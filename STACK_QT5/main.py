@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtWidgets import QMainWindow,QApplication
 from PyQt5.QtCore import Qt,QPropertyAnimation
@@ -9,7 +9,7 @@ WINDOW_SIZE = 0;
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow,self).__init__()
-        uic.loadUi("STACK_QT5\\main_window.ui",self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window.ui"),self)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         self.closeButton.clicked.connect(lambda: self.close()) 
@@ -19,6 +19,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qedit_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qedit_page))        
         self.feedback_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.feedback_page))
         self.attributes_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.attributes_page))
+        self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
+        self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
     
   

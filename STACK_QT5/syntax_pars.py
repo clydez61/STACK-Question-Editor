@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QColor, QTextCharFormat, QFont, QSyntaxHighlighter
 import html2text
@@ -39,11 +39,11 @@ STYLES = {
     'numbers': format([100, 150, 190]),
 }
 keywords2 = []
-tree = ElementTree.parse('STACK_QT5\\maxima.xml')
+tree = ElementTree.parse(os.path.join(os.path.dirname(__file__),"maxima.xml"))
 root = tree.getroot()
 for node in tree.findall('.//list'):   
         warnings.filterwarnings("ignore")
-        for snode in node.getchildren():
+        for snode in list(node):
             keywords2.append(snode.text)
 
 

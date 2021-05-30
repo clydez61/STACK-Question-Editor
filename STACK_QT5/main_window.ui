@@ -166,7 +166,7 @@ QPushButton:hover{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="nike_app.qrc">
+                <iconset>
                  <normaloff>:/icons/icons/cil-menu.png</normaloff>:/icons/icons/cil-menu.png</iconset>
                </property>
                <property name="iconSize">
@@ -269,7 +269,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="nike_app.qrc">
+             <iconset>
               <normaloff>:/icons/icons/cil-minus.png</normaloff>:/icons/icons/cil-minus.png</iconset>
             </property>
             <property name="iconSize">
@@ -289,7 +289,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="nike_app.qrc">
+             <iconset>
               <normaloff>:/icons/icons/cil-window-maximize.png</normaloff>:/icons/icons/cil-window-maximize.png</iconset>
             </property>
             <property name="iconSize">
@@ -309,7 +309,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="nike_app.qrc">
+             <iconset>
               <normaloff>:/icons/icons/cil-x.png</normaloff>:/icons/icons/cil-x.png</iconset>
             </property>
             <property name="iconSize">
@@ -586,7 +586,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="qedit_page">
              <property name="styleSheet">
@@ -768,6 +768,19 @@ background-color: rgb(51, 51, 51);
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="inputs_page"/>
+            <widget class="QWidget" name="tree_page">
+             <widget class="QMdiArea" name="mdiArea">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>0</y>
+                <width>981</width>
+                <height>591</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
            </widget>
           </item>
          </layout>
@@ -840,7 +853,7 @@ QLabel{
   </widget>
  </widget>
  <resources>
-  <include location="nike_app.qrc"/>
+  <include location="resources/fonts/nike_desktop_app/nike_app.qrc"/>
  </resources>
  <connections/>
 </ui>
