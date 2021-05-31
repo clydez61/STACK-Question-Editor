@@ -166,7 +166,7 @@ QPushButton:hover{
                 <string/>
                </property>
                <property name="icon">
-                <iconset>
+                <iconset resource="local.qrc">
                  <normaloff>:/icons/icons/cil-menu.png</normaloff>:/icons/icons/cil-menu.png</iconset>
                </property>
                <property name="iconSize">
@@ -269,7 +269,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="local.qrc">
               <normaloff>:/icons/icons/cil-minus.png</normaloff>:/icons/icons/cil-minus.png</iconset>
             </property>
             <property name="iconSize">
@@ -289,7 +289,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="local.qrc">
               <normaloff>:/icons/icons/cil-window-maximize.png</normaloff>:/icons/icons/cil-window-maximize.png</iconset>
             </property>
             <property name="iconSize">
@@ -309,7 +309,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="local.qrc">
               <normaloff>:/icons/icons/cil-x.png</normaloff>:/icons/icons/cil-x.png</iconset>
             </property>
             <property name="iconSize">
@@ -770,16 +770,33 @@ background-color: rgb(51, 51, 51);
             </widget>
             <widget class="QWidget" name="inputs_page"/>
             <widget class="QWidget" name="tree_page">
-             <widget class="QMdiArea" name="mdiArea">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>0</y>
-                <width>981</width>
-                <height>591</height>
-               </rect>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QMdiArea" name="mdiArea"/>
+              </item>
+              <item>
+               <widget class="QFrame" name="treeFrame">
+                <property name="minimumSize">
+                 <size>
+                  <width>200</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>200</width>
+                  <height>9999999</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </widget>
           </item>
@@ -853,7 +870,7 @@ QLabel{
   </widget>
  </widget>
  <resources>
-  <include location="resources/fonts/nike_desktop_app/nike_app.qrc"/>
+  <include location="local.qrc"/>
  </resources>
  <connections/>
 </ui>
