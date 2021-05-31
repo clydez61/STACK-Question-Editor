@@ -166,7 +166,7 @@ QPushButton:hover{
                 <string/>
                </property>
                <property name="icon">
-                <iconset resource="nike_app.qrc">
+                <iconset resource="local.qrc">
                  <normaloff>:/icons/icons/cil-menu.png</normaloff>:/icons/icons/cil-menu.png</iconset>
                </property>
                <property name="iconSize">
@@ -269,7 +269,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="nike_app.qrc">
+             <iconset resource="local.qrc">
               <normaloff>:/icons/icons/cil-minus.png</normaloff>:/icons/icons/cil-minus.png</iconset>
             </property>
             <property name="iconSize">
@@ -289,7 +289,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="nike_app.qrc">
+             <iconset resource="local.qrc">
               <normaloff>:/icons/icons/cil-window-maximize.png</normaloff>:/icons/icons/cil-window-maximize.png</iconset>
             </property>
             <property name="iconSize">
@@ -309,7 +309,7 @@ QPushButton:hover{
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="nike_app.qrc">
+             <iconset resource="local.qrc">
               <normaloff>:/icons/icons/cil-x.png</normaloff>:/icons/icons/cil-x.png</iconset>
             </property>
             <property name="iconSize">
@@ -586,7 +586,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="qedit_page">
              <property name="styleSheet">
@@ -768,6 +768,36 @@ background-color: rgb(51, 51, 51);
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="inputs_page"/>
+            <widget class="QWidget" name="tree_page">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QMdiArea" name="mdiArea"/>
+              </item>
+              <item>
+               <widget class="QFrame" name="treeFrame">
+                <property name="minimumSize">
+                 <size>
+                  <width>200</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>200</width>
+                  <height>9999999</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>
@@ -840,7 +870,7 @@ QLabel{
   </widget>
  </widget>
  <resources>
-  <include location="nike_app.qrc"/>
+  <include location="local.qrc"/>
  </resources>
  <connections/>
 </ui>

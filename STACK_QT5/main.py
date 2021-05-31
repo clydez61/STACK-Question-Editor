@@ -1,15 +1,25 @@
-import sys
+import sys, os
 from PyQt5 import QtWidgets,QtGui,QtCore,uic
-from PyQt5.QtWidgets import QMainWindow,QApplication
-from PyQt5.QtCore import Qt,QPropertyAnimation
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.sip import dump
 import resource
+
+from nodeeditor.utils import *
+from nodeeditor.node_editor_window import NodeEditorWindow
+from stack_sub_window import *
+from stack_drag_listbox import *
+from stack_conf import *
+from stack_conf_nodes import *
+
 import syntax_pars
 
-WINDOW_SIZE = 0;
+WINDOW_SIZE = 0
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow,self).__init__()
-        uic.loadUi("STACK_QT5\\main_window.ui",self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window.ui"),self)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         self.closeButton.clicked.connect(lambda: self.close()) 
@@ -19,9 +29,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qedit_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qedit_page))        
         self.feedback_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.feedback_page))
         self.attributes_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.attributes_page))
+        self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
+        self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
     
-  
+        self.empty_icon = QIcon(".")
+
+        self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.mdiArea.setViewMode(QMdiArea.TabbedView)
+        self.mdiArea.setDocumentMode(True)
+        self.mdiArea.setTabsClosable(True)
+        self.mdiArea.setTabsMovable(True)
+
+        self.windowMapper = QSignalMapper(self)
+        self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
+
+        self.treeFrameLayout = QVBoxLayout()
+        self.treeFrameLayout.addWidget(QDMDragListbox())
+        self.treeFrame.setLayout(self.treeFrameLayout)
+
+        nodeeditor = StackSubWindow()
+        nodeeditor.setTitle()
+        subwnd = self.createMdiChild(nodeeditor)
+        subwnd.show()
+
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -37,9 +69,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_header.mouseMoveEvent = moveWindow    
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
-
-        
-   
 
     def restore_or_maximize_window(self):
         # Global windows state
@@ -87,6 +116,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
 
+    def createMdiChild(self, child_widget=None):
+        nodeeditor = child_widget if child_widget is not None else StackSubWindow()
+        subwnd = self.mdiArea.addSubWindow(nodeeditor)
+        subwnd.setWindowIcon(self.empty_icon)
+        subwnd.setWindowState(Qt.WindowMaximized)
+        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
+        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
+        # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        # nodeeditor.addCloseEventListener(self.onSubWndClose)
+        return subwnd
+
+    def setActiveSubWindow(self, window):
+        if window:
+            self.mdiArea.setActiveSubWindow(window)
 
 app = QtWidgets.QApplication(sys.argv) # Create an instance of QtWidgets.QApplicationhighlight = syntax_pars.PythonHighlighter(qvar_box.document())
 window = MainWindow() # Create an instance of our class
