@@ -19,11 +19,18 @@ WINDOW_SIZE = 0
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow,self).__init__()
-        uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window.ui"),self)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
-        self.closeButton.clicked.connect(lambda: self.close()) 
-        self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
+        uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
+        #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        self.setWindowTitle('New file - unsaved[*]')
+        self.actionSave.triggered.connect(lambda:self.save())
+        self.actionOpen.triggered.connect(lambda:self.open())
+        self.actionSave_as.triggered.connect(lambda:self.save_as())
+
+        
+        #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
+        #self.closeButton.clicked.connect(lambda: self.close()) 
+        #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
         
         self.stackedWidget.setCurrentWidget(self.qedit_page)
         self.qedit_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qedit_page))        
@@ -32,7 +39,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
         self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
-    
+
+        self.savefile = None
+
+        #check if window is modified
+        self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
+        self.qtext_box.document().modificationChanged.connect(self.setWindowModified)
+        self.gfeedback_box.document().modificationChanged.connect(self.setWindowModified)
+        self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
+        self.grade_box.document().modificationChanged.connect(self.setWindowModified)
+        self.penalty_box.document().modificationChanged.connect(self.setWindowModified)
+        self.ID_box.document().modificationChanged.connect(self.setWindowModified)
+        self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
+        self.tag_box.document().modificationChanged.connect(self.setWindowModified)
+
         self.empty_icon = QIcon(".")
 
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -70,6 +90,108 @@ class MainWindow(QtWidgets.QMainWindow):
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
 
+    def save_as(self):
+        if not self.isWindowModified():
+            return
+        savefile, _ = QFileDialog.getSaveFileName(self,'Save File','STACK_QT5','(*.py)')
+        if savefile:
+            pyout = open(savefile,'w')
+            pyout.write("question = {")
+
+            #writing question text
+            pyout.write('   "questiontext":"""\n')
+            pyout.write(str(self.qtext_box.toPlainText()))
+            pyout.write('\n""",\n')
+
+            #writing question variables
+            pyout.write('   "questionvariables":"""\n')
+            pyout.write(str(self.qvar_box.toPlainText()))
+            pyout.write('\n""",\n')
+
+            #writing general feedback
+            pyout.write('   "generalfeedback":"""\n')
+            pyout.write(str(self.gfeedback_box.toPlainText()))
+            pyout.write('\n""",\n')
+            
+            #writing default grade
+            pyout.write('   "defaultgrade":')
+            pyout.write('"' + str(self.grade_box.toPlainText()) + '",\n')
+
+            #writing question note
+            pyout.write('   "questionnote":"""\n')
+            pyout.write(str(self.qnote_box.toPlainText()))
+            pyout.write('\n""",\n')
+
+            # writing tags
+            pyout.write('   "tags":{\n')
+            pyout.write('       "tag": [\n')                
+            pyout.write(str(self.tag_box.toPlainText()) + '\n')
+            pyout.write('       ]\n')
+            pyout.write('   },\n')
+
+            #writing ID
+            pyout.write('   "defaultgrade":')
+            pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
+
+        #penalty
+        #add here
+            pyout.write("\n}")
+                                    
+            self.savefile = savefile
+            self.setWindowTitle(str(os.path.basename(savefile)))
+
+
+
+    def save(self):
+        # if savefile[0] already exists, then save, if savefile[0] does not, then open save_file    
+        if not self.isWindowModified():
+            return
+
+        if not self.savefile:
+            self.save_as()
+        else:
+            pyout = open(self.savefile,'w')
+            pyout.write("question = {")
+
+            #writing question text
+            pyout.write('   "questiontext":"""\n')
+            pyout.write(str(self.qtext_box.toPlainText()))
+            pyout.write('\n""",\n')
+
+            #writing question variables
+            pyout.write('   "questionvariables":"""\n')
+            pyout.write(str(self.qvar_box.toPlainText()))
+            pyout.write('\n""",\n')
+
+            #writing general feedback
+            pyout.write('   "generalfeedback":"""\n')
+            pyout.write(str(self.gfeedback_box.toPlainText()))
+            pyout.write('\n""",\n')
+            
+            #writing default grade
+            pyout.write('   "defaultgrade":')
+            pyout.write('"' + str(self.grade_box.toPlainText()) + '",\n')
+
+            #writing question note
+            pyout.write('   "questionnote":"""\n')
+            pyout.write(str(self.qnote_box.toPlainText()))
+            pyout.write('\n""",\n')
+
+            # writing tags
+            pyout.write('   "tags":{\n')
+            pyout.write('       "tag": [\n')                
+            pyout.write(str(self.tag_box.toPlainText()) + '\n')
+            pyout.write('       ]\n')
+            pyout.write('   },\n')
+
+            #writing ID
+            pyout.write('   "defaultgrade":')
+            pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
+
+        #penalty
+        #add here
+            pyout.write("\n}")
+   
     def restore_or_maximize_window(self):
         # Global windows state
         global WINDOW_SIZE #The default value is zero to show that the size is not maximized
