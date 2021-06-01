@@ -438,7 +438,7 @@ padding-left: 50px;
 background-position: center left;</string>
                </property>
                <property name="text">
-                <string>Potential Tree</string>
+                <string>Tree</string>
                </property>
               </widget>
              </item>
@@ -776,7 +776,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1071</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="styleSheet">

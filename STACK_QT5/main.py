@@ -1,4 +1,4 @@
-import sys, os
+import sys, os,importlib
 from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -93,6 +93,39 @@ class MainWindow(QtWidgets.QMainWindow):
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
 
+
+    def open(self):
+        fname = QFileDialog.getOpenFileName(self,'Open File','STACK_QT5','(*.py)') #(*.py *.xml *.txt)
+        path = fname[0]
+        split_string = path.rsplit("/",1)
+        imp_path = split_string[0] 
+        imp_path += '/'
+        name = split_string[-1].split(".")
+        imp_name = name[0]
+        
+        if imp_path != '':
+            sys.path.insert(0, imp_path)
+            mod = importlib.import_module(imp_name)
+        #make the variable global
+            print(f"path:{imp_path},name = {imp_name}")
+
+            #self.qvar_box.clear()
+            self.qvar_box.setPlainText(mod.question.get('questionvariables')[1:-1])     
+            self.qtext_box.setPlainText(mod.question.get('questiontext')[1:-1])           
+            self.gfeedback_box.setPlainText(mod.question.get('generalfeedback')[1:-1])               
+            #self.sfeedback_box.insertPlainText(mod.question.get('specificfeedback')[1:-1])               
+            self.grade_box.setPlainText(mod.question.get('defaultgrade'))     
+            self.penalty_box.setPlainText(mod.question.get('penalty'))
+            self.ID_box.setPlainText(mod.question.get('idnumber'))       
+            self.qnote_box.setPlainText(mod.question.get('questionnote')[1:-1])  
+            #self.tag_box.setText(mod.question['tags']['tag'])
+            key = mod.question.get('tags')
+            result = ''
+            for elements in key['tag']: 
+                result += str(elements) + "\n" 
+            self.tag_box.setText(result)
+            print(f"path is {imp_path}, name is {imp_name}")
+
     def save_as(self):
         if not self.isWindowModified():
             return
@@ -133,11 +166,12 @@ class MainWindow(QtWidgets.QMainWindow):
             pyout.write('   },\n')
 
             #writing ID
-            pyout.write('   "defaultgrade":')
+            pyout.write('   "idnumber":')
             pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
-        #penalty
-        #add here
+            #penalty
+            pyout.write('   "penalty":')
+            pyout.write('"' + str(self.penalty_box.toPlainText()) + '",\n')
             pyout.write("\n}")
                                     
             self.savefile = savefile
@@ -186,11 +220,12 @@ class MainWindow(QtWidgets.QMainWindow):
             pyout.write('   },\n')
 
             #writing ID
-            pyout.write('   "defaultgrade":')
+            pyout.write('   "idnumber":')
             pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
-        #penalty
-        #add here
+            #penalty
+            pyout.write('   "penalty":')
+            pyout.write('"' + str(self.penalty_box.toPlainText()) + '",\n')
             pyout.write("\n}")
    
     def restore_or_maximize_window(self):
