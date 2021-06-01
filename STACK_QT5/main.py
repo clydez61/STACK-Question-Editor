@@ -26,8 +26,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSave.triggered.connect(lambda:self.save())
         self.actionOpen.triggered.connect(lambda:self.open())
         self.actionSave_as.triggered.connect(lambda:self.save_as())
-
         
+        #TODO: Disable Edit menu items when mdiArea is not in focus.
+
+        self.actionRedo.triggered.connect(lambda:NodeEditorWindow.onEditRedo(self))
+        self.actionUndo.triggered.connect(lambda:NodeEditorWindow.onEditUndo(self))
+        self.actionCut.triggered.connect(lambda:NodeEditorWindow.onEditCut(self))
+        self.actionCopy.triggered.connect(lambda:NodeEditorWindow.onEditCopy(self))
+        self.actionPaste.triggered.connect(lambda:NodeEditorWindow.onEditPaste(self))
+        self.actionDelete.triggered.connect(lambda:NodeEditorWindow.onEditDelete(self))
+
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
@@ -62,8 +70,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mdiArea.setTabsClosable(True)
         self.mdiArea.setTabsMovable(True)
 
+        self.mdiArea.subWindowActivated.connect(self.updateMenus)
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
+
+        self.updateMenus()
 
         self.treeFrameLayout = QVBoxLayout()
         self.treeFrameLayout.addWidget(QDMDragListbox())
@@ -72,9 +83,8 @@ class MainWindow(QtWidgets.QMainWindow):
         nodeeditor = StackSubWindow()
         nodeeditor.setTitle()
         subwnd = self.createMdiChild(nodeeditor)
+        subwnd.widget().fileNew()
         subwnd.show()
-
-        self.createActions()
 
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -285,35 +295,47 @@ class MainWindow(QtWidgets.QMainWindow):
         # nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
 
+    def updateMenus(self):
+        active = self.getCurrentNodeEditorWidget()
+        hasMdiChild = (active is not None)
+        #TODO: Work with Chen to sort out save and export features
+        # self.actSave.setEnabled(hasMdiChild)
+        # self.actSaveAs.setEnabled(hasMdiChild)
+        # self.actClose.setEnabled(hasMdiChild)
+        # self.actCloseAll.setEnabled(hasMdiChild)
+        # self.actTile.setEnabled(hasMdiChild)
+        # self.actCascade.setEnabled(hasMdiChild)
+        # self.actNext.setEnabled(hasMdiChild)
+        # self.actPrevious.setEnabled(hasMdiChild)
+        # self.actSeparator.setVisible(hasMdiChild)
+
+        self.updateEditMenu()
+
+    def updateEditMenu(self):
+         #print("update Edit Menu")
+         active = self.getCurrentNodeEditorWidget()
+         hasMdiChild = (active is not None)
+
+         self.actionPaste.setEnabled(hasMdiChild)
+         self.actionCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+         self.actionCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+         self.actionDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+
+         self.actionUndo.setEnabled(hasMdiChild and active.canUndo())
+         self.actionRedo.setEnabled(hasMdiChild and active.canRedo())
+
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
 
-    def createActions(self):
-        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=NodeEditorWindow.onFileNew)
-        self.actOpen = QAction('&Open', self, shortcut='Ctrl+O', statusTip="Open file", triggered=NodeEditorWindow.onFileOpen)
-        self.actSave = QAction('&Save', self, shortcut='Ctrl+S', statusTip="Save file", triggered=NodeEditorWindow.onFileSave)
-        self.actSaveAs = QAction('Save &As...', self, shortcut='Ctrl+Shift+S', statusTip="Save file as...", triggered=NodeEditorWindow.onFileSaveAs)
-        self.actExit = QAction('E&xit', self, shortcut='Ctrl+Q', statusTip="Exit application", triggered=NodeEditorWindow.close)
-
-        self.actUndo = QAction('&Undo', self, shortcut='Ctrl+Z', statusTip="Undo last operation", triggered=NodeEditorWindow.onEditUndo)
-        self.actRedo = QAction('&Redo', self, shortcut='Ctrl+Shift+Z', statusTip="Redo last operation", triggered=NodeEditorWindow.onEditRedo)
-        self.actCut = QAction('Cu&t', self, shortcut='Ctrl+X', statusTip="Cut to clipboard", triggered=NodeEditorWindow.onEditCut)
-        self.actCopy = QAction('&Copy', self, shortcut='Ctrl+C', statusTip="Copy to clipboard", triggered=NodeEditorWindow.onEditCopy)
-        self.actPaste = QAction('&Paste', self, shortcut='Ctrl+V', statusTip="Paste from clipboard", triggered=NodeEditorWindow.onEditPaste)
-        self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items", triggered=NodeEditorWindow.onEditDelete)
-
-        self.actClose = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
-        self.actCloseAll = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
-        self.actTile = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
-        self.actCascade = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
-        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
-        self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
-
-        self.actSeparator = QAction(self)
-        self.actSeparator.setSeparator(True)
-
-        self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
+    def getCurrentNodeEditorWidget(self):
+        """ we're returning NodeEditorWidget here... """
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            print("Success")
+            return activeSubWindow.widget()
+        print("Fail")
+        return None
 
     def about(self):
         QMessageBox.about(self, "About STACK Tools",
