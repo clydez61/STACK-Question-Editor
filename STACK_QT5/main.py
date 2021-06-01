@@ -74,6 +74,8 @@ class MainWindow(QtWidgets.QMainWindow):
         subwnd = self.createMdiChild(nodeeditor)
         subwnd.show()
 
+        self.createActions()
+
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -81,7 +83,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 # Move window only when window is normal size  
                 # ###############################################
                 #if left mouse button is clicked (Only accept left mouse button clicks)
-                if e.buttons() == Qt.LeftButton:  
+                #FIXME: hasatrr() is a hacky fix, come up with solution to prevent click-drag of left-menu toggle button.
+                if e.buttons() == Qt.LeftButton and hasattr(self, 'clickPosition'):  
                     #Move window 
                     self.move(self.pos() + e.globalPos() - self.clickPosition)
                     self.clickPosition = e.globalPos()
@@ -139,8 +142,6 @@ class MainWindow(QtWidgets.QMainWindow):
                                     
             self.savefile = savefile
             self.setWindowTitle(str(os.path.basename(savefile)))
-
-
 
     def save(self):
         # if savefile[0] already exists, then save, if savefile[0] does not, then open save_file    
@@ -252,6 +253,37 @@ class MainWindow(QtWidgets.QMainWindow):
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
+
+    def createActions(self):
+        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=NodeEditorWindow.onFileNew)
+        self.actOpen = QAction('&Open', self, shortcut='Ctrl+O', statusTip="Open file", triggered=NodeEditorWindow.onFileOpen)
+        self.actSave = QAction('&Save', self, shortcut='Ctrl+S', statusTip="Save file", triggered=NodeEditorWindow.onFileSave)
+        self.actSaveAs = QAction('Save &As...', self, shortcut='Ctrl+Shift+S', statusTip="Save file as...", triggered=NodeEditorWindow.onFileSaveAs)
+        self.actExit = QAction('E&xit', self, shortcut='Ctrl+Q', statusTip="Exit application", triggered=NodeEditorWindow.close)
+
+        self.actUndo = QAction('&Undo', self, shortcut='Ctrl+Z', statusTip="Undo last operation", triggered=NodeEditorWindow.onEditUndo)
+        self.actRedo = QAction('&Redo', self, shortcut='Ctrl+Shift+Z', statusTip="Redo last operation", triggered=NodeEditorWindow.onEditRedo)
+        self.actCut = QAction('Cu&t', self, shortcut='Ctrl+X', statusTip="Cut to clipboard", triggered=NodeEditorWindow.onEditCut)
+        self.actCopy = QAction('&Copy', self, shortcut='Ctrl+C', statusTip="Copy to clipboard", triggered=NodeEditorWindow.onEditCopy)
+        self.actPaste = QAction('&Paste', self, shortcut='Ctrl+V', statusTip="Paste from clipboard", triggered=NodeEditorWindow.onEditPaste)
+        self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items", triggered=NodeEditorWindow.onEditDelete)
+
+        self.actClose = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
+        self.actCloseAll = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
+        self.actTile = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
+        self.actCascade = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
+        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
+        self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
+
+        self.actSeparator = QAction(self)
+        self.actSeparator.setSeparator(True)
+
+        self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
+
+    def about(self):
+        QMessageBox.about(self, "About STACK Tools",
+                "STACK Tools is a program designed to simplify/ assist in the creation of Moodle STACK "
+                "questions")
 
 app = QtWidgets.QApplication(sys.argv) # Create an instance of QtWidgets.QApplicationhighlight = syntax_pars.PythonHighlighter(qvar_box.document())
 window = MainWindow() # Create an instance of our class
