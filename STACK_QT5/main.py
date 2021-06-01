@@ -8,6 +8,7 @@ import resource
 
 from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
+from stack_window import StackWindow
 from stack_sub_window import *
 from stack_drag_listbox import *
 from stack_conf import *
@@ -27,14 +28,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionOpen.triggered.connect(lambda:self.open())
         self.actionSave_as.triggered.connect(lambda:self.save_as())
         
-        #TODO: Disable Edit menu items when mdiArea is not in focus.
+        #TODO: Integrate sub-QMainWindow menu bar with main-QMainWindow menu bar 
+        
+        self.actionRedo.setEnabled(False)
+        self.actionUndo.setEnabled(False)
+        self.actionCut.setEnabled(False)
+        self.actionCopy.setEnabled(False)
+        self.actionPaste.setEnabled(False)
+        self.actionDelete.setEnabled(False)
 
-        self.actionRedo.triggered.connect(lambda:NodeEditorWindow.onEditRedo(self))
-        self.actionUndo.triggered.connect(lambda:NodeEditorWindow.onEditUndo(self))
-        self.actionCut.triggered.connect(lambda:NodeEditorWindow.onEditCut(self))
-        self.actionCopy.triggered.connect(lambda:NodeEditorWindow.onEditCopy(self))
-        self.actionPaste.triggered.connect(lambda:NodeEditorWindow.onEditPaste(self))
-        self.actionDelete.triggered.connect(lambda:NodeEditorWindow.onEditDelete(self))
+        #self.actionRedo.triggered.connect(lambda:NodeEditorWindow.onEditRedo(self))
+        #self.actionUndo.triggered.connect(lambda:NodeEditorWindow.onEditUndo(self))
+        #self.actionCut.triggered.connect(lambda:NodeEditorWindow.onEditCut(self))
+        #self.actionCopy.triggered.connect(lambda:NodeEditorWindow.onEditCopy(self))
+        #self.actionPaste.triggered.connect(lambda:NodeEditorWindow.onEditPaste(self))
+        #self.actionDelete.triggered.connect(lambda:NodeEditorWindow.onEditDelete(self))
 
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
@@ -61,31 +69,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
-        self.empty_icon = QIcon(".")
-
-        self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.mdiArea.setViewMode(QMdiArea.TabbedView)
-        self.mdiArea.setDocumentMode(True)
-        self.mdiArea.setTabsClosable(True)
-        self.mdiArea.setTabsMovable(True)
-
-        self.mdiArea.subWindowActivated.connect(self.updateMenus)
-        self.windowMapper = QSignalMapper(self)
-        self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
-
-        self.updateMenus()
-
-        self.treeFrameLayout = QVBoxLayout()
-        self.treeFrameLayout.addWidget(QDMDragListbox())
-        self.treeFrame.setLayout(self.treeFrameLayout)
-
-        nodeeditor = StackSubWindow()
-        nodeeditor.setTitle()
-        subwnd = self.createMdiChild(nodeeditor)
-        subwnd.widget().fileNew()
-        subwnd.show()
-
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -102,6 +85,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_header.mouseMoveEvent = moveWindow    
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
+
+        self.NodeEditorLayout.addWidget(StackWindow())
 
     def save_as(self):
         if not self.isWindowModified():
@@ -248,64 +233,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEndValue(newWidth)#end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
-
-    def createMdiChild(self, child_widget=None):
-        nodeeditor = child_widget if child_widget is not None else StackSubWindow()
-        subwnd = self.mdiArea.addSubWindow(nodeeditor)
-        subwnd.setWindowIcon(self.empty_icon)
-        subwnd.setWindowState(Qt.WindowMaximized)
-        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
-        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
-        # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
-        # nodeeditor.addCloseEventListener(self.onSubWndClose)
-        return subwnd
-
-    def updateMenus(self):
-        active = self.getCurrentNodeEditorWidget()
-        hasMdiChild = (active is not None)
-        #TODO: Work with Chen to sort out save and export features
-        # self.actSave.setEnabled(hasMdiChild)
-        # self.actSaveAs.setEnabled(hasMdiChild)
-        # self.actClose.setEnabled(hasMdiChild)
-        # self.actCloseAll.setEnabled(hasMdiChild)
-        # self.actTile.setEnabled(hasMdiChild)
-        # self.actCascade.setEnabled(hasMdiChild)
-        # self.actNext.setEnabled(hasMdiChild)
-        # self.actPrevious.setEnabled(hasMdiChild)
-        # self.actSeparator.setVisible(hasMdiChild)
-
-        self.updateEditMenu()
-
-    def updateEditMenu(self):
-         #print("update Edit Menu")
-         active = self.getCurrentNodeEditorWidget()
-         hasMdiChild = (active is not None)
-
-         self.actionPaste.setEnabled(hasMdiChild)
-         self.actionCut.setEnabled(hasMdiChild and active.hasSelectedItems())
-         self.actionCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
-         self.actionDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
-
-         self.actionUndo.setEnabled(hasMdiChild and active.canUndo())
-         self.actionRedo.setEnabled(hasMdiChild and active.canRedo())
-
-    def setActiveSubWindow(self, window):
-        if window:
-            self.mdiArea.setActiveSubWindow(window)
-
-    def getCurrentNodeEditorWidget(self):
-        """ we're returning NodeEditorWidget here... """
-        activeSubWindow = self.mdiArea.activeSubWindow()
-        if activeSubWindow:
-            print("Success")
-            return activeSubWindow.widget()
-        print("Fail")
-        return None
-
-    def about(self):
-        QMessageBox.about(self, "About STACK Tools",
-                "STACK Tools is a program designed to simplify/ assist in the creation of Moodle STACK "
-                "questions")
 
 app = QtWidgets.QApplication(sys.argv) # Create an instance of QtWidgets.QApplicationhighlight = syntax_pars.PythonHighlighter(qvar_box.document())
 window = MainWindow() # Create an instance of our class
