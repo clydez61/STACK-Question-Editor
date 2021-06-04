@@ -1,10 +1,11 @@
-import sys, os,importlib
+import sys, os, importlib
 from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.sip import dump
 import resource
+import json
 
 from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
@@ -27,21 +28,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSave.triggered.connect(lambda:self.save())
         self.actionOpen.triggered.connect(lambda:self.open())
         self.actionSave_as.triggered.connect(lambda:self.save_as())
-        
-        #TODO: Integrate sub-QMainWindow menu bar with main-QMainWindow menu bar 
-        self.actionRedo.setEnabled(False)
-        self.actionUndo.setEnabled(False)
-        self.actionCut.setEnabled(False)
-        self.actionCopy.setEnabled(False)
-        self.actionPaste.setEnabled(False)
-        self.actionDelete.setEnabled(False)
-
-        #self.actionRedo.triggered.connect(lambda:NodeEditorWindow.onEditRedo(self))
-        #self.actionUndo.triggered.connect(lambda:NodeEditorWindow.onEditUndo(self))
-        #self.actionCut.triggered.connect(lambda:NodeEditorWindow.onEditCut(self))
-        #self.actionCopy.triggered.connect(lambda:NodeEditorWindow.onEditCopy(self))
-        #self.actionPaste.triggered.connect(lambda:NodeEditorWindow.onEditPaste(self))
-        #self.actionDelete.triggered.connect(lambda:NodeEditorWindow.onEditDelete(self))
 
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
@@ -68,6 +54,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
+        self.empty_icon = QIcon(".")
+
+        NodeEditor = StackWindow()
+        NodeEditor.setObjectName("NodeEditor")
+        self.NodeEditorLayout.addWidget(NodeEditor)
+
+        self.createActions()
+        self.createMenus()
+        self.updateMenus()
+
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -85,7 +81,42 @@ class MainWindow(QtWidgets.QMainWindow):
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
 
-        self.NodeEditorLayout.addWidget(StackWindow())
+    def createActions(self):
+        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
+
+    def createMenus(self):
+        self.menuEdit.clear()
+
+        self.menuEdit.addAction(self.actNew)
+        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actUndo)
+        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actRedo)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actCut)
+        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actCopy)
+        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actPaste)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actDelete)
+
+    def updateMenus(self):
+        pass
+
+    def onFileNew(self):
+        try:
+            subwnd = self.createMdiChild()
+            subwnd.widget().fileNew()
+            subwnd.show()
+        except Exception as e: dumpException(e)
+
+    def createMdiChild(self, child_widget=None):
+        nodeeditor = child_widget if child_widget is not None else StackSubWindow()
+        subwnd = self.tree_page.findChild(StackWindow, "NodeEditor").centralWidget().addSubWindow(nodeeditor)
+        subwnd.setWindowIcon(self.empty_icon)
+        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
+        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
+        #TODO: Reimplement two functions below
+        #nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        #nodeeditor.addCloseEventListener(self.onSubWndClose)
+        return subwnd
 
     def open(self):
         fname = QFileDialog.getOpenFileName(self,'Open File','STACK_QT5','(*.py)') #(*.py *.xml *.txt)

@@ -71,17 +71,17 @@ class StackWindow(NodeEditorWindow):
     def createActions(self):
         super().createActions()
 
-        self.actClose = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
-        self.actCloseAll = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
-        self.actTile = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
-        self.actCascade = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
-        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
-        self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
+        # self.actClose = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
+        # self.actCloseAll = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
+        # self.actTile = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
+        # self.actCascade = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
+        # self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
+        # self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
 
-        self.actSeparator = QAction(self)
-        self.actSeparator.setSeparator(True)
+        # self.actSeparator = QAction(self)
+        # self.actSeparator.setSeparator(True)
 
-        self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
+        # self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
 
     def getCurrentNodeEditorWidget(self):
         """ we're returning NodeEditorWidget here... """
@@ -124,32 +124,33 @@ class StackWindow(NodeEditorWindow):
                 "questions")
 
     def createMenus(self):
-        super().createMenus()
+        pass
+        # super().createMenus()
 
-        self.windowMenu = self.menuBar().addMenu("&Window")
-        self.updateWindowMenu()
-        self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
+        # self.windowMenu = self.menuBar().addMenu("&Window")
+        # self.updateWindowMenu()
+        # self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
 
-        self.menuBar().addSeparator()
+        # self.menuBar().addSeparator()
 
-        self.helpMenu = self.menuBar().addMenu("&Help")
-        self.helpMenu.addAction(self.actAbout)
+        # self.helpMenu = self.menuBar().addMenu("&Help")
+        # self.helpMenu.addAction(self.actAbout)
 
-        self.editMenu.aboutToShow.connect(self.updateEditMenu)
+        # self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
         active = self.getCurrentNodeEditorWidget()
         hasMdiChild = (active is not None)
 
-        self.actSave.setEnabled(hasMdiChild)
-        self.actSaveAs.setEnabled(hasMdiChild)
-        self.actClose.setEnabled(hasMdiChild)
-        self.actCloseAll.setEnabled(hasMdiChild)
-        self.actTile.setEnabled(hasMdiChild)
-        self.actCascade.setEnabled(hasMdiChild)
-        self.actNext.setEnabled(hasMdiChild)
-        self.actPrevious.setEnabled(hasMdiChild)
-        self.actSeparator.setVisible(hasMdiChild)
+        # self.actSave.setEnabled(hasMdiChild)
+        # self.actSaveAs.setEnabled(hasMdiChild)
+        # self.actClose.setEnabled(hasMdiChild)
+        # self.actCloseAll.setEnabled(hasMdiChild)
+        # self.actTile.setEnabled(hasMdiChild)
+        # self.actCascade.setEnabled(hasMdiChild)
+        # self.actNext.setEnabled(hasMdiChild)
+        # self.actPrevious.setEnabled(hasMdiChild)
+        # self.actSeparator.setVisible(hasMdiChild)
 
         self.updateEditMenu()
 
@@ -159,13 +160,13 @@ class StackWindow(NodeEditorWindow):
             active = self.getCurrentNodeEditorWidget()
             hasMdiChild = (active is not None)
 
-            self.actPaste.setEnabled(hasMdiChild)
-            self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
-            self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
-            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+            # self.actPaste.setEnabled(hasMdiChild)
+            # self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+            # self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+            # self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
 
-            self.actUndo.setEnabled(hasMdiChild and active.canUndo())
-            self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+            # self.actUndo.setEnabled(hasMdiChild and active.canUndo())
+            # self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e: dumpException(e)
 
     def updateWindowMenu(self):
@@ -224,7 +225,8 @@ class StackWindow(NodeEditorWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.nodesDock)
 
     def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
+        #self.statusBar().showMessage("Ready")
+        pass
 
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
