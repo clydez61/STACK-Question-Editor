@@ -63,11 +63,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gfeedback_box.document().modificationChanged.connect(self.setWindowModified)
         self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
         self.grade_box.document().modificationChanged.connect(self.setWindowModified)
-        self.penalty_box.document().modificationChanged.connect(self.setWindowModified)
+        
         self.ID_box.document().modificationChanged.connect(self.setWindowModified)
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
+ 
+        
+        self.setStyleSheet("""QToolTip { 
+                           background-color: black; 
+                           color: white; 
+                           border: black solid 1px
+                           }""")
+        #setting ToolTip
+  
+        #html button for question text
+        self.html_btn.setCheckable(True)
+        self.html_btn.toggle()
+        self.html_btn.clicked.connect(lambda:self.htmltoggle())
+        self.qtext_box.acceptRichText()
 
+        #html button for general feedback
+        self.html_btn2.setCheckable(True)
+        self.html_btn2.toggle()
+        self.html_btn2.clicked.connect(lambda:self.htmltoggle2())
+        
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -87,6 +106,41 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.NodeEditorLayout.addWidget(StackWindow())
 
+
+
+    def htmltoggle(self):
+        textformat = self.qtext_box.toPlainText()        
+        if self.html_btn.isChecked():
+            htmlformat = repr(self.qtext_box.toPlainText())
+            
+            htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
+            print(htmlformat)
+            
+            self.qtext_box.setPlainText(htmlformat)
+
+            self.html_btn.setStyleSheet("background-color : lightblue")
+  
+        else:
+            
+            self.qtext_box.setHtml(textformat)
+
+
+    def htmltoggle2(self):
+        textformat = self.gfeedback_box.toPlainText()        
+        if self.html_btn2.isChecked():
+            htmlformat = repr(self.gfeedback_box.toPlainText())
+            
+            htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
+            
+            
+            self.gfeedback_box.setPlainText(htmlformat)
+
+            self.html_btn2.setStyleSheet("background-color : lightblue")
+  
+        else:
+            
+            self.gfeedback_box.setHtml(textformat)    
+
     def open(self):
         fname = QFileDialog.getOpenFileName(self,'Open File','STACK_QT5','(*.py)') #(*.py *.xml *.txt)
         path = fname[0]
@@ -96,9 +150,11 @@ class MainWindow(QtWidgets.QMainWindow):
         name = split_string[-1].split(".")
         imp_name = name[0]
         
-        if imp_path != '':
+        if imp_name and imp_path != '':
             sys.path.insert(0, imp_path)
+            
             mod = importlib.import_module(imp_name)
+
         #make the variable global
             print(f"path:{imp_path},name = {imp_name}")
 
@@ -106,12 +162,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.qvar_box.setPlainText(mod.question.get('questionvariables')[1:-1])     
             self.qtext_box.setPlainText(mod.question.get('questiontext')[1:-1])           
             self.gfeedback_box.setPlainText(mod.question.get('generalfeedback')[1:-1])               
-            #self.sfeedback_box.insertPlainText(mod.question.get('specificfeedback')[1:-1])               
+            self.sfeedback_box.insertPlainText(mod.question.get('specificfeedback')[1:-1])               
             self.grade_box.setPlainText(mod.question.get('defaultgrade'))     
-            self.penalty_box.setPlainText(mod.question.get('penalty'))
+            #self.penalty_box.setPlainText(mod.question.get('penalty'))
             self.ID_box.setPlainText(mod.question.get('idnumber'))       
             self.qnote_box.setPlainText(mod.question.get('questionnote')[1:-1])  
-            #self.tag_box.setText(mod.question['tags']['tag'])
+
             key = mod.question.get('tags')
             result = ''
             for elements in key['tag']: 
@@ -163,8 +219,8 @@ class MainWindow(QtWidgets.QMainWindow):
             pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
             #penalty
-            pyout.write('   "penalty":')
-            pyout.write('"' + str(self.penalty_box.toPlainText()) + '",\n')
+      
+          
             pyout.write("\n}")
                                     
             self.savefile = savefile
@@ -217,8 +273,7 @@ class MainWindow(QtWidgets.QMainWindow):
             pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
             #penalty
-            pyout.write('   "penalty":')
-            pyout.write('"' + str(self.penalty_box.toPlainText()) + '",\n')
+
             pyout.write("\n}")
    
     def restore_or_maximize_window(self):

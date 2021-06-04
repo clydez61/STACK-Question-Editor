@@ -46,6 +46,10 @@ for node in tree.findall('.//list'):
         for snode in list(node):
             keywords2.append(snode.text)
 
+#STACK-specific maxima commands
+keywords2.extend(['rand','rand_with_prohib','comp_square','exdowncase','rand_with_step',
+'decimalplaces','siginificantfigures','dispdp','dispsf','scientific_notation'])
+
 
 class PythonHighlighter(QSyntaxHighlighter):
     """Syntax highlighter for the Python language.

@@ -167,9 +167,10 @@
     <file>icons/cil-zoom-in.png</file>
     <file>icons/cil-zoom-out.png</file>
     <file>icons/var.png</file>
+    <file>icons/sampletext.png</file>
   </qresource>
   <qresource prefix="images">
-    <file>images/nike_logo.png</file>
-    <file>images/nike_shoe.png</file>
+
   </qresource>
+  <qresource/>
 </RCC>
