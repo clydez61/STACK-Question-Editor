@@ -826,7 +826,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1071</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -847,6 +847,8 @@ color: rgb(255, 255, 222);</string>
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionNew_Tree"/>
+    <addaction name="separator"/>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
     <addaction name="separator"/>
@@ -928,6 +930,11 @@ color: rgb(255, 255, 222);</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionNew_Tree">
+   <property name="text">
+    <string>New Tree</string>
    </property>
   </action>
  </widget>
