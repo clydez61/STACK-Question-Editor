@@ -73,7 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.html_btn2.toggle()
         self.html_btn2.clicked.connect(lambda:self.htmltoggle2())
         
-
+        
         self.empty_icon = QIcon(".")
 
         NodeEditor = StackWindow()
@@ -83,7 +83,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createActions()
         self.createMenus()
         self.updateMenus()
-
+        
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -100,6 +100,110 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_header.mouseMoveEvent = moveWindow    
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
+        
+        #add input here (row,column)
+        self.addInput(0,1)
+        self.addInput(0,2)
+        self.addInput(0,3)
+        self.addInput(1,1)
+ 
+    def addInput(self,row,column):
+        NewFrame = setattr(self, "new_frame", "")
+        NewName = f"input_name({str(row)},{str(column)})"
+        NewAns = f"input_ans({str(row)},{str(column)})"
+        NewSize = f"input_size({str(row)},{str(column)})"
+        NewType = f"input_type({str(row)},{str(column)})"
+        
+        print(NewFrame)
+        NewFrame = QFrame(self.ScrollPage)
+
+
+        NewFrame.setMinimumSize(QSize(100, 100))
+        NewFrame.setMaximumSize(QSize(200, 250))
+        
+        NewFrame.setFrameShape(QFrame.StyledPanel)
+        NewFrame.setFrameShadow(QFrame.Raised)
+        NewFrame.setObjectName(u"QFrame")
+        NewFrame.setStyleSheet(u"font: 5pt \"MS Sans Serif\";\n"
+"color: rgb(255, 255, 222);\n"
+"background-color: rgb(51, 51, 51);\n"
+"border-color: rgb(255, 255, 0);\n"
+"")
+        self.ScrollPage.setStyleSheet(u"#QFrame{"
+"border:2px solid rgb(255,0,0)"
+"}")
+        self.formLayout_2 = QFormLayout(NewFrame)
+        self.formLayout_2.setObjectName(u"formLayout_2")
+        self.label_name = QLabel(NewFrame)
+        self.label_name.setObjectName(u"label_name")
+        self.label_name.setText("Name")
+        self.label_name.setAlignment(Qt.AlignCenter)
+
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_name)
+
+        self.input_name = QTextBrowser(NewFrame)
+        self.input_name.setObjectName(NewName)
+        self.input_name.setMaximumSize(QSize(16777215, 30))
+
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.input_name)
+
+        self.label_type = QLabel(NewFrame)
+        self.label_type.setObjectName(u"label_type")
+        self.label_type.setText("Type")
+
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_type)
+
+        self.input_type = QComboBox(NewFrame)
+        self.input_type.addItem("Algebraic Input")
+        self.input_type.addItem("Checkbox")
+        self.input_type.addItem("Drop down List")
+        self.input_type.addItem("Equivalence reasoning")
+        self.input_type.addItem("Matrix")
+        self.input_type.addItem("Notes")
+        self.input_type.addItem("Numerical")
+        self.input_type.addItem("Radio")
+        self.input_type.addItem("Single Character")
+        self.input_type.addItem("String")
+        self.input_type.addItem("Text Area")
+        self.input_type.addItem("True/False")
+        self.input_type.addItem("Units")
+        self.input_type.setObjectName(NewType)
+
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.input_type)
+
+        self.label_ans = QLabel(NewFrame)
+        self.label_ans.setObjectName(u"label_ans")
+        self.label_ans.setText("Answer")
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_ans)
+
+        self.input_ans = QTextEdit(NewFrame)
+        self.input_ans.setObjectName(NewAns)
+        self.input_ans.setMaximumSize(QSize(16777215, 30))
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.input_ans)
+
+        self.label_size = QLabel(NewFrame)
+        self.label_size.setObjectName(u"label_size")
+        self.label_size.setText("Box Size")
+
+        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_size)
+
+        self.input_size = QTextEdit(NewFrame)
+        self.input_size.setObjectName(NewSize)
+        self.input_size.setMaximumSize(QSize(16777215, 30))
+
+        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.input_size)
+
+        self.more_btn = QPushButton(NewFrame)
+        self.more_btn.setObjectName(u"more_btn")
+        self.more_btn.setText("More..")
+
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.more_btn)
+
+
+        #self.gridLayout_2.addWidget(self.input_frame, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(NewFrame, row, column, 1, 1)
+        
 
     def createActions(self):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
@@ -126,6 +230,9 @@ class MainWindow(QtWidgets.QMainWindow):
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e: dumpException(e)
+
+    
+
 
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
