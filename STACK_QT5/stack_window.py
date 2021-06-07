@@ -170,27 +170,28 @@ class StackWindow(NodeEditorWindow):
         except Exception as e: dumpException(e)
 
     def updateWindowMenu(self):
-        self.windowMenu.clear()
+        pass
+        # self.windowMenu.clear()
 
-        toolbar_nodes = self.windowMenu.addAction("Nodes Toolbar")
-        toolbar_nodes.setCheckable(True)
-        toolbar_nodes.triggered.connect(self.onWindowNodesToolbar)
-        toolbar_nodes.setChecked(self.nodesDock.isVisible())
+        # toolbar_nodes = self.windowMenu.addAction("Nodes Toolbar")
+        # toolbar_nodes.setCheckable(True)
+        # toolbar_nodes.triggered.connect(self.onWindowNodesToolbar)
+        # toolbar_nodes.setChecked(self.nodesDock.isVisible())
 
-        self.windowMenu.addSeparator()
+        # self.windowMenu.addSeparator()
 
-        self.windowMenu.addAction(self.actClose)
-        self.windowMenu.addAction(self.actCloseAll)
-        self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.actTile)
-        self.windowMenu.addAction(self.actCascade)
-        self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.actNext)
-        self.windowMenu.addAction(self.actPrevious)
-        self.windowMenu.addAction(self.actSeparator)
+        # self.windowMenu.addAction(self.actClose)
+        # self.windowMenu.addAction(self.actCloseAll)
+        # self.windowMenu.addSeparator()
+        # self.windowMenu.addAction(self.actTile)
+        # self.windowMenu.addAction(self.actCascade)
+        # self.windowMenu.addSeparator()
+        # self.windowMenu.addAction(self.actNext)
+        # self.windowMenu.addAction(self.actPrevious)
+        # self.windowMenu.addAction(self.actSeparator)
 
-        windows = self.mdiArea.subWindowList()
-        self.actSeparator.setVisible(len(windows) != 0)
+        # windows = self.mdiArea.subWindowList()
+        # self.actSeparator.setVisible(len(windows) != 0)
 
         for i, window in enumerate(windows):
             child = window.widget()
