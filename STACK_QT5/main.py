@@ -19,6 +19,8 @@ import syntax_pars
 
 WINDOW_SIZE = 0
 class MainWindow(QtWidgets.QMainWindow):
+    nodeEditorModified = pyqtSignal()
+
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
@@ -28,6 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSave.triggered.connect(lambda:self.save())
         self.actionOpen.triggered.connect(lambda:self.open())
         self.actionSave_as.triggered.connect(lambda:self.save_as())
+        self.actionExport.triggered.connect(lambda:self.onExport())
 
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
@@ -42,19 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
 
         self.savefile = None
-
-        #check if window is modified
-        self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
-        self.qtext_box.document().modificationChanged.connect(self.setWindowModified)
-        self.gfeedback_box.document().modificationChanged.connect(self.setWindowModified)
-        self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
-        self.grade_box.document().modificationChanged.connect(self.setWindowModified)
-        
-        self.ID_box.document().modificationChanged.connect(self.setWindowModified)
-        self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
-        self.tag_box.document().modificationChanged.connect(self.setWindowModified)
  
-        
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -76,13 +67,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.empty_icon = QIcon(".")
 
-        NodeEditor = StackWindow()
-        NodeEditor.setObjectName("NodeEditor")
-        self.NodeEditorLayout.addWidget(NodeEditor)
+        self.nodeEditor = StackWindow()
+        self.NodeEditorLayout.addWidget(self.nodeEditor)
+
+        self.nodeEditor.mdiArea.subWindowActivated.connect(self.updateMenus)
+        self.windowMapper = QSignalMapper(self.nodeEditor)
+        self.windowMapper.mapped[QWidget].connect(self.nodeEditor.setActiveSubWindow)
 
         self.createActions()
         self.createMenus()
         self.updateMenus()
+
+        self.checkModified()
 
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -101,6 +97,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         self.show()
 
+    def checkModified(self):
+        #set up checks to see if window is modified
+        self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
+        self.qtext_box.document().modificationChanged.connect(self.setWindowModified)
+        self.gfeedback_box.document().modificationChanged.connect(self.setWindowModified)
+        self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
+        self.grade_box.document().modificationChanged.connect(self.setWindowModified)
+        
+        self.ID_box.document().modificationChanged.connect(self.setWindowModified)
+        self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
+        self.tag_box.document().modificationChanged.connect(self.setWindowModified)
+
+        self.nodeEditorModified.connect(self.nodeEditorSetWindowModified)
+
+    def nodeEditorSetWindowModified(self):
+        self.setWindowModified(True)
+
     def createActions(self):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
 
@@ -108,17 +121,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menuEdit.clear()
 
         self.menuEdit.addAction(self.actNew)
-        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actUndo)
-        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actRedo)
+        self.menuEdit.addAction(self.nodeEditor.actUndo)
+        self.menuEdit.addAction(self.nodeEditor.actRedo)
         self.menuEdit.addSeparator()
-        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actCut)
-        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actCopy)
-        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actPaste)
+        self.menuEdit.addAction(self.nodeEditor.actCut)
+        self.menuEdit.addAction(self.nodeEditor.actCopy)
+        self.menuEdit.addAction(self.nodeEditor.actPaste)
         self.menuEdit.addSeparator()
-        self.menuEdit.addAction(self.tree_page.findChild(StackWindow, "NodeEditor").actDelete)
+        self.menuEdit.addAction(self.nodeEditor.actDelete)
+
+        self.menuEdit.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
-        pass
+        # May contain other menu items
+        self.updateEditMenu()
+
+    def updateEditMenu(self):
+        active = self.nodeEditor.getCurrentNodeEditorWidget() 
+
+        hasMdiChild = (active is not None)
+        self.nodeEditor.actPaste.setEnabled(hasMdiChild)
+        self.nodeEditor.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+        self.nodeEditor.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+        self.nodeEditor.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+
+        self.nodeEditor.actUndo.setEnabled(hasMdiChild and active.canUndo())
+        self.nodeEditor.actRedo.setEnabled(hasMdiChild and active.canRedo())
 
     def onFileNew(self):
         try:
@@ -129,16 +157,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
-        subwnd = self.tree_page.findChild(StackWindow, "NodeEditor").centralWidget().addSubWindow(nodeeditor)
+        subwnd = self.nodeEditor.mdiArea.addSubWindow(nodeeditor)
         subwnd.setWindowIcon(self.empty_icon)
         # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
         # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
-        #TODO: Reimplement two functions below
-        #nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
-        #nodeeditor.addCloseEventListener(self.onSubWndClose)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
+        nodeeditor.addCloseEventListener(self.nodeEditor.onSubWndClose)
         return subwnd
-
-
 
     def htmltoggle(self):
         textformat = self.qtext_box.toPlainText()        
@@ -172,6 +198,9 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             
             self.gfeedback_box.setHtml(textformat)    
+
+    def onExport(self):
+        print(self.isWindowModified())
 
     def open(self):
         fname = QFileDialog.getOpenFileName(self,'Open File','STACK_QT5','(*.py)') #(*.py *.xml *.txt)
