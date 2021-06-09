@@ -42,7 +42,7 @@ class QDMDragListbox(QListWidget):
         item.setData(Qt.UserRole + 1, op_code)
 
     def startDrag(self, *args, **kvargs):
-        print("Listbox::startDrag")
+        #print("Listbox::startDrag")
         try:
             item = self.currentItem()
             op_code = item.data(Qt.UserRole + 1)
