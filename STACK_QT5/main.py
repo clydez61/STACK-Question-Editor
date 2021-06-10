@@ -265,10 +265,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
-        self.nodeEditorModified.connect(self.nodeEditorSetWindowModified)
-
-    def nodeEditorSetWindowModified(self):
-        self.setWindowModified(True)
+        self.nodeEditorModified.connect(lambda:self.setWindowModified(True))
 
     def createActions(self):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
