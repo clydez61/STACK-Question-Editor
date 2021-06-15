@@ -1,10 +1,9 @@
 import sys, os, importlib,re
-from time import time, sleep
 from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5.sip import dump
+from Input_Dialog import Dialog
 import resource
 import json
 
@@ -50,6 +49,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.savefile = None
         self.inputs = None
         self.NewName = None
+        self.NewSize = None
+        self.NewAns = None
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -122,11 +123,15 @@ class MainWindow(QtWidgets.QMainWindow):
         
 
 
+    def openDialog(self):
+        #self.window = QtWidgets.QDialog()
+        self.ui = Dialog()
+        self.ui.show()
 
     def UpdateInput(self):
         QApplication.processEvents()
         current_text = self.qtext_box.toPlainText()
-        inputs = re.findall(r'\[\[input:[a-zA-z0-9]\]\]', current_text) 
+        inputs = re.findall(r'\[\[input:[a-zA-z0-9]+\]\]', current_text) 
         
         # 2 cases:
         # <= 5 inputs 
@@ -134,13 +139,18 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             exec(f'self.input_frame.setParent(None)')
         except:
-            pass  
-        if len(inputs) < 5:
-            for index, elem in enumerate(inputs):                            
-                self.addInput(0,index)
-                exec(f'self.input_name{0}_{index}.setText("{elem[8:-2]}")')
-
-              
+            pass
+        for index, elem in enumerate(inputs):
+            rows, lastrow = divmod(index, 4)                            
+            self.addInput(rows,lastrow)
+            exec(f'self.input_name{rows}_{lastrow}.setText("{elem[8:-2]}")')
+            exec(f'self.input_size{rows}_{lastrow}.setText("5")')
+        
+        #To store or save user input fo "input" section:
+        #self.input_name.toPlainText() for Name
+        #self.input_ans.toPlainText() for Model answer
+        #self.input_size.toPlainText() for Box Size
+        #unicode(self.input_type.currentText()) for Input Type
         self.inputs = inputs    
 
             #self.addInput()
@@ -154,22 +164,23 @@ class MainWindow(QtWidgets.QMainWindow):
     def addInput(self,row,column):
         
         
-        NewFrame = f"input_name{str(row)}_{str(column)}"
+        NewFrame = f"input_frame{str(row)}_{str(column)}"
         NewName = f"input_name{str(row)}_{str(column)}"
-        print(NewName)
         
+        
+        
+        NewAns = f"input_ans{str(row)}_{str(column)}"
+        NewSize = f"input_size{str(row)}_{str(column)}"
+        NewType = f"input_type{str(row)},{str(column)}"
         self.NewName = NewName
-        NewAns = f"input_ans({str(row)},{str(column)})"
-        NewSize = f"input_size({str(row)},{str(column)})"
-        NewType = f"input_type({str(row)},{str(column)})"
-        
-        
+        self.NewSize = NewSize
+        self.NewAns = NewAns
         
         self.input_frame = QFrame(self.ScrollPage)
         setattr(self, NewFrame, self.input_frame)
 
         self.input_frame.setMinimumSize(QSize(100, 100))
-        self.input_frame.setMaximumSize(QSize(200, 250))
+        self.input_frame.setMaximumSize(QSize(250, 280))
         
         self.input_frame.setFrameShape(QFrame.StyledPanel)
         self.input_frame.setFrameShadow(QFrame.Raised)
@@ -181,6 +192,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_name = QLabel(self.input_frame)
         self.label_name.setObjectName(u"label_name")
         self.label_name.setText("Name")
+        self.label_name.setToolTip("The Name of the Input, can be used in the potential tree section\n Edit through the Question Text Section")
         self.label_name.setAlignment(Qt.AlignCenter)
 
         self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_name)
@@ -188,10 +200,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_name = QTextEdit(self.input_frame)
         self.input_name.setObjectName(u'input_name')
         self.input_name.setMaximumSize(QSize(16777215, 30))
+
         
         #self.input_name.setText(QCoreApplication.translate("MainWindow", temps, None))
         setattr(self,NewName,self.input_name)
-        
+
         self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.input_name)
 
         self.label_type = QLabel(self.input_frame)
@@ -226,7 +239,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_ans = QTextEdit(self.input_frame)
         self.input_ans.setObjectName(NewAns)
         self.input_ans.setMaximumSize(QSize(16777215, 30))
-
+        setattr(self,NewAns,self.input_ans)
         self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.input_ans)
 
         self.label_size = QLabel(self.input_frame)
@@ -236,21 +249,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_size)
 
         self.input_size = QTextEdit(self.input_frame)
-        self.input_size.setObjectName(NewSize)
+        setattr(self,NewSize,self.input_size)
+        self.input_size.setObjectName(u'input_size')
         self.input_size.setMaximumSize(QSize(16777215, 30))
-
+        
         self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.input_size)
 
         self.more_btn = QPushButton(self.input_frame)
         self.more_btn.setObjectName(u"more_btn")
         self.more_btn.setText("More..")
-
+        self.more_btn.clicked.connect(self.openDialog)
         self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.more_btn)
 
-
+        
         #self.gridLayout_2.addWidget(self.input_frame, 1, 0, 1, 1)
         self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
         
+
 
 
     def checkModified(self):
@@ -544,6 +559,7 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv) 
     window = MainWindow() # Create an instance of our class
-    app.exec_()
+    window.show()
     sys.exit(app.exec_())   
+
 
