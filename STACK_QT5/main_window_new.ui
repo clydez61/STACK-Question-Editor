@@ -489,7 +489,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="qedit_page">
              <property name="styleSheet">
@@ -499,6 +499,20 @@ background-color: rgb(51, 51, 51);
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout">
+              <item row="1" column="1">
+               <widget class="QTextEdit" name="qtext_box">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(51, 51, 51);</string>
+                </property>
+                <property name="html">
+                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Sans Serif'; font-size:14pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignTop">
                <widget class="QLabel" name="qvar_label">
                 <property name="maximumSize">
@@ -516,41 +530,6 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 </property>
                 <property name="text">
                  <string>Question Variables</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="qtext_label">
-                <property name="maximumSize">
-                 <size>
-                  <width>200</width>
-                  <height>200</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text of the question that will be displayed to students.&lt;/p&gt;&lt;p&gt;Mathematics can be included using LATEX syntax. Use the LATEX delineator \( . . . \) for inline maths and \[ . . . \] for displayed maths.&lt;/p&gt;&lt;p&gt;Use {@ . . . @} to include any variable values created in the &amp;quot;Question Variable&amp;quot; section&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sample Question:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;---Question variables---&lt;/p&gt;&lt;p&gt;base : 1+rand(4)&lt;/p&gt;&lt;p&gt;height : 2+rand(5)&lt;/p&gt;&lt;p&gt;area: base * height /2&lt;/p&gt;&lt;p&gt;---Question Text---&lt;/p&gt;&lt;p&gt;Given a triangle with base = {@base@}, height = {height@}, determine the area. [[input:area_student]]&lt;/p&gt;&lt;p&gt;Output:&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;:/icons/icons/sampletext.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="toolTipDuration">
-                 <number>-1</number>
-                </property>
-                <property name="statusTip">
-                 <string/>
-                </property>
-                <property name="whatsThis">
-                 <string/>
-                </property>
-                <property name="accessibleDescription">
-                 <string/>
-                </property>
-                <property name="layoutDirection">
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 222);
-font: 75 14pt &quot;MS Sans Serif&quot;;</string>
-                </property>
-                <property name="text">
-                 <string>Question Text</string>
                 </property>
                </widget>
               </item>
@@ -599,17 +578,48 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QTextEdit" name="qtext_box">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(51, 51, 51);</string>
+              <item row="0" column="1" alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="qtext_label">
+                <property name="maximumSize">
+                 <size>
+                  <width>200</width>
+                  <height>200</height>
+                 </size>
                 </property>
-                <property name="html">
-                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Sans Serif'; font-size:14pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text of the question that will be displayed to students.&lt;/p&gt;&lt;p&gt;Mathematics can be included using LATEX syntax. Use the LATEX delineator \( . . . \) for inline maths and \[ . . . \] for displayed maths.&lt;/p&gt;&lt;p&gt;Use {@ . . . @} to include any variable values created in the &amp;quot;Question Variable&amp;quot; section&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sample Question:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;---Question variables---&lt;/p&gt;&lt;p&gt;base : 1+rand(4)&lt;/p&gt;&lt;p&gt;height : 2+rand(5)&lt;/p&gt;&lt;p&gt;area: base * height /2&lt;/p&gt;&lt;p&gt;---Question Text---&lt;/p&gt;&lt;p&gt;Given a triangle with base = {@base@}, height = {height@}, determine the area. [[input:area_student]]&lt;/p&gt;&lt;p&gt;Output:&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;:/icons/icons/sampletext.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="toolTipDuration">
+                 <number>-1</number>
+                </property>
+                <property name="statusTip">
+                 <string/>
+                </property>
+                <property name="whatsThis">
+                 <string/>
+                </property>
+                <property name="accessibleDescription">
+                 <string/>
+                </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(255, 255, 222);
+font: 75 14pt &quot;MS Sans Serif&quot;;</string>
+                </property>
+                <property name="text">
+                 <string>Question Text</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="update_btn">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Updates current inputs for students.&lt;/p&gt;&lt;p&gt;To add an input, type [[input:--]] to insert an input at a location you desire, where &amp;quot;--&amp;quot; is the name of the input&lt;/p&gt;&lt;p&gt;To remove an input, simply delete the &amp;quot;[[input:--]]&amp;quot;&lt;/p&gt;&lt;p&gt;Edit the inputs in the &amp;quot;inputs&amp;quot; page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Update Input</string>
                 </property>
                </widget>
               </item>
@@ -623,28 +633,8 @@ background-color: rgb(51, 51, 51);
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-               <widget class="QLabel" name="sfeedback_label">
-                <property name="text">
-                 <string>Specific Feedback</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="gfeedback_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text given to the student once they have used all their permitted attempts at the question, or once they have given a correct answer. It is typically used to give a worked solution to the particular randomised question instance asked.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This section behaves similarly to the Question text section: LATEX formatting can be included as well as values of any question variables.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>General Feedback</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="0">
                <widget class="QTextEdit" name="gfeedback_box"/>
-              </item>
-              <item row="1" column="1">
-               <widget class="QTextEdit" name="sfeedback_box"/>
               </item>
               <item row="1" column="2">
                <widget class="QFrame" name="right_side_menu2">
@@ -671,6 +661,26 @@ background-color: rgb(51, 51, 51);
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+               <widget class="QLabel" name="sfeedback_label">
+                <property name="text">
+                 <string>Specific Feedback</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="gfeedback_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text given to the student once they have used all their permitted attempts at the question, or once they have given a correct answer. It is typically used to give a worked solution to the particular randomised question instance asked.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This section behaves similarly to the Question text section: LATEX formatting can be included as well as values of any question variables.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>General Feedback</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QTextEdit" name="sfeedback_box"/>
               </item>
              </layout>
             </widget>
@@ -774,8 +784,8 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>997</width>
-                   <height>515</height>
+                   <width>98</width>
+                   <height>28</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
