@@ -22,37 +22,95 @@ class PrtGraphicsNode(StackGraphicsNode):
     def initSizes(self):
         super().initSizes()
         self.width = 160
-        self.height = 200
+        self.height = 230
         self.edge_size = 5
         self._padding = 5
 
 class StackInputContent(StackContent):
+    nodeDataModified = pyqtSignal(dict)
     def initUI(self):
+        self.dataSans = ''
+        self.dataTans = ''
+        self.dataTestType = ''
+        self.dataTestOption = ''
+        self.dataModTrue = '+'
+        self.dataScoreTrue = ''
+        self.dataPenaltyTrue = ''
+        self.dataModFalse = '-'
+        self.dataScoreFalse = ''
+        self.dataPenaltyFalse = ''
+        self.dataTrueFeedback = ''
+        self.dataFalseFeedback = ''
+
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.SansLabel = QLabel("Student Answer:", self)
-        self.layout.addWidget(self.SansLabel)
-        self.Sans = QLineEdit("test1", self)
-        self.layout.addWidget(self.Sans)
-        self.TansLabel = QLabel("Teacher Answer:", self)
-        self.layout.addWidget(self.TansLabel)
-        self.Tans = QLineEdit("test2", self)
-        self.layout.addWidget(self.Tans)
+        self.layout.addWidget(QLabel("Student Answer:", self))
+        self.sans = QLineEdit("", self)
+        self.sans.textChanged.connect(self.updateDataAndPropertiesWidget)
+        self.layout.addWidget(self.sans)
+        self.layout.addWidget(QLabel("Teacher Answer:", self))
+        self.tans = QLineEdit("", self)
+        self.tans.textChanged.connect(self.updateDataAndPropertiesWidget)
+        self.layout.addWidget(self.tans)
+        self.layout.addWidget(QLabel("Test Options:", self))
+        self.testType = QComboBox(self)
+        self.testType.addItems(['', 'AlgEquiv', 'CasEqual', 'CompletedSquare', 'Diff', 'EqualComAss', 'EquivFirst', 'EquivReasoning', 'Expanded', 'FacForm', 'Int', 'GT', 'GTE', 'NumAbsolute', 'NumDecPlaces', 'NumDecPlacesWrong', 'NumRelative', 'NumSigFigs', 'RegExp', 'SameType', 'Sets', 'SigFigsStrict', 'SingleFrac', 'String', 'StirngSloppy', 'SubstEquiv', 'SysEquiv', 'UnitsAbsolute', 'UnitsRelative', 'Units', 'UnitsStrictAbsolute', 'UnitsStrictRelative', 'UnitsStrictSigFig'])
+        self.testType.currentIndexChanged.connect(self.updateDataAndPropertiesWidget)
+        self.layout.addWidget(self.testType)
+        self.layout.addWidget(QLabel("Test Option Parameters:", self))
+        self.testOption = QLineEdit("", self)
+        self.testOption.textChanged.connect(self.updateDataAndPropertiesWidget)
+        self.layout.addWidget(self.testOption)
+
+    def updateDataAndPropertiesWidget(self):
+        self.dataSans = self.sans.text()
+        self.dataTans = self.tans.text()
+        self.dataTestType = self.testType.currentText()
+        self.dataTestOption = self.testOption.text()
+
+        self.updatePropertiesWidget()
+
+    def updatePropertiesWidget(self):
+        data = self.serialize()
+        
+        self.nodeDataModified.emit(data)
 
     def serialize(self):
         res = super().serialize()
-        res['Sans'] = self.Sans.text()
-        res['Tans'] = self.Tans.text()
+        res['sans'] = self.dataSans
+        res['tans'] = self.dataTans
+        res['testType'] = self.dataTestType
+        res['testOption'] = self.dataTestOption
+        res['modTrue'] = self.dataModTrue
+        res['scoreTrue'] = self.dataScoreTrue
+        res['penaltyTrue'] = self.dataPenaltyTrue
+        res['modFalse'] = self.dataModFalse
+        res['scoreFalse'] = self.dataScoreFalse
+        res['penaltyFalse'] = self.dataPenaltyFalse
+        res['trueFeedback'] = self.dataTrueFeedback
+        res['falseFeedback'] = self.dataFalseFeedback
 
         return res
 
     def deserialize(self, data, hashmap=[]):
         res = super().deserialize(data, hashmap)
         try:
-            valueSans = data['Sans']
-            self.Sans.setText(valueSans)
-            valueTans = data['Tans']
-            self.Tans.setText(valueTans)
+            self.dataSans = data['sans']
+            self.sans.setText(self.dataSans)
+            self.dataTans = data['tans']
+            self.tans.setText(self.dataTans)
+            self.dataTestType = data['testType']
+            self.testType.setCurrentIndex(self.testType.findText(self.dataTestType))
+            self.dataTestOption = data['testOption']
+            self.testOption.setText(self.dataTestOption)
+            self.dataModTrue = data['modTrue']
+            self.dataScoreTrue = data['scoreTrue']
+            self.dataPenaltyTrue = data['penaltyTrue']
+            self.dataModFalse = data['modFalse']
+            self.dataScoreFalse = data['scoreFalse']
+            self.dataPenaltyFalse = data['penaltyFalse']
+            self.dataTrueFeedback = data['trueFeedback']
+            self.dataFalseFeedback = data['falseFeedback']
             return True & res
         except Exception as e:
             dumpException(e)

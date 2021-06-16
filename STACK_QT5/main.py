@@ -19,7 +19,6 @@ import syntax_pars
 
 WINDOW_SIZE = 0
 class MainWindow(QtWidgets.QMainWindow):
-    nodeEditorModified = pyqtSignal()
 
     def __init__(self):
         super(MainWindow,self).__init__()
@@ -71,14 +70,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.NodeEditorLayout.addWidget(self.nodeEditor)
 
         self.nodeEditor.mdiArea.subWindowActivated.connect(self.updateMenus)
-        self.windowMapper = QSignalMapper(self.nodeEditor)
-        self.windowMapper.mapped[QWidget].connect(self.nodeEditor.setActiveSubWindow)
 
         self.createActions()
         self.createMenus()
         self.updateMenus()
         
-
         self.checkModified()
 
         def moveWindow(e):
@@ -122,13 +118,13 @@ class MainWindow(QtWidgets.QMainWindow):
         NewFrame.setFrameShadow(QFrame.Raised)
         NewFrame.setObjectName(u"QFrame")
         NewFrame.setStyleSheet(u"font: 5pt \"MS Sans Serif\";\n"
-"color: rgb(255, 255, 222);\n"
-"background-color: rgb(51, 51, 51);\n"
-"border-color: rgb(255, 255, 0);\n"
-"")
+            "color: rgb(255, 255, 222);\n"
+            "background-color: rgb(51, 51, 51);\n"
+            "border-color: rgb(255, 255, 0);\n"
+            "")
         self.ScrollPage.setStyleSheet(u"#QFrame{"
-"border:2px solid rgb(255,0,0)"
-"}")
+            "border:2px solid rgb(255,0,0)"
+            "}")
         self.formLayout_2 = QFormLayout(NewFrame)
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.label_name = QLabel(NewFrame)
@@ -201,7 +197,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.gridLayout_2.addWidget(self.input_frame, 1, 0, 1, 1)
         self.gridLayout_2.addWidget(NewFrame, row, column, 1, 1)
         
-
     def checkModified(self):
         #set up checks to see if window is modified
         self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
@@ -214,7 +209,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
-        self.nodeEditorModified.connect(lambda:self.setWindowModified(True))
+        self.nodeEditor.nodeEditorModified.connect(lambda:self.setWindowModified(True))
+        self.nodeEditor.nodeEditorModified.connect(self.updateMenus)
 
     def createActions(self):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
@@ -240,8 +236,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateEditMenu(self):
         active = self.nodeEditor.getCurrentNodeEditorWidget() 
-
         hasMdiChild = (active is not None)
+
         self.nodeEditor.actPaste.setEnabled(hasMdiChild)
         self.nodeEditor.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
         self.nodeEditor.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
@@ -252,24 +248,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onFileNew(self):
         try:
-            subwnd = self.createMdiChild()
+            subwnd = self.nodeEditor.createMdiChild()
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e: dumpException(e)
-
-    
-
-
-    def createMdiChild(self, child_widget=None):
-        nodeeditor = child_widget if child_widget is not None else StackSubWindow()
-        subwnd = self.nodeEditor.mdiArea.addSubWindow(nodeeditor)
-        subwnd.setWindowIcon(self.empty_icon)
-        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
-        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
-        nodeeditor.addCloseEventListener(self.nodeEditor.onSubWndClose)
-        return subwnd
 
     def htmltoggle(self):
         textformat = self.qtext_box.toPlainText()        
@@ -286,7 +268,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             
             self.qtext_box.setHtml(textformat)
-
 
     def htmltoggle2(self):
         textformat = self.gfeedback_box.toPlainText()        

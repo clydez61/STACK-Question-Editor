@@ -8,9 +8,10 @@ from stack_conf import *
 from stack_node_base import *
 
 DEBUG = False
-DEBUG_CONTEXT = True
+DEBUG_CONTEXT = False
 
 class StackSubWindow(NodeEditorWidget):
+    nodeDataModified = pyqtSignal(dict)
     def __init__(self):
         super().__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -19,12 +20,18 @@ class StackSubWindow(NodeEditorWidget):
 
         self.initNewNodeActions()
 
+        self.initData()
+
         self.scene.addHasBeenModifiedListener(self.setTitle)
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
 
         self._close_event_listeners = []
+
+    def initData(self):
+        self.PRTValue = ''
+        self.feedbackVar = ''
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
@@ -79,6 +86,7 @@ class StackSubWindow(NodeEditorWidget):
                 try:
                     node = get_class_from_opcode(op_code)(self.scene)
                     node.setPos(scene_position.x(), scene_position.y())
+                    node.content.nodeDataModified.connect(self.nodeDataModified.emit)
                     self.scene.history.storeHistory("Created node %s" % node.__class__.__name__)
                 except Exception as e: dumpException(e)
 
@@ -161,3 +169,21 @@ class StackSubWindow(NodeEditorWidget):
             scene_pos = self.scene.getView().mapToScene(event.pos())
             new_stack_node.setPos(scene_pos.x(), scene_pos.y())
             print("Selected node:", new_stack_node)
+
+    def hasSelectedItem(self):
+        """Is there only one thing selected in the :class:`nodeeditor.node_scene.Scene`?
+
+        :return: ``True`` if there is only one thing selected in the `Scene`
+        :rtype: ``bool``
+        """
+        return len(self.getSelectedItems()) == 1
+
+    def treeSerialize(self):
+        res = {}
+        res['PRTValue'] = self.PRTValue
+        res['feedbackVar'] = self.feedbackVar
+        return res
+
+    def treeDeserialize(self, data):
+        self.PRTValue = data['PRTValue']
+        self.feedbackVar = data['feedbackvar']

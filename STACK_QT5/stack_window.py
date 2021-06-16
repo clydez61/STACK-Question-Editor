@@ -8,6 +8,7 @@ from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
 from stack_sub_window import StackSubWindow
 from stack_drag_listbox import QDMDragListbox
+from stack_properties_box import PropertiesBox
 from stack_conf import *
 from stack_conf_nodes import *
 
@@ -16,6 +17,9 @@ import qss.nodeeditor_dark_resources
 DEBUG = False
 
 class StackWindow(NodeEditorWindow):
+    # For parent widget to know modifications have been made within node editor
+    nodeEditorModified = pyqtSignal()
+
     def initUI(self):
         self.name_company = 'University of Alberta'
         self.name_product = 'STACK Tools'
@@ -42,10 +46,11 @@ class StackWindow(NodeEditorWindow):
         self.setCentralWidget(self.mdiArea)
 
         self.mdiArea.subWindowActivated.connect(self.updateMenus)
+        self.mdiArea.subWindowActivated.connect(self.updateEditorPropertiesBox)
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
-        self.createNodesDock()
+        self.createDocks()
 
         self.createActions()
         self.createMenus()
@@ -139,8 +144,8 @@ class StackWindow(NodeEditorWindow):
         # self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
-        active = self.getCurrentNodeEditorWidget()
-        hasMdiChild = (active is not None)
+        # active = self.getCurrentNodeEditorWidget()
+        # hasMdiChild = (active is not None)
 
         # self.actSave.setEnabled(hasMdiChild)
         # self.actSaveAs.setEnabled(hasMdiChild)
@@ -206,6 +211,49 @@ class StackWindow(NodeEditorWindow):
         #     action.triggered.connect(self.windowMapper.map)
         #     self.windowMapper.setMapping(action, window)
 
+    def updateEditorPropertiesBox(self):
+        currentSubWnd = self.getCurrentNodeEditorWidget()
+        if currentSubWnd is None:
+            self.propertiesWidget.setNoSubWindowLayout()
+        else:
+            self.propertiesWidget.treeDataSignal.connect(self.storeTreeData)
+            self.displayTreeData()
+            if currentSubWnd.hasSelectedItem():
+                self.displayNodeData(self.getNodeData())
+                self.propertiesWidget.setNodeSelectedLayout()
+            else:
+                self.propertiesWidget.setNoneSelectedLayout()
+
+    def displayTreeData(self):
+        tree = self.getCurrentNodeEditorWidget()
+        data = tree.treeSerialize()
+        # When switching over to a new tree, stops the textChanged emit signal
+        self.propertiesWidget.blockSignals(True)
+        self.propertiesWidget.displayTreeData(data)
+        self.propertiesWidget.blockSignals(False)
+
+    def storeTreeData(self, data):
+        tree = self.getCurrentNodeEditorWidget()
+        tree.treeDeserialize(data)
+
+    def displayNodeData(self, data):
+        # When switching over to a new tree, stops the textChanged emit signal
+        self.propertiesWidget.blockSignals(True)
+        self.propertiesWidget.displayNodeData(data)
+        self.propertiesWidget.blockSignals(False)
+    
+    def getNodeData(self):
+        if self.getCurrentNodeEditorWidget().hasSelectedItem():
+            return self.getCurrentNodeEditorWidget().getSelectedItems()[0].content.serialize()
+
+    def storeNodeData(self, data):
+        currentSubWnd = self.getCurrentNodeEditorWidget()
+        if currentSubWnd.hasSelectedItem():
+            # When a new node is selected, stops the TextChanged emit signal when writing node data
+            currentSubWnd.blockSignals(True)
+            currentSubWnd.getSelectedItems()[0].content.deserialize(data)
+            currentSubWnd.blockSignals(False)
+
     def onWindowNodesToolbar(self):
         if self.nodesDock.isVisible():
             self.nodesDock.hide()
@@ -215,7 +263,7 @@ class StackWindow(NodeEditorWindow):
     def createToolBars(self):
         pass
 
-    def createNodesDock(self):
+    def createDocks(self):
         #List of nodes available to user
         self.nodesListWidget = QDMDragListbox()
 
@@ -223,7 +271,18 @@ class StackWindow(NodeEditorWindow):
         self.nodesDock.setWidget(self.nodesListWidget)
         self.nodesDock.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.nodesDock)
+        self.propertiesWidgetScroll = QScrollArea()
+        self.propertiesWidget = PropertiesBox()
+        self.propertiesWidget.nodeDataSignal.connect(self.storeNodeData)
+
+        self.propertiesWidgetScroll.setWidget(self.propertiesWidget)
+        self.propertiesWidgetScroll.setWidgetResizable(True)
+        self.propertiesDock = QDockWidget("Properties")
+        self.propertiesDock.setWidget(self.propertiesWidgetScroll)
+        self.propertiesDock.setFloating(False)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.propertiesDock)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.nodesDock)
 
     def createStatusBar(self):
         #self.statusBar().showMessage("Ready")
@@ -235,7 +294,10 @@ class StackWindow(NodeEditorWindow):
         subwnd.setWindowIcon(self.empty_icon)
         # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
         # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditorPropertiesBox)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
+        nodeeditor.nodeDataModified.connect(self.displayNodeData)
         nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
 
