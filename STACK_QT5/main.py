@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from Input_Dialog import Dialog
+#from Input_Dialog import Dialog
 import resource
 import json
 
@@ -16,15 +16,16 @@ from stack_conf import *
 from stack_conf_nodes import *
 
 import syntax_pars
-
+list = []
 WINDOW_SIZE = 0
 class MainWindow(QtWidgets.QMainWindow):
+    nodeEditorModified = pyqtSignal()
 
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-
+        self.Dialog = Dialog()
         self.setWindowTitle('New file - unsaved[*]')
         self.actionSave.triggered.connect(lambda:self.save())
         self.actionOpen.triggered.connect(lambda:self.open())
@@ -45,12 +46,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tree_btn.clicked.connect(self.updateEditMenu)
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
 
+        
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
         self.savefile = None
         self.inputs = None
         self.NewName = None
         self.NewSize = None
         self.NewAns = None
+        self.NewButton = None
+        self.dialog_syntax = None
+        self.history = None
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -77,6 +82,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.NodeEditorLayout.addWidget(self.nodeEditor)
 
         self.nodeEditor.mdiArea.subWindowActivated.connect(self.updateMenus)
+        self.windowMapper = QSignalMapper(self.nodeEditor)
+        self.windowMapper.mapped[QWidget].connect(self.nodeEditor.setActiveSubWindow)
 
         self.createActions()
         self.createMenus()
@@ -110,19 +117,53 @@ class MainWindow(QtWidgets.QMainWindow):
         nonNodeData = self.serialize()
         self.nodeEditor.serialize()
 
-    def openDialog(self):
-        #self.window = QtWidgets.QDialog()
-        self.ui = Dialog()
-        self.ui.show()
+    def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
+        
+        QApplication.processEvents()
+
+        self.Dialog.input_save_btn.clicked.connect(lambda: self.set())
+
+        syntax_content = {}
+        try:
+            for index, elem in enumerate(self.inputs):
+                rows, lastrow = divmod(index, 4)
+
+
+                #exec(f'self.connectClass.input_syntax{rows}_{lastrow}.setText({dialog_syntax})')
+                #exec(f'history{index}.append("{dialog_syntax}")')
+                
+
+                #print(syntax_content)
+                #syntax_content["syntax{}_{}".format(rows,lastrow)] = dialog_syntax
+        except:
+            pass
+        
+        self.Dialog.show()
+    
+    def set(self): #action after clicking the save button , passes 2nd window info to 1st window
+        QApplication.processEvents()
+        #self.connectClass = Dialog()
+        syntax_content = {}
+        
+        for index, elem in enumerate(self.inputs):
+            rows, lastrow = divmod(index, 4)                            
+            self.Dialog.new_dialog(rows,lastrow)
+            #index = 2, added 2
+            exec(f'current_syntax = self.Dialog.input_syntax{rows}_{lastrow}.toPlainText()') #retrieve syntax hint
+
+            #exec(f'syntax_content{rows}_{lastrow} = []; syntax_content{rows}_{lastrow}.append(current_syntax) ')
+
+            #exec(f'print(self.connectClass.input_float{rows}_{lastrow}.currentText())')
+        
+        #exec(f'print(syntax_content{rows}_{lastrow})')
+        print(list)
+        self.Dialog.close()   
 
     def UpdateInput(self):
         QApplication.processEvents()
         current_text = self.qtext_box.toPlainText()
         inputs = re.findall(r'\[\[input:[a-zA-z0-9]+\]\]', current_text) 
-        
-        # 2 cases:
-        # <= 5 inputs 
-        # >= 5 inputs
+
         try:
             exec(f'self.input_frame.setParent(None)')
         except:
@@ -158,11 +199,12 @@ class MainWindow(QtWidgets.QMainWindow):
         
         NewAns = f"input_ans{str(row)}_{str(column)}"
         NewSize = f"input_size{str(row)}_{str(column)}"
-        NewType = f"input_type{str(row)},{str(column)}"
+        NewType = f"input_type{str(row)}_{str(column)}"
+        NewButton = f"input_btn{str(row)}_{str(column)}"
         self.NewName = NewName
         self.NewSize = NewSize
         self.NewAns = NewAns
-        
+        self.NewButton = NewButton
         self.input_frame = QFrame(self.ScrollPage)
         setattr(self, NewFrame, self.input_frame)
 
@@ -243,9 +285,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.input_size)
 
         self.more_btn = QPushButton(self.input_frame)
+        setattr(self,NewButton,self.more_btn)
         self.more_btn.setObjectName(u"more_btn")
         self.more_btn.setText("More..")
         self.more_btn.clicked.connect(self.openDialog)
+    
         self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.more_btn)
 
         
@@ -264,8 +308,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
-        self.nodeEditor.nodeEditorModified.connect(lambda:self.setWindowModified(True))
-        self.nodeEditor.nodeEditorModified.connect(self.updateMenus)
+        self.nodeEditorModified.connect(lambda:self.setWindowModified(True))
 
     def createActions(self):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
@@ -298,13 +341,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateEditMenu(self):
         active = self.nodeEditor.getCurrentNodeEditorWidget() 
-        hasMdiChild = (active is not None)
 
         self.actNew.setEnabled(self.nodeEditor.isVisible())
         self.nodesToolbar.setEnabled(self.nodeEditor.isVisible())
         self.nodesToolbar.setChecked(self.nodeEditor.nodesDock.isVisible())
         self.propertiesToolbar.setEnabled(self.nodeEditor.isVisible())
         self.propertiesToolbar.setChecked(self.nodeEditor.propertiesDock.isVisible())
+        
+        hasMdiChild = (active is not None)
         self.nodeEditor.actPaste.setEnabled(hasMdiChild)
         self.nodeEditor.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
         self.nodeEditor.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
@@ -315,10 +359,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onFileNew(self):
         try:
-            subwnd = self.nodeEditor.createMdiChild()
+            subwnd = self.createMdiChild()
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e: dumpException(e)
+
+    
+
+
+    def createMdiChild(self, child_widget=None):
+        nodeeditor = child_widget if child_widget is not None else StackSubWindow()
+        subwnd = self.nodeEditor.mdiArea.addSubWindow(nodeeditor)
+        subwnd.setWindowIcon(self.empty_icon)
+        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
+        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
+        nodeeditor.addCloseEventListener(self.nodeEditor.onSubWndClose)
+        return subwnd
 
     def htmltoggle(self):
         textformat = self.qtext_box.toPlainText()        
@@ -335,6 +393,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             
             self.qtext_box.setHtml(textformat)
+
 
     def htmltoggle2(self):
         textformat = self.gfeedback_box.toPlainText()        
@@ -543,11 +602,46 @@ class MainWindow(QtWidgets.QMainWindow):
     def deserialize(self, data, hashmap=[]):
         pass
 
+class Dialog(QtWidgets.QDialog):
+    def __init__(self):
+        super(Dialog, self).__init__()
+        uic.loadUi(os.path.join(os.path.dirname(__file__),"InputDialog.ui"),self)
+        self.NewFrameD = None
+        self.NewSyntax = None
+        self.NewFloat = None
+        self.NewButton2 = None
+        
+    def saving(self):
+        QApplication.processEvents()
+        
+    def new_dialog(self,row,column):
+        NewFrameD = f"input_frameD{str(row)}_{str(column)}"
+        NewSyntax = f"input_syntax{str(row)}_{str(column)}"
+        NewButton2 = f"input_save_btn{str(row)}_{str(column)}"
+        print(NewSyntax)
+        NewFloat  = f"input_float{str(row)}_{str(column)}"
+        self.NewFrameD = NewFrameD
+        self.NewSyntax = NewSyntax
+        self.NewFloat = NewFloat
+        self.NewButton2 = NewButton2
+        setattr(self, NewFrameD, self.input_frameD)
+        setattr(self, NewSyntax, self.input_syntax)
+        setattr(self, NewFloat, self.input_float)
+        setattr(self, NewButton2, self.input_save_btn)
+        
+
 if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv) 
+  
     window = MainWindow() # Create an instance of our class
+    
     window.show()
     sys.exit(app.exec_())   
+
+
+        
+
+
 
 
