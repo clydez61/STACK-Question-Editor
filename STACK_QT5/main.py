@@ -28,7 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle('New file - unsaved[*]')
         self.actionSave.triggered.connect(lambda:self.save())
         self.actionOpen.triggered.connect(lambda:self.open())
-        self.actionSave_as.triggered.connect(lambda:self.save_as())
+        self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
 
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
@@ -42,6 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.attributes_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.attributes_page))
         self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
         self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
+        self.tree_btn.clicked.connect(self.updateEditMenu)
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
 
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
@@ -80,14 +81,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createActions()
         self.createMenus()
         self.updateMenus()
-<<<<<<< HEAD
         
-=======
-
-
-
->>>>>>> a56c7471686fdc844385ccdfdecdb358a549d764
         self.checkModified()
+
+        self.menuEdit.aboutToShow.connect(self.updateEditMenu)
 
         def moveWindow(e):
             # Detect if the window is  normal size
@@ -107,22 +104,11 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.show()
 
-
-    
-
-
-
-
-        
-        
         #print(self.inputs)
 
-        
-        
-        
-
-        
-
+    def onSaveAs(self):
+        nonNodeData = self.serialize()
+        self.nodeEditor.serialize()
 
     def openDialog(self):
         #self.window = QtWidgets.QDialog()
@@ -147,20 +133,6 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f'self.input_name{rows}_{lastrow}.setText("{elem[8:-2]}")')
             exec(f'self.input_size{rows}_{lastrow}.setText("5")')
         
-<<<<<<< HEAD
-        NewFrame.setFrameShape(QFrame.StyledPanel)
-        NewFrame.setFrameShadow(QFrame.Raised)
-        NewFrame.setObjectName(u"QFrame")
-        NewFrame.setStyleSheet(u"font: 5pt \"MS Sans Serif\";\n"
-            "color: rgb(255, 255, 222);\n"
-            "background-color: rgb(51, 51, 51);\n"
-            "border-color: rgb(255, 255, 0);\n"
-            "")
-        self.ScrollPage.setStyleSheet(u"#QFrame{"
-            "border:2px solid rgb(255,0,0)"
-            "}")
-        self.formLayout_2 = QFormLayout(NewFrame)
-=======
         #To store or save user input fo "input" section:
         #self.input_name.toPlainText() for Name
         #self.input_ans.toPlainText() for Model answer
@@ -203,7 +175,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_frame.setStyleSheet(u"font: 5pt \"MS Sans Serif\";color: rgb(255, 255, 222);background-color: rgb(51, 51, 51);border-color: rgb(255, 255, 0);")
         self.ScrollPage.setStyleSheet(u"#QFrame{border:2px solid rgb(255,0,0)}")
         self.formLayout_2 = QFormLayout(self.input_frame)
->>>>>>> a56c7471686fdc844385ccdfdecdb358a549d764
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.label_name = QLabel(self.input_frame)
         self.label_name.setObjectName(u"label_name")
@@ -281,12 +252,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.gridLayout_2.addWidget(self.input_frame, 1, 0, 1, 1)
         self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
         
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> a56c7471686fdc844385ccdfdecdb358a549d764
     def checkModified(self):
         #set up checks to see if window is modified
         self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
@@ -317,6 +282,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menuEdit.addAction(self.nodeEditor.actPaste)
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.nodeEditor.actDelete)
+        self.menuEdit.addSeparator()
+        self.nodesToolbar = self.menuEdit.addAction("Nodes Toolbar")
+        self.nodesToolbar.setCheckable(True)
+        self.nodesToolbar.triggered.connect(self.nodeEditor.onWindowNodesToolbar)
+        self.propertiesToolbar = self.menuEdit.addAction("Properties Toolbar")
+        self.propertiesToolbar.setCheckable(True)
+        self.propertiesToolbar.triggered.connect(self.nodeEditor.onWindowPropertiesToolbar)
 
         self.menuEdit.aboutToShow.connect(self.updateEditMenu)
 
@@ -328,6 +300,11 @@ class MainWindow(QtWidgets.QMainWindow):
         active = self.nodeEditor.getCurrentNodeEditorWidget() 
         hasMdiChild = (active is not None)
 
+        self.actNew.setEnabled(self.nodeEditor.isVisible())
+        self.nodesToolbar.setEnabled(self.nodeEditor.isVisible())
+        self.nodesToolbar.setChecked(self.nodeEditor.nodesDock.isVisible())
+        self.propertiesToolbar.setEnabled(self.nodeEditor.isVisible())
+        self.propertiesToolbar.setChecked(self.nodeEditor.propertiesDock.isVisible())
         self.nodeEditor.actPaste.setEnabled(hasMdiChild)
         self.nodeEditor.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
         self.nodeEditor.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
@@ -559,6 +536,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
 
+    def serialize(self):
+        return OrderedDict([
+        ])
+    
+    def deserialize(self, data, hashmap=[]):
+        pass
 
 if __name__ == '__main__':
 

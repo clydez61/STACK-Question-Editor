@@ -1,4 +1,5 @@
 import os
+import json
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -214,9 +215,11 @@ class StackWindow(NodeEditorWindow):
     def updateEditorPropertiesBox(self):
         currentSubWnd = self.getCurrentNodeEditorWidget()
         if currentSubWnd is None:
+            self.propertiesWidgetScroll.setWidgetResizable(False)
             self.propertiesWidget.setNoSubWindowLayout()
         else:
             self.propertiesWidget.treeDataSignal.connect(self.storeTreeData)
+            self.propertiesWidgetScroll.setWidgetResizable(True)
             self.displayTreeData()
             if currentSubWnd.hasSelectedItem():
                 self.displayNodeData(self.getNodeData())
@@ -260,6 +263,12 @@ class StackWindow(NodeEditorWindow):
         else:
             self.nodesDock.show()
 
+    def onWindowPropertiesToolbar(self):
+        if self.propertiesDock.isVisible():
+            self.propertiesDock.hide()
+        else:
+            self.propertiesDock.show()
+
     def createToolBars(self):
         pass
 
@@ -276,7 +285,7 @@ class StackWindow(NodeEditorWindow):
         self.propertiesWidget.nodeDataSignal.connect(self.storeNodeData)
 
         self.propertiesWidgetScroll.setWidget(self.propertiesWidget)
-        self.propertiesWidgetScroll.setWidgetResizable(True)
+        self.propertiesWidgetScroll.setWidgetResizable(False)
         self.propertiesDock = QDockWidget("Properties")
         self.propertiesDock.setWidget(self.propertiesWidgetScroll)
         self.propertiesDock.setFloating(False)
@@ -319,3 +328,13 @@ class StackWindow(NodeEditorWindow):
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
+
+    def serialize(self):
+        subWnd = []
+        for window in self.mdiArea.subWindowList():
+            subWnd.append(window.widget().serialize())
+
+        print(json.dumps(subWnd, indent=4))
+
+    def deserialize(self, data, hashmap=[]):
+        pass

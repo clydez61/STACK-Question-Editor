@@ -489,7 +489,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="qedit_page">
              <property name="styleSheet">
@@ -692,6 +692,65 @@ background-color: rgb(51, 51, 51);
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
+              <item row="2" column="1">
+               <widget class="QTextEdit" name="qnote_box"/>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="qnote_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Question note is text unique to a particular randomisation of a question, and is used to distinguish between different randomised question instances.&lt;/p&gt;&lt;p&gt;Type in any text that may help you identify these variables or any other useful information that you would like to be reminded of when editing the question.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Question Note</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QTextEdit" name="tag_box"/>
+              </item>
+              <item row="0" column="1">
+               <widget class="QTextEdit" name="grade_box">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="tag_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This section of the form allows user-speci ed tags (identi er texts) to be added to a question. Within the Question bank, questions can be searched for by tags. Tags can also be used within a quiz, to allow an included question to be randomly selected from all questions with particular tags.&lt;/p&gt;&lt;p&gt;Syntax: One line per tag&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Tags</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="grade_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The overall grade that the entire question (including all potential trees) is worth. Type in any numeric value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Grade</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="ID_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a unique identifier which can be given to a question. It is used to identify the question when using outside of a quiz, for example when embedded within other areas of Moodle&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>ID Number</string>
+                </property>
+               </widget>
+              </item>
               <item row="1" column="1">
                <widget class="QTextEdit" name="ID_box">
                 <property name="minimumSize">
@@ -710,65 +769,6 @@ background-color: rgb(51, 51, 51);
                  <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
                </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="ID_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a unique identifier which can be given to a question. It is used to identify the question when using outside of a quiz, for example when embedded within other areas of Moodle&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>ID Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="tag_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This section of the form allows user-speci ed tags (identi er texts) to be added to a question. Within the Question bank, questions can be searched for by tags. Tags can also be used within a quiz, to allow an included question to be randomly selected from all questions with particular tags.&lt;/p&gt;&lt;p&gt;Syntax: One line per tag&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Tags</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QTextEdit" name="grade_box">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="verticalScrollBarPolicy">
-                 <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="grade_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The overall grade that the entire question (including all potential trees) is worth. Type in any numeric value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Grade</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QTextEdit" name="qnote_box"/>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="qnote_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Question note is text unique to a particular randomisation of a question, and is used to distinguish between different randomised question instances.&lt;/p&gt;&lt;p&gt;Type in any text that may help you identify these variables or any other useful information that you would like to be reminded of when editing the question.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Question Note</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QTextEdit" name="tag_box"/>
               </item>
              </layout>
             </widget>
@@ -862,7 +862,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1071</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -893,6 +893,9 @@ color: rgb(255, 255, 222);</string>
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
     <addaction name="actionDelete"/>
+    <addaction name="separator"/>
+    <addaction name="actionNodes_Toolbar"/>
+    <addaction name="actionProperties_Toolbar"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -971,6 +974,22 @@ color: rgb(255, 255, 222);</string>
   <action name="actionNew_Tree">
    <property name="text">
     <string>New Tree</string>
+   </property>
+  </action>
+  <action name="actionNodes_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Nodes Toolbar</string>
+   </property>
+  </action>
+  <action name="actionProperties_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Properties Toolbar</string>
    </property>
   </action>
  </widget>

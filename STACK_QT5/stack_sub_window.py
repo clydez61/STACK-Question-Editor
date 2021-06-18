@@ -1,4 +1,5 @@
 from typing import ByteString
+from collections import OrderedDict
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
@@ -179,7 +180,7 @@ class StackSubWindow(NodeEditorWidget):
         return len(self.getSelectedItems()) == 1
 
     def treeSerialize(self):
-        res = {}
+        res = OrderedDict()
         res['PRTValue'] = self.PRTValue
         res['feedbackVar'] = self.feedbackVar
         return res
@@ -187,3 +188,13 @@ class StackSubWindow(NodeEditorWidget):
     def treeDeserialize(self, data):
         self.PRTValue = data['PRTValue']
         self.feedbackVar = data['feedbackvar']
+
+    def serialize(self):
+        data = self.scene.serialize() | self.treeSerialize()
+        return data
+
+    def deserialize(self, data):
+        self.treeDeserialize(data)
+        self.scene.deserialize(data)
+
+        

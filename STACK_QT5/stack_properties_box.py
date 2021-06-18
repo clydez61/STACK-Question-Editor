@@ -18,6 +18,7 @@ class PropertiesBox(QStackedWidget):
 
     def initUI(self):
         noSubWindowLayout = QVBoxLayout()
+        noSubWindowLayout.setAlignment(Qt.AlignTop)
         noneSelectedLayout = QVBoxLayout()
         nodeSelectedLayout = QVBoxLayout()
 
