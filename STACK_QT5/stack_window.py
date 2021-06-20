@@ -1,5 +1,6 @@
 import os
 import json
+from collections import OrderedDict
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -330,11 +331,10 @@ class StackWindow(NodeEditorWindow):
             self.mdiArea.setActiveSubWindow(window)
 
     def serialize(self):
-        subWnd = []
+        subWndList = []
         for window in self.mdiArea.subWindowList():
-            subWnd.append(window.widget().serialize())
-
-        print(json.dumps(subWnd, indent=4))
+            subWndList.append(window.widget().serialize())
+        return(subWndList)
 
     def deserialize(self, data, hashmap=[]):
         pass

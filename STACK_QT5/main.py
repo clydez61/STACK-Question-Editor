@@ -115,7 +115,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onSaveAs(self):
         nonNodeData = self.serialize()
-        self.nodeEditor.serialize()
+        nodeData = self.nodeEditor.serialize()
+        data = OrderedDict([
+            ('nonNodeData', nonNodeData),
+            ('nodeData', nodeData),
+        ])
+        print(json.dumps(data, indent=4))
+        #self.saveToFile(data, filename)
+
+    def saveToFile(self, data, filename):
+        with open(filename, 'w') as file:
+            file.write(json.dumps(data, indent=4))
+            print("saving to", filename, "was successfull.")
+            self.setWindowModified(False)
+            self.filename = filename
 
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
@@ -364,9 +377,6 @@ class MainWindow(QtWidgets.QMainWindow):
             subwnd.show()
         except Exception as e: dumpException(e)
 
-    
-
-
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
         subwnd = self.nodeEditor.mdiArea.addSubWindow(nodeeditor)
@@ -596,7 +606,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.start()
 
     def serialize(self):
+        qvar = self.qvar_box.toPlainText()
+        qtext = self.qtext_box.toPlainText()
+        grade = self.grade_box.text()
+        qnote = self.qnote_box.toPlainText()
+        tags = self.tag_box.toPlainText()
         return OrderedDict([
+            ('questionVar', qvar),
+            ('questionText', qtext),
+            ('grade', grade),
+            ('questionNote', qnote),
+            ('tags', tags),
         ])
     
     def deserialize(self, data, hashmap=[]):

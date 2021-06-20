@@ -190,11 +190,15 @@ class StackSubWindow(NodeEditorWidget):
         self.feedbackVar = data['feedbackvar']
 
     def serialize(self):
-        data = self.scene.serialize() | self.treeSerialize()
-        return data
+        nodeData = self.scene.serialize()
+        treeData = self.treeSerialize()
+        return OrderedDict([
+            ('nodeData', nodeData),
+            ('treeData', treeData),
+        ])
 
     def deserialize(self, data):
-        self.treeDeserialize(data)
-        self.scene.deserialize(data)
+        self.treeDeserialize(data['treeData'])
+        self.scene.deserialize(data['nodeData'])
 
         
