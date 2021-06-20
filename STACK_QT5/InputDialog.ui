@@ -44,7 +44,7 @@ color: rgb(255, 255, 222);</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QFrame" name="input_frame2">
+        <widget class="QFrame" name="input_frameD">
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -142,7 +142,7 @@ color: rgb(255, 255, 222);</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="save_input2_btn">
+        <widget class="QPushButton" name="input_save_btn">
          <property name="text">
           <string>Save</string>
          </property>
