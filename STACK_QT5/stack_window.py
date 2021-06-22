@@ -334,7 +334,9 @@ class StackWindow(NodeEditorWindow):
         subWndList = []
         for window in self.mdiArea.subWindowList():
             subWndList.append(window.widget().serialize())
-        return(subWndList)
+        return subWndList
 
     def deserialize(self, data, hashmap=[]):
-        pass
+        for subWndData in data:
+            subwindow = self.createMdiChild()
+            subwindow.deserialize(subWndData)

@@ -28,7 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.Dialog = Dialog()
         self.setWindowTitle('New file - unsaved[*]')
         self.actionSave.triggered.connect(lambda:self.save())
-        self.actionOpen.triggered.connect(lambda:self.open())
+        self.actionOpen.triggered.connect(lambda:self.onOpen())
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
 
@@ -113,15 +113,32 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #print(self.inputs)
 
+    def onOpen(self):
+        try:
+            fname, filter = QFileDialog.getOpenFileName(self, 'Open STACK question from file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
+
+            if fname != '' and os.path.isfile(fname):
+                with open(fname, 'r') as file:
+                    data = json.loads(file.read())
+                    self.deserialize(data['nonNodeData'])
+                    self.nodeEditor.deserialize(data['nodeData'])
+        except Exception as e: dumpException(e)
+
     def onSaveAs(self):
-        nonNodeData = self.serialize()
-        nodeData = self.nodeEditor.serialize()
-        data = OrderedDict([
-            ('nonNodeData', nonNodeData),
-            ('nodeData', nodeData),
-        ])
-        print(json.dumps(data, indent=4))
-        #self.saveToFile(data, filename)
+        try:
+            nonNodeData = self.serialize()
+            nodeData = self.nodeEditor.serialize()
+            data = OrderedDict([
+                ('nonNodeData', nonNodeData),
+                ('nodeData', nodeData), 
+            ])
+            fname, filter = QFileDialog.getSaveFileName(self, 'Save STACK question to file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
+            if fname == '': return False
+
+            self.setWindowTitle(fname)
+            self.saveToFile(data, fname)
+            return True
+        except Exception as e: dumpException(e)
 
     def saveToFile(self, data, filename):
         with open(filename, 'w') as file:
@@ -197,13 +214,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.addInput()
             #i+=1
 
-            
-        
-
-
-
     def addInput(self,row,column):
-        
         
         NewFrame = f"input_frame{str(row)}_{str(column)}"
         NewName = f"input_name{str(row)}_{str(column)}"
@@ -608,19 +619,34 @@ class MainWindow(QtWidgets.QMainWindow):
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
         qtext = self.qtext_box.toPlainText()
-        grade = self.grade_box.text()
+        generalfeedback = self.gfeedback_box.toPlainText()
+        specificfeedback = self.sfeedback_box.toPlainText()
+        grade = self.grade_box.toPlainText()
+        mainid = self.ID_box.toPlainText()
         qnote = self.qnote_box.toPlainText()
         tags = self.tag_box.toPlainText()
         return OrderedDict([
             ('questionVar', qvar),
             ('questionText', qtext),
+            ('generalFeedback', generalfeedback),
+            ('specificFeedback', specificfeedback),
             ('grade', grade),
+            ('mainID', mainid),
             ('questionNote', qnote),
             ('tags', tags),
         ])
     
     def deserialize(self, data, hashmap=[]):
-        pass
+        try:
+            self.qvar_box.setPlainText(data['questionVar'])
+            self.qtext_box.setPlainText(data['questionText'])
+            self.gfeedback_box.setPlainText(data['generalFeedback'])
+            self.sfeedback_box.setPlainText(data['specificFeedback'])
+            self.grade_box.setPlainText(data['grade'])
+            self.ID_box.setPlainText(data['mainID'])
+            self.qnote_box.setPlainText(data['questionNote'])
+            self.tag_box.setPlainText(data['tags'])
+        except Exception as e: dumpException(e)
 
 class Dialog(QtWidgets.QDialog):
     def __init__(self):
