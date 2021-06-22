@@ -43,19 +43,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.attributes_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.attributes_page))
         self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
         self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
-        self.tree_btn.clicked.connect(self.updateEditMenu)
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
-
+        self.tree_btn.clicked.connect(self.updateEditMenu)
         
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
         self.savefile = None
         self.inputs = None
+        self.NewFrame = None
         self.NewName = None
         self.NewSize = None
         self.NewAns = None
-        self.NewButton = None
+        self.MoreButton = None
         self.dialog_syntax = None
         self.history = None
+        self.row = None
+        self.column = None
+        self.NewLayout = None
+        self.NewGrid = None
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -88,11 +92,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createActions()
         self.createMenus()
         self.updateMenus()
-        
+
+
+
         self.checkModified()
-
         self.menuEdit.aboutToShow.connect(self.updateEditMenu)
-
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -110,8 +114,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         
         self.show()
-
-        #print(self.inputs)
 
     def onOpen(self):
         try:
@@ -146,6 +148,11 @@ class MainWindow(QtWidgets.QMainWindow):
             print("saving to", filename, "was successfull.")
             self.setWindowModified(False)
             self.filename = filename
+        
+        
+
+        
+
 
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
@@ -170,6 +177,125 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.Dialog.show()
     
+
+    def expand(self,row,column):
+        
+        
+        exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
+
+        NewSyntax = f"input_syntax{str(row)}_{str(column)}"
+        NewFloat = f"input_float{str(row)}_{str(column)}"
+        #NewSyntaxL = f"label_syntax{str(row)}_{str(column)}"
+        #NewFloatL = f"label_float{str(row)}_{str(column)}"
+        #NewlowestL = f"label_lowestTerms{str(row)}_{str(column)}"
+        Newlowest =  f"input_lowestTerms{str(row)}_{str(column)}"
+        NewGrid = f"NewGrid{str(row)}_{str(column)}"
+        HideButton =  f"hide_btn{str(row)}_{str(column)}"
+
+        symbols = {"self": self,"QLabel":QLabel,"QTextEdit":QTextEdit,"Qt":Qt,}
+
+
+
+
+        exec(f'self.input_btn{row}_{column}.hide()')
+        exec(f'self.label_syntax = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
+      
+        self.label_syntax.setObjectName(u"label_size")
+        self.label_syntax.setText("Syntax Hints")       
+        self.label_syntax.setMaximumSize(QSize(16777215, 30))
+        self.label_syntax.setAlignment(Qt.AlignVCenter)
+        #self.formLayout_2.addRow(5, QFormLayout.LabelRole, self.label_syntax)
+
+        exec(f'self.input_syntax = QTextEdit(self.input_frame{str(row)}_{str(column)})',symbols)
+        setattr(self,NewSyntax,self.input_syntax)
+        self.input_syntax.setObjectName(u'input_size')
+        self.input_syntax.setMaximumSize(QSize(16777215, 100))
+    
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_syntax,self.input_syntax)',symbols)
+        
+        #self.formLayout_2.addRow(self.label_syntax,self.input_frame)
+        #self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.input_syntax)
+
+        self.label_float = QLabel(self.input_frame)
+     
+        self.label_float.setObjectName(u"input_float")
+        self.label_float.setText("Forbid Float")
+
+        
+
+        self.input_float = QComboBox(self.input_frame)
+        setattr(self,NewFloat,self.input_float)
+        self.input_float.addItem(u"Yes")
+        self.input_float.addItem(u"No")
+        
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_float,self.input_float)',symbols)
+
+        self.label_lowestTerms = QLabel(self.input_frame)
+           
+        self.label_lowestTerms.setText("Lowest Terms")
+        
+
+        self.input_lowestTerms = QComboBox(self.input_frame)
+        setattr(self,Newlowest,self.input_lowestTerms)
+        self.input_lowestTerms.addItem(u"Yes")
+        self.input_lowestTerms.addItem(u"No")
+
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_lowestTerms,self.input_lowestTerms)',symbols)
+
+        self.label_extraOptions = QLabel(self.input_frame)
+        #setattr(self,NewExtra,self.label_lowestTerms)        
+        self.label_extraOptions.setText("Extra Options")
+
+
+        
+        setattr(self,NewGrid,self.gridLayout)
+        self.input_hideanswer = QCheckBox(self.input_frame)
+        self.input_hideanswer.setObjectName(u"input_hideanswer")
+        self.input_hideanswer.setText("Hide Answer")
+
+
+        self.input_allowempty = QCheckBox(self.input_frame)
+        self.input_allowempty.setObjectName(u"input_allowempty")
+        self.input_allowempty.setText("Allow Empty")
+        
+        self.input_simplify = QCheckBox(self.input_frame)
+        self.input_simplify.setText("Simplify")
+        
+
+
+
+        
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_extraOptions,self.input_hideanswer)',symbols)
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_allowempty)',symbols)
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_simplify)',symbols)
+
+        self.hide_btn = QPushButton(self.input_frame)
+        setattr(self,HideButton,self.hide_btn)        
+        self.hide_btn.setText(u"Hide")
+        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.hide_btn)',symbols)
+        exec(f'self.hide_btn{str(row)}_{str(column)}.clicked.connect(lambda:self.restore({row},{column}))',symbols)
+        
+        #exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.input_allowempty)',symbols)
+        #exec(f'self.input_layout{str(row)}_{str(column)}.setAlignment(Qt.AlignRight)',symbols)
+
+        
+    def restore(self,row,column): #not sure if needed to go back?
+        
+        NewSyntax = f"input_syntax{str(row)}_{str(column)}"
+        NewFloat = f"input_float{str(row)}_{str(column)}"
+        #NewSyntaxL = f"label_syntax{str(row)}_{str(column)}"
+        #NewFloatL = f"label_float{str(row)}_{str(column)}"
+        #NewlowestL = f"label_lowestTerms{str(row)}_{str(column)}"
+        Newlowest =  f"input_lowestTerms{str(row)}_{str(column)}"
+        NewGrid = f"NewGrid{str(row)}_{str(column)}"
+        HideButton =  f"hide_btn{str(row)}_{str(column)}"
+        print(NewSyntax)
+
+        exec(f'self.input_syntax{str(row)}_{str(column)}.setParent(None)')
+        exec(f'self.input_float{str(row)}_{str(column)}.setParent(None)')
+        exec(f"self.input_lowestTerms{str(row)}_{str(column)}.setParent(None)")
+
+        #self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
     def set(self): #action after clicking the save button , passes 2nd window info to 1st window
         QApplication.processEvents()
         #self.connectClass = Dialog()
@@ -186,14 +312,14 @@ class MainWindow(QtWidgets.QMainWindow):
             #exec(f'print(self.connectClass.input_float{rows}_{lastrow}.currentText())')
         
         #exec(f'print(syntax_content{rows}_{lastrow})')
-        print(list)
+        
         self.Dialog.close()   
 
     def UpdateInput(self):
         QApplication.processEvents()
         current_text = self.qtext_box.toPlainText()
         inputs = re.findall(r'\[\[input:[a-zA-z0-9]+\]\]', current_text) 
-
+        symbols = {"self": self}
         try:
             exec(f'self.input_frame.setParent(None)')
         except:
@@ -201,8 +327,12 @@ class MainWindow(QtWidgets.QMainWindow):
         for index, elem in enumerate(inputs):
             rows, lastrow = divmod(index, 4)                            
             self.addInput(rows,lastrow)
+            
+            #exec(f'self.input_btn{row}_{column}.clicked.connect(lambda: self.expand({row},{column}))',symbols) 
+            exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols)        
             exec(f'self.input_name{rows}_{lastrow}.setText("{elem[8:-2]}")')
             exec(f'self.input_size{rows}_{lastrow}.setText("5")')
+        
         
         #To store or save user input fo "input" section:
         #self.input_name.toPlainText() for Name
@@ -214,26 +344,28 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.addInput()
             #i+=1
 
-    def addInput(self,row,column):
+    def addInput(self,row,column): #triggers by clicking update 
         
         NewFrame = f"input_frame{str(row)}_{str(column)}"
         NewName = f"input_name{str(row)}_{str(column)}"
-        
+        NewLayout = f"input_layout{str(row)}_{str(column)}"
         
         
         NewAns = f"input_ans{str(row)}_{str(column)}"
         NewSize = f"input_size{str(row)}_{str(column)}"
         NewType = f"input_type{str(row)}_{str(column)}"
-        NewButton = f"input_btn{str(row)}_{str(column)}"
+        MoreButton = f"input_btn{str(row)}_{str(column)}"
+        self.NewFrame = NewFrame
         self.NewName = NewName
         self.NewSize = NewSize
         self.NewAns = NewAns
-        self.NewButton = NewButton
+        self.MoreButton = MoreButton
+        self.NewLayout = NewLayout
         self.input_frame = QFrame(self.ScrollPage)
         setattr(self, NewFrame, self.input_frame)
 
         self.input_frame.setMinimumSize(QSize(100, 100))
-        self.input_frame.setMaximumSize(QSize(250, 280))
+        self.input_frame.setMaximumSize(QSize(300, 300))
         
         self.input_frame.setFrameShape(QFrame.StyledPanel)
         self.input_frame.setFrameShadow(QFrame.Raised)
@@ -242,6 +374,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ScrollPage.setStyleSheet(u"#QFrame{border:2px solid rgb(255,0,0)}")
         self.formLayout_2 = QFormLayout(self.input_frame)
         self.formLayout_2.setObjectName(u"formLayout_2")
+        setattr(self, NewLayout, self.formLayout_2)
         self.label_name = QLabel(self.input_frame)
         self.label_name.setObjectName(u"label_name")
         self.label_name.setText("Name")
@@ -255,7 +388,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_name.setMaximumSize(QSize(16777215, 30))
 
         
-        #self.input_name.setText(QCoreApplication.translate("MainWindow", temps, None))
+       
         setattr(self,NewName,self.input_name)
 
         self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.input_name)
@@ -308,18 +441,26 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.input_size)
 
-        self.more_btn = QPushButton(self.input_frame)
-        setattr(self,NewButton,self.more_btn)
+        self.more_btn = QPushButton(self.NewFrame)
+        setattr(self,MoreButton,self.more_btn)
         self.more_btn.setObjectName(u"more_btn")
-        self.more_btn.setText("More..")
-        self.more_btn.clicked.connect(self.openDialog)
-    
+        self.more_btn.setText(u"More..")
+        symbols = {"self": self}
+        
+        
+
+        #self.more_btn.clicked.connect(lambda: self.expand(row,column))
+        
         self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.more_btn)
 
         
         #self.gridLayout_2.addWidget(self.input_frame, 1, 0, 1, 1)
         self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
-        
+        self.row = row
+        self.column = column
+
+
+
     def checkModified(self):
         #set up checks to see if window is modified
         self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
@@ -356,7 +497,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.propertiesToolbar = self.menuEdit.addAction("Properties Toolbar")
         self.propertiesToolbar.setCheckable(True)
         self.propertiesToolbar.triggered.connect(self.nodeEditor.onWindowPropertiesToolbar)
-
         self.menuEdit.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
@@ -365,13 +505,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updateEditMenu(self):
         active = self.nodeEditor.getCurrentNodeEditorWidget() 
-
         self.actNew.setEnabled(self.nodeEditor.isVisible())
         self.nodesToolbar.setEnabled(self.nodeEditor.isVisible())
-        self.nodesToolbar.setChecked(self.nodeEditor.nodesDock.isVisible())
+        self.nodesToolbar.setChecked(self.nodeEditor.nodesDock.isVisible())	
         self.propertiesToolbar.setEnabled(self.nodeEditor.isVisible())
         self.propertiesToolbar.setChecked(self.nodeEditor.propertiesDock.isVisible())
-        
+
         hasMdiChild = (active is not None)
         self.nodeEditor.actPaste.setEnabled(hasMdiChild)
         self.nodeEditor.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
@@ -387,6 +526,9 @@ class MainWindow(QtWidgets.QMainWindow):
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e: dumpException(e)
+
+    
+
 
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
@@ -615,6 +757,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEndValue(newWidth)#end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
+
 
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
