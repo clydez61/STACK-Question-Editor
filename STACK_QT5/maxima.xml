@@ -453,7 +453,7 @@
             <item>fillarray</item>
             <item>findde</item>
             <item>find_root</item>
-            <item>first</item>
+            
             <item>fix</item>
             <item>flatten</item>
             <item>flength</item>
@@ -1371,7 +1371,7 @@
             <item>symbolp</item>
             <item>symmdifference</item>
             <item>symmetricp</item>
-            <item>system</item>
+            
             <item>take_channel</item>
             <item>take_inference</item>
             <item>tan</item>
@@ -1401,9 +1401,9 @@
             <item>%th</item>
             <item>third</item>
             <item>throw</item>
-            <item>time</item>
+            
             <item>timedate</item>
-            <item>timer</item>
+            
             <item>timer_info</item>
             <item>tldefint</item>
             <item>tlimit</item>

@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 #from Input_Dialog import Dialog
 import resource
 import json
-
+from pylatexenc.latex2text import LatexNodes2Text
 from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
 from stack_window import StackWindow
@@ -38,14 +38,21 @@ class MainWindow(QtWidgets.QMainWindow):
        
         
         self.stackedWidget.setCurrentWidget(self.qedit_page)
+        self.qvar_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qvar_page))  
         self.qedit_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qedit_page))        
         self.feedback_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.feedback_page))
         self.attributes_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.attributes_page))
         self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
         self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
+        self.highlight2 = syntax_pars.PythonHighlighter(self.qtext_box.document())
+        self.highlight3 = syntax_pars.PythonHighlighter(self.preview_box.document())
         self.tree_btn.clicked.connect(self.updateEditMenu)
+        self.preview_btn.clicked.connect(self.preview)
+
+
         
+
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
         self.savefile = None
         self.inputs = None
@@ -71,7 +78,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.html_btn.setCheckable(True)
         self.html_btn.toggle()
         self.html_btn.clicked.connect(lambda:self.htmltoggle())
-        self.qtext_box.acceptRichText()
+        
 
         #html button for general feedback
         self.html_btn2.setCheckable(True)
@@ -145,15 +152,33 @@ class MainWindow(QtWidgets.QMainWindow):
     def saveToFile(self, data, filename):
         with open(filename, 'w') as file:
             file.write(json.dumps(data, indent=4))
-            print("saving to", filename, "was successfull.")
+            print("saving to", filename, "was successful.")
             self.setWindowModified(False)
             self.filename = filename
         
         
 
         
+    def preview(self):
+        QApplication.processEvents()
+        qtext_code = self.qtext_box.toPlainText()
+        
+        self.qtext_box.setAcceptRichText(True)
+        self.preview_box.setAcceptRichText(True)
+        #self.preview_box.setStyleSheet("color: rgb(85, 0, 255);")
+        qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
+        stack_var = re.findall(r'\@[a-zA-z0-9]+\@', qtext_code)
+        
+        
+        for elements in stack_var: 
+            #font-size:8pt; to change            
+            qtext_code = qtext_code.replace(elements,"{" + elements + "}")
+        #self.preview_box.setStyleSheet("color: rgb(51, 51, 51);")
+        
+        print(qtext_code)
+        self.preview_box.setText(qtext_code)
 
-
+        
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
         QApplication.processEvents()

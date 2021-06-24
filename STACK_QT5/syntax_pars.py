@@ -29,14 +29,14 @@ def format(color, style=''):
 
 STYLES = {
     'keyword': format([200, 120, 50], 'bold'),
-    'operator': format([150, 150, 150]),
-    'brace': format([255,255,0]),
-    'defclass': format([220, 220, 255], 'bold'),
-    'string': format([20, 110, 100]),
-    'string2': format([30, 120, 110]),
-    'comment': format([128, 128, 128]),
-    'self': format([150, 85, 140], 'italic'),
-    'numbers': format([100, 150, 190]),
+    'operator': format([204, 204, 0]),
+    'brace': format([255,255,222]),
+    'defclass': format([255,255,222]),
+    'string': format([255,255,222]),
+    'string2': format([255,255,222]),
+    'comment': format([255,255,222]),
+    'self': format([255,255,222]),
+    'numbers': format([255,255,222]),
 }
 keywords2 = []
 tree = ElementTree.parse(os.path.join(os.path.dirname(__file__),"maxima.xml"))
@@ -78,17 +78,17 @@ class PythonHighlighter(QSyntaxHighlighter):
         # Bitwise
         '\^', '\|', '\&', '\~', '>>', '<<',
         # STACK
-        '{@','@}',
+        r'\{\@[a-zA-z0-9]+\@\}',
     ]
 
     # Python braces
     braces = [
-        '\{', '\}', '\(', '\)', '\[', '\]','[[',']]'
+         '\(', '\)', '\[', '\]','[[',']]'
     ]
-
+    #'\{', '\}',
     def __init__(self, document):
         QSyntaxHighlighter.__init__(self, document)
-
+        
         # Multi-line strings (expression, flag, style)
         # FIXME: The triple-quotes in these two lines will mess up the
         # syntax highlighting from this point onward
