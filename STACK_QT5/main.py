@@ -51,6 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.preview_btn.clicked.connect(self.preview)
 
 
+
         
 
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
@@ -100,6 +101,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createMenus()
         self.updateMenus()
 
+        
 
 
         self.checkModified()
@@ -120,6 +122,34 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_header.mouseMoveEvent = moveWindow    
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
         
+
+        #Setting up rich text bar
+        self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
+        self.tfont_box.activated.connect(self.setFont)
+
+        self.tsize_box.setValue(14)
+        self.tsize_box.valueChanged.connect(self.setFontSize)
+
+        self.tbold_btn.setCheckable(True)
+        self.tbold_btn.toggle()
+        self.tbold_btn.clicked.connect(self.boldText)
+        
+        self.titalic_btn.setCheckable(True)
+        self.titalic_btn.toggle()
+        self.titalic_btn.clicked.connect(self.italicText)
+
+        self.tunderline_btn.setCheckable(True)
+        self.tunderline_btn.toggle()
+        self.tunderline_btn.clicked.connect(self.underlineText)
+
+        self.tleft_align_btn.clicked.connect(lambda : self.qtext_box.setAlignment(Qt.AlignLeft))
+        self.tcenter_align_btn.clicked.connect(lambda : self.qtext_box.setAlignment(Qt.AlignCenter))
+        self.tright_align_btn.clicked.connect(lambda : self.qtext_box.setAlignment(Qt.AlignRight))
+  
+        self.tordered_list_btn.clicked.connect(self.bulletList)
+        self.ttext_color_btn.clicked.connect(self.setColor)
+        self.tbcolor_btn.clicked.connect(self.setBackgroundColor)
+
         self.show()
 
     def onOpen(self):
@@ -156,9 +186,42 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setWindowModified(False)
             self.filename = filename
         
+    def setFont(self):
+        font = self.tfont_box.currentText()
+        self.qtext_box.setCurrentFont(QFont(font))    
         
 
-        
+    def setFontSize(self):
+        value = self.tsize_box.value()
+        self.qtext_box.setFontPointSize(value)
+
+    def setColor(self):         
+        color = QColorDialog.getColor()
+        self.qtext_box.setTextColor(color)
+
+    def setBackgroundColor(self):     
+        color = QColorDialog.getColor()
+        self.qtext_box.setTextBackgroundColor(color)
+
+    def boldText(self):
+        if self.tbold_btn.isChecked():
+            self.qtext_box.setFontWeight(QFont.Bold)
+        else:
+            self.qtext_box.setFontWeight(QFont.Normal)  
+
+    def italicText(self):
+        state = self.qtext_box.fontItalic()
+        self.qtext_box.setFontItalic(not(state)) 
+
+    def underlineText(self):
+        state = self.qtext_box.fontUnderline()
+        self.qtext_box.setFontUnderline(not(state))     
+
+    def bulletList(self):
+        cursor = self.qtext_box.textCursor()
+        cursor.insertList(QtGui.QTextListFormat.ListDisc)
+
+
     def preview(self):
         QApplication.processEvents()
         qtext_code = self.qtext_box.toPlainText()

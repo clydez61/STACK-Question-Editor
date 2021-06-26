@@ -168,6 +168,13 @@
     <file>icons/cil-zoom-out.png</file>
     <file>icons/var.png</file>
     <file>icons/sampletext.png</file>
+    <file>icons/align-left.png</file>
+    <file>icons/align-center.png</file>
+    <file>icons/align-right.png</file>
+    <file>icons/bold.png</file>
+    <file>icons/italic.png</file>
+    <file>icons/unordered-list.png</file>
+    <file>icons/numbered-list.png</file>
   </qresource>
   <qresource prefix="images">
 
