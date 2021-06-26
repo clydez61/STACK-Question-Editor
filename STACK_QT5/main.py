@@ -18,20 +18,24 @@ from stack_conf_nodes import *
 import syntax_pars
 list = []
 WINDOW_SIZE = 0
+selectedfonts = {}
+
 class MainWindow(QtWidgets.QMainWindow):
     nodeEditorModified = pyqtSignal()
-
+   
+    
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        
         self.Dialog = Dialog()
         self.setWindowTitle('New file - unsaved[*]')
         self.actionSave.triggered.connect(lambda:self.save())
         self.actionOpen.triggered.connect(lambda:self.onOpen())
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
-
+        
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
@@ -51,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.preview_btn.clicked.connect(self.preview)
 
 
+       
 
         
 
@@ -120,12 +125,20 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.clickPosition = e.globalPos()
                     e.accept()
         self.main_header.mouseMoveEvent = moveWindow    
-        self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())        
-        
+        self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())    
+
+      
 
         #Setting up rich text bar
+        
+        
+        #self.qtext_box.checkFontSignal.connect(self.checkFont)
+        self.qtext_box.selectionChanged.connect(self.updatefont)
         self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
+        
         self.tfont_box.activated.connect(self.setFont)
+        
+
 
         self.tsize_box.setValue(14)
         self.tsize_box.valueChanged.connect(self.setFontSize)
@@ -149,6 +162,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tordered_list_btn.clicked.connect(self.bulletList)
         self.ttext_color_btn.clicked.connect(self.setColor)
         self.tbcolor_btn.clicked.connect(self.setBackgroundColor)
+
+
+
 
         self.show()
 
@@ -185,12 +201,32 @@ class MainWindow(QtWidgets.QMainWindow):
             print("saving to", filename, "was successful.")
             self.setWindowModified(False)
             self.filename = filename
+    def handleSelectionChanged(self):
+        cursor = self.qtext_box.textCursor()
+        return [cursor.selectionStart(), cursor.selectionEnd()];
         
     def setFont(self):
         font = self.tfont_box.currentText()
-        self.qtext_box.setCurrentFont(QFont(font))    
-        
+        self.qtext_box.setCurrentFont(QFont(font)) 
+        selectedfonts[self.tfont_box.currentText()] = self.handleSelectionChanged()
+        for textfont, cursorindex in selectedfonts.items():
+            print(cursorindex)
+        #just set for the following cursor locations, set font to ""
 
+        print(selectedfonts)
+
+        
+       
+        # update the text-edit
+    def updatefont(self):
+        cursor2 = self.qtext_box.textCursor()
+        #print(cursor2.selectionStart(),cursor2.selectionEnd())
+        for textfont, cursorindex in selectedfonts.items():
+            if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
+                self.tfont_box.setCurrentText(textfont)
+            else:
+                self.tfont_box.setCurrentText('Arial')
+        
     def setFontSize(self):
         value = self.tsize_box.value()
         self.qtext_box.setFontPointSize(value)
