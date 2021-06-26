@@ -15,6 +15,8 @@ from stack_drag_listbox import *
 from stack_conf import *
 from stack_conf_nodes import *
 
+from rich_text_editor import TextEditor
+
 import syntax_pars
 list = []
 WINDOW_SIZE = 0
@@ -39,7 +41,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.stackedWidget.setCurrentWidget(self.qedit_page)
         self.qedit_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qedit_page))        
-        self.feedback_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.feedback_page))
+        self.qvar_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qvar_page))
         self.attributes_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.attributes_page))
         self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
         self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
@@ -67,21 +69,23 @@ class MainWindow(QtWidgets.QMainWindow):
                            }""")
         #setting ToolTip
 
+        self.qtext_box = TextEditor()
+        self.qtext_layout.addWidget(self.qtext_box)
+        self.qtext_boxEditor = self.qtext_box.editor
+
+        #TODO: Remove html button after implementing rich text editor
         #html button for question text
         self.html_btn.setCheckable(True)
         self.html_btn.toggle()
         self.html_btn.clicked.connect(lambda:self.htmltoggle())
-        self.qtext_box.acceptRichText()
+        self.qtext_boxEditor.acceptRichText()
 
         #html button for general feedback
-        self.html_btn2.setCheckable(True)
-        self.html_btn2.toggle()
-        self.html_btn2.clicked.connect(lambda:self.htmltoggle2())
-        
-
+        # self.html_btn2.setCheckable(True)
+        # self.html_btn2.toggle()
+        # self.html_btn2.clicked.connect(lambda:self.htmltoggle2())
         
         self.empty_icon = QIcon(".")
-
         self.nodeEditor = StackWindow()
         self.NodeEditorLayout.addWidget(self.nodeEditor)
 
@@ -149,11 +153,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setWindowModified(False)
             self.filename = filename
         
-        
-
-        
-
-
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
         QApplication.processEvents()
@@ -317,7 +316,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def UpdateInput(self):
         QApplication.processEvents()
-        current_text = self.qtext_box.toPlainText()
+        current_text = self.qtext_boxEditor.toPlainText()
         inputs = re.findall(r'\[\[input:[a-zA-z0-9]+\]\]', current_text) 
         symbols = {"self": self}
         try:
@@ -464,12 +463,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def checkModified(self):
         #set up checks to see if window is modified
         self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
-        self.qtext_box.document().modificationChanged.connect(self.setWindowModified)
+        self.qtext_boxEditor.document().modificationChanged.connect(self.setWindowModified)
         self.gfeedback_box.document().modificationChanged.connect(self.setWindowModified)
-        self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
         self.grade_box.document().modificationChanged.connect(self.setWindowModified)
         
-        self.ID_box.document().modificationChanged.connect(self.setWindowModified)
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
@@ -542,20 +539,20 @@ class MainWindow(QtWidgets.QMainWindow):
         return subwnd
 
     def htmltoggle(self):
-        textformat = self.qtext_box.toPlainText()        
+        textformat = self.qtext_boxEditor.toPlainText()        
         if self.html_btn.isChecked():
-            htmlformat = repr(self.qtext_box.toPlainText())
+            htmlformat = repr(self.qtext_boxEditor.toPlainText())
             
             htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
             print(htmlformat)
             
-            self.qtext_box.setPlainText(htmlformat)
+            self.qtext_boxEditor.setPlainText(htmlformat)
 
             self.html_btn.setStyleSheet("background-color : lightblue")
   
         else:
             
-            self.qtext_box.setHtml(textformat)
+            self.qtext_boxEditor.setHtml(textformat)
 
 
     def htmltoggle2(self):
@@ -596,12 +593,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             #self.qvar_box.clear()
             self.qvar_box.setPlainText(mod.question.get('questionvariables')[1:-1])     
-            self.qtext_box.setPlainText(mod.question.get('questiontext')[1:-1])           
-            self.gfeedback_box.setPlainText(mod.question.get('generalfeedback')[1:-1])               
-            self.sfeedback_box.insertPlainText(mod.question.get('specificfeedback')[1:-1])               
+            self.qtext_boxEditor.setPlainText(mod.question.get('questiontext')[1:-1])           
+            self.gfeedback_box.setPlainText(mod.question.get('generalfeedback')[1:-1])                             
             self.grade_box.setPlainText(mod.question.get('defaultgrade'))     
-            #self.penalty_box.setPlainText(mod.question.get('penalty'))
-            self.ID_box.setPlainText(mod.question.get('idnumber'))       
+            #self.penalty_box.setPlainText(mod.question.get('penalty')) 
             self.qnote_box.setPlainText(mod.question.get('questionnote')[1:-1])  
 
             key = mod.question.get('tags')
@@ -621,7 +616,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             #writing question text
             pyout.write('   "questiontext":"""\n')
-            pyout.write(str(self.qtext_box.toPlainText()))
+            pyout.write(str(self.qtext_boxEditor.toPlainText()))
             pyout.write('\n""",\n')
 
             #writing question variables
@@ -651,8 +646,8 @@ class MainWindow(QtWidgets.QMainWindow):
             pyout.write('   },\n')
 
             #writing ID
-            pyout.write('   "idnumber":')
-            pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
+            #pyout.write('   "idnumber":')
+            #pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
             #penalty
       
@@ -675,7 +670,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             #writing question text
             pyout.write('   "questiontext":"""\n')
-            pyout.write(str(self.qtext_box.toPlainText()))
+            pyout.write(str(self.qtext_boxEditor.toPlainText()))
             pyout.write('\n""",\n')
 
             #writing question variables
@@ -705,8 +700,8 @@ class MainWindow(QtWidgets.QMainWindow):
             pyout.write('   },\n')
 
             #writing ID
-            pyout.write('   "idnumber":')
-            pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
+            #pyout.write('   "idnumber":')
+            #pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
             #penalty
 
@@ -761,11 +756,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
-        qtext = self.qtext_box.toPlainText()
+        qtext = self.qtext_boxEditor.toPlainText()
         generalfeedback = self.gfeedback_box.toPlainText()
-        specificfeedback = self.sfeedback_box.toPlainText()
         grade = self.grade_box.toPlainText()
-        mainid = self.ID_box.toPlainText()
         qnote = self.qnote_box.toPlainText()
         tags = self.tag_box.toPlainText()
         return OrderedDict([
@@ -782,11 +775,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def deserialize(self, data, hashmap=[]):
         try:
             self.qvar_box.setPlainText(data['questionVar'])
-            self.qtext_box.setPlainText(data['questionText'])
+            self.qtext_box.editor.setPlainText(data['questionText'])
             self.gfeedback_box.setPlainText(data['generalFeedback'])
-            self.sfeedback_box.setPlainText(data['specificFeedback'])
             self.grade_box.setPlainText(data['grade'])
-            self.ID_box.setPlainText(data['mainID'])
             self.qnote_box.setPlainText(data['questionNote'])
             self.tag_box.setPlainText(data['tags'])
         except Exception as e: dumpException(e)

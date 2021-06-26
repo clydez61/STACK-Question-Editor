@@ -354,26 +354,6 @@ background-position: center left;</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QPushButton" name="feedback_btn">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-image: url(:/icons/icons/cil-speech.png);
-background-repeat: none;
-padding-left: 50px;
-background-position: center left;
-</string>
-               </property>
-               <property name="text">
-                <string>Feedback </string>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QPushButton" name="attributes_btn">
                <property name="minimumSize">
@@ -443,6 +423,26 @@ background-position: center left;</string>
                </property>
               </widget>
              </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QPushButton" name="qvar_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-image: url(:/icons/icons/cil-code.png);
+background-repeat: none;
+padding-left: 50px;
+background-position: center left;
+</string>
+               </property>
+               <property name="text">
+                <string>Question Variable</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -500,40 +500,6 @@ background-color: rgb(51, 51, 51);
              </property>
              <layout class="QGridLayout" name="gridLayout">
               <item row="1" column="1">
-               <widget class="QTextEdit" name="qtext_box">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(51, 51, 51);</string>
-                </property>
-                <property name="html">
-                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Sans Serif'; font-size:14pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignTop">
-               <widget class="QLabel" name="qvar_label">
-                <property name="maximumSize">
-                 <size>
-                  <width>400</width>
-                  <height>200</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maxima code is used to create and randomise the parameters of the question. Any forms of calculations should be done within this section. &lt;/p&gt;&lt;p&gt;Variables and function names can be a combination of letters followed by a combination of numbers. For exmaple: height1.An example of invalid variable name would be &amp;quot;h2s&amp;quot; where a number is between letters&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Syntax rules:&lt;/span&gt;&lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Values are assigned to variables using a colon (:), for example,&lt;span style=&quot; font-weight:600;&quot;&gt;aa:4&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Custom functions are defined using colon equals (:=), for example, &lt;span style=&quot; font-weight:600;&quot;&gt;f(x):=x^2&lt;/span&gt; and the function called and stored for example, &lt;span style=&quot; font-weight:600;&quot;&gt;y: f(2)&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Equal sign (=) is used in equations, which could themselves be assigned to a variable, for example, &lt;span style=&quot; font-weight:600;&quot;&gt;eqn:x^2-4=0&lt;/span&gt;;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 222);
-font: 75 14pt &quot;MS Sans Serif&quot;;</string>
-                </property>
-                <property name="text">
-                 <string>Question Variables</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
                <widget class="QFrame" name="right_side_menu">
                 <property name="maximumSize">
                  <size>
@@ -571,19 +537,22 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 </layout>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QPlainTextEdit" name="qvar_box">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(51, 51, 51);</string>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="update_btn">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Updates current inputs for students.&lt;/p&gt;&lt;p&gt;To add an input, type [[input:--]] to insert an input at a location you desire, where &amp;quot;--&amp;quot; is the name of the input&lt;/p&gt;&lt;p&gt;To remove an input, simply delete the &amp;quot;[[input:--]]&amp;quot;&lt;/p&gt;&lt;p&gt;Edit the inputs in the &amp;quot;inputs&amp;quot; page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Update Input</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" alignment="Qt::AlignHCenter">
+              <item row="0" column="0" alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="qtext_label">
                 <property name="maximumSize">
                  <size>
                   <width>200</width>
-                  <height>200</height>
+                  <height>24</height>
                  </size>
                 </property>
                 <property name="toolTip">
@@ -613,19 +582,12 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QPushButton" name="update_btn">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Updates current inputs for students.&lt;/p&gt;&lt;p&gt;To add an input, type [[input:--]] to insert an input at a location you desire, where &amp;quot;--&amp;quot; is the name of the input&lt;/p&gt;&lt;p&gt;To remove an input, simply delete the &amp;quot;[[input:--]]&amp;quot;&lt;/p&gt;&lt;p&gt;Edit the inputs in the &amp;quot;inputs&amp;quot; page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Update Input</string>
-                </property>
-               </widget>
+              <item row="1" column="0">
+               <layout class="QGridLayout" name="qtext_layout"/>
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="feedback_page">
+            <widget class="QWidget" name="qvar_page">
              <property name="styleSheet">
               <string notr="true">QTextEdit{
 color: rgb(255, 255, 222);
@@ -633,54 +595,18 @@ background-color: rgb(51, 51, 51);
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="qvar_label">
+                <property name="text">
+                 <string>Question Variable</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
               <item row="1" column="0">
-               <widget class="QTextEdit" name="gfeedback_box"/>
-              </item>
-              <item row="1" column="2">
-               <widget class="QFrame" name="right_side_menu2">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(0, 0, 0);</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_5">
-                 <item>
-                  <widget class="QPushButton" name="html_btn2">
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="local.qrc">
-                     <normaloff>:/icons/icons/cil-code.png</normaloff>:/icons/icons/cil-code.png</iconset>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-               <widget class="QLabel" name="sfeedback_label">
-                <property name="text">
-                 <string>Specific Feedback</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="gfeedback_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text given to the student once they have used all their permitted attempts at the question, or once they have given a correct answer. It is typically used to give a worked solution to the particular randomised question instance asked.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This section behaves similarly to the Question text section: LATEX formatting can be included as well as values of any question variables.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>General Feedback</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QTextEdit" name="sfeedback_box"/>
+               <widget class="QTextEdit" name="qvar_box"/>
               </item>
              </layout>
             </widget>
@@ -692,35 +618,6 @@ background-color: rgb(51, 51, 51);
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="2" column="1">
-               <widget class="QTextEdit" name="qnote_box"/>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="qnote_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Question note is text unique to a particular randomisation of a question, and is used to distinguish between different randomised question instances.&lt;/p&gt;&lt;p&gt;Type in any text that may help you identify these variables or any other useful information that you would like to be reminded of when editing the question.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>Question Note</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QTextEdit" name="tag_box"/>
-              </item>
-              <item row="0" column="1">
-               <widget class="QTextEdit" name="grade_box">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="verticalScrollBarPolicy">
-                 <enum>Qt::ScrollBarAlwaysOff</enum>
-                </property>
-               </widget>
-              </item>
               <item row="3" column="0">
                <widget class="QLabel" name="tag_label">
                 <property name="toolTip">
@@ -741,24 +638,18 @@ background-color: rgb(51, 51, 51);
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="ID_label">
+              <item row="2" column="0">
+               <widget class="QLabel" name="qnote_label">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a unique identifier which can be given to a question. It is used to identify the question when using outside of a quiz, for example when embedded within other areas of Moodle&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Question note is text unique to a particular randomisation of a question, and is used to distinguish between different randomised question instances.&lt;/p&gt;&lt;p&gt;Type in any text that may help you identify these variables or any other useful information that you would like to be reminded of when editing the question.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
-                 <string>ID Number</string>
+                 <string>Question Note</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QTextEdit" name="ID_box">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
+              <item row="0" column="1">
+               <widget class="QTextEdit" name="grade_box">
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
@@ -769,6 +660,36 @@ background-color: rgb(51, 51, 51);
                  <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
                </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QTextEdit" name="tag_box">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>60</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QTextEdit" name="qnote_box">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>90</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="gfeedback_label">
+                <property name="text">
+                 <string>General Feedback</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QTextEdit" name="gfeedback_box"/>
               </item>
              </layout>
             </widget>
@@ -784,8 +705,8 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
+                   <width>63</width>
+                   <height>18</height>
                   </rect>
                  </property>
                  <property name="styleSheet">
