@@ -935,7 +935,7 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                    <rect>
                     <x>10</x>
                     <y>10</y>
-                    <width>82</width>
+                    <width>96</width>
                     <height>146</height>
                    </rect>
                   </property>
@@ -955,13 +955,136 @@ border-color: rgb(202, 208, 215);</string>
                   <property name="midLineWidth">
                    <number>0</number>
                   </property>
+                  <widget class="QLineEdit" name="lineEdit">
+                   <property name="geometry">
+                    <rect>
+                     <x>5</x>
+                     <y>3</y>
+                     <width>81</width>
+                     <height>20</height>
+                    </rect>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Question 1</string>
+                   </property>
+                   <property name="frame">
+                    <bool>false</bool>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                  <widget class="QPlainTextEdit" name="plainTextEdit">
+                   <property name="geometry">
+                    <rect>
+                     <x>5</x>
+                     <y>23</y>
+                     <width>81</width>
+                     <height>51</height>
+                    </rect>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(255, 65, 54);</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                   <property name="plainText">
+                    <string>Not yet answered  </string>
+                   </property>
+                  </widget>
+                  <widget class="QPlainTextEdit" name="plainTextEdit_2">
+                   <property name="geometry">
+                    <rect>
+                     <x>5</x>
+                     <y>60</y>
+                     <width>81</width>
+                     <height>41</height>
+                    </rect>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                   <property name="plainText">
+                    <string>Marked out of 1.00</string>
+                   </property>
+                  </widget>
+                  <widget class="QTextEdit" name="textEdit">
+                   <property name="geometry">
+                    <rect>
+                     <x>5</x>
+                     <y>100</y>
+                     <width>81</width>
+                     <height>41</height>
+                    </rect>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(0, 0, 0);</string>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Plain</enum>
+                   </property>
+                   <property name="verticalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAlwaysOff</enum>
+                   </property>
+                   <property name="horizontalScrollBarPolicy">
+                    <enum>Qt::ScrollBarAlwaysOff</enum>
+                   </property>
+                   <property name="html">
+                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/icons/icons/unflagged.png&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Flag question&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                  </widget>
+                  <zorder>textEdit</zorder>
+                  <zorder>plainTextEdit</zorder>
+                  <zorder>plainTextEdit_2</zorder>
+                  <zorder>lineEdit</zorder>
                  </widget>
                  <widget class="QTextBrowser" name="preview_box">
                   <property name="geometry">
                    <rect>
-                    <x>100</x>
+                    <x>120</x>
                     <y>10</y>
-                    <width>391</width>
+                    <width>371</width>
                     <height>461</height>
                    </rect>
                   </property>
@@ -972,6 +1095,9 @@ border-color: rgb(190, 229, 235);</string>
                   </property>
                   <property name="frameShadow">
                    <enum>QFrame::Plain</enum>
+                  </property>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QAbstractScrollArea::AdjustIgnored</enum>
                   </property>
                  </widget>
                 </widget>

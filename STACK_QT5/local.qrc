@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>icons/unflagged.png</file>
     <file>icons/cil-3d.png</file>
     <file>icons/cil-4k.png</file>
     <file>icons/cil-airplay.png</file>
@@ -176,8 +177,6 @@
     <file>icons/unordered-list.png</file>
     <file>icons/numbered-list.png</file>
   </qresource>
-  <qresource prefix="images">
-
-  </qresource>
+  <qresource prefix="images"/>
   <qresource/>
 </RCC>
