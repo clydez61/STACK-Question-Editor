@@ -187,7 +187,7 @@ class StackSubWindow(NodeEditorWidget):
 
     def treeDeserialize(self, data):
         self.PRTValue = data['PRTValue']
-        self.feedbackVar = data['feedbackvar']
+        self.feedbackVar = data['feedbackVar']
 
     def serialize(self):
         nodeData = self.scene.serialize()

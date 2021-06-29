@@ -20,18 +20,17 @@ list = []
 WINDOW_SIZE = 0
 selectedfonts = {}
 
-class MainWindow(QtWidgets.QMainWindow):
-    nodeEditorModified = pyqtSignal()
-   
-    
+class MainWindow(QtWidgets.QMainWindow):    
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         
+        self.filename = None
+
         self.Dialog = Dialog()
-        self.setWindowTitle('New file - unsaved[*]')
-        self.actionSave.triggered.connect(lambda:self.save())
+        self.setTitle()
+        self.actionSave.triggered.connect(lambda:self.onSave())
         self.actionOpen.triggered.connect(lambda:self.onOpen())
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
@@ -53,11 +52,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.highlight3 = syntax_pars.PythonHighlighter(self.preview_box.document())
         self.tree_btn.clicked.connect(self.updateEditMenu)
         self.preview_btn.clicked.connect(self.preview)
-
-
-       
-
-        
 
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
         self.savefile = None
@@ -105,9 +99,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createActions()
         self.createMenus()
         self.updateMenus()
-
-        
-
 
         self.checkModified()
         self.menuEdit.aboutToShow.connect(self.updateEditMenu)
@@ -163,10 +154,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ttext_color_btn.clicked.connect(self.setColor)
         self.tbcolor_btn.clicked.connect(self.setBackgroundColor)
 
-
-
-
         self.show()
+
+    def setTitle(self):
+        title = "STACK Question Editor - "
+        title = title + (os.path.basename(self.filename) + '[*]' if self.filename is not None else "New Question[*]")
+
+        self.setWindowTitle(title)
 
     def onOpen(self):
         try:
@@ -177,30 +171,40 @@ class MainWindow(QtWidgets.QMainWindow):
                     data = json.loads(file.read())
                     self.deserialize(data['nonNodeData'])
                     self.nodeEditor.deserialize(data['nodeData'])
+                    self.filename = fname
+
+                self.setTitle()
+                self.setWindowModified(False)
         except Exception as e: dumpException(e)
+
+    def onSave(self):
+        data = self.combineNonNodeAndNodeData()
+        if not self.isWindowModified():
+            return
+        else:
+            if self.filename is not None:
+                self.saveToFile(data, self.filename)
+            else:
+                self.onSaveAs()
 
     def onSaveAs(self):
         try:
-            nonNodeData = self.serialize()
-            nodeData = self.nodeEditor.serialize()
-            data = OrderedDict([
-                ('nonNodeData', nonNodeData),
-                ('nodeData', nodeData), 
-            ])
+            data = self.combineNonNodeAndNodeData()
             fname, filter = QFileDialog.getSaveFileName(self, 'Save STACK question to file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
             if fname == '': return False
 
             self.setWindowTitle(fname)
             self.saveToFile(data, fname)
+            self.filename = fname
             return True
         except Exception as e: dumpException(e)
 
     def saveToFile(self, data, filename):
         with open(filename, 'w') as file:
             file.write(json.dumps(data, indent=4))
-            print("saving to", filename, "was successful.")
+            #print("saving to", filename, "was successful.")
             self.setWindowModified(False)
-            self.filename = filename
+
     def handleSelectionChanged(self):
         cursor = self.qtext_box.textCursor()
         return [cursor.selectionStart(), cursor.selectionEnd()];
@@ -256,7 +260,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def bulletList(self):
         cursor = self.qtext_box.textCursor()
         cursor.insertList(QtGui.QTextListFormat.ListDisc)
-
 
     def preview(self):
         QApplication.processEvents()
@@ -583,8 +586,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.row = row
         self.column = column
 
-
-
     def checkModified(self):
         #set up checks to see if window is modified
         self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
@@ -597,7 +598,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
-        self.nodeEditorModified.connect(lambda:self.setWindowModified(True))
+        self.nodeEditor.nodeEditorModified.connect(lambda:self.setWindowModified(True))
 
     def createActions(self):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
@@ -646,24 +647,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onFileNew(self):
         try:
-            subwnd = self.createMdiChild()
+            subwnd = self.nodeEditor.createMdiChild()
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e: dumpException(e)
-
-    
-
-
-    def createMdiChild(self, child_widget=None):
-        nodeeditor = child_widget if child_widget is not None else StackSubWindow()
-        subwnd = self.nodeEditor.mdiArea.addSubWindow(nodeeditor)
-        subwnd.setWindowIcon(self.empty_icon)
-        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
-        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
-        nodeeditor.addCloseEventListener(self.nodeEditor.onSubWndClose)
-        return subwnd
 
     def htmltoggle(self):
         textformat = self.qtext_box.toPlainText()        
@@ -915,6 +902,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tag_box.setPlainText(data['tags'])
         except Exception as e: dumpException(e)
 
+    def combineNonNodeAndNodeData(self):
+        nonNodeData = self.serialize()
+        nodeData = self.nodeEditor.serialize()
+        data = OrderedDict([
+            ('nonNodeData', nonNodeData),
+            ('nodeData', nodeData), 
+        ])
+        return data
+
 class Dialog(QtWidgets.QDialog):
     def __init__(self):
         super(Dialog, self).__init__()
@@ -951,10 +947,3 @@ if __name__ == '__main__':
     
     window.show()
     sys.exit(app.exec_())   
-
-
-        
-
-
-
-

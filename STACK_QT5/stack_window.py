@@ -213,6 +213,11 @@ class StackWindow(NodeEditorWindow):
         #     action.triggered.connect(self.windowMapper.map)
         #     self.windowMapper.setMapping(action, window)
 
+    def mouseReleaseEvent(self, event):
+        print("Test") 
+        self.updateEditorPropertiesBox()
+        super().mouseReleaseEvent(event)
+
     def updateEditorPropertiesBox(self):
         currentSubWnd = self.getCurrentNodeEditorWidget()
         if currentSubWnd is None:
@@ -314,7 +319,7 @@ class StackWindow(NodeEditorWindow):
     def onSubWndClose(self, widget, event):
         existing = self.findMdiChild(widget.filename)
         self.mdiArea.setActiveSubWindow(existing)
-
+        
         if self.maybeSave():
             event.accept()
         else:
