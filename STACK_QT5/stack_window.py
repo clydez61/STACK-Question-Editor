@@ -100,6 +100,7 @@ class StackWindow(NodeEditorWindow):
     def onFileNew(self):
         try:
             subwnd = self.createMdiChild()
+            subwnd.showMaximized()
             subwnd.widget().fileNew()
             subwnd.show()
         except Exception as e: dumpException(e)
@@ -214,7 +215,6 @@ class StackWindow(NodeEditorWindow):
         #     self.windowMapper.setMapping(action, window)
 
     def mouseReleaseEvent(self, event):
-        print("Test") 
         self.updateEditorPropertiesBox()
         super().mouseReleaseEvent(event)
 
@@ -310,11 +310,24 @@ class StackWindow(NodeEditorWindow):
         # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
         # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        nodeeditor.treeName = self.getNewSubWindowName()
         nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditorPropertiesBox)
         nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
         nodeeditor.nodeDataModified.connect(self.displayNodeData)
         nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
+
+    def getNewSubWindowName(self):
+        name = "New Tree"
+        if self.findChildViaTreeName(name) is None:
+            return name
+        
+        i = 1
+        while True:
+            name = "New Tree - " + str(i)
+            if self.findChildViaTreeName(name) is None:
+                return name
+            i = i+1
 
     def onSubWndClose(self, widget, event):
         existing = self.findMdiChild(widget.filename)
@@ -331,6 +344,12 @@ class StackWindow(NodeEditorWindow):
                 return window
         return None
 
+    def findChildViaTreeName(self, name):
+        for window in self.mdiArea.subWindowList():
+            if window.widget().treeName == name:
+                return window
+        return None
+
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
@@ -344,4 +363,7 @@ class StackWindow(NodeEditorWindow):
     def deserialize(self, data, hashmap=[]):
         for subWndData in data:
             subwindow = self.createMdiChild()
-            subwindow.deserialize(subWndData)
+            subwindow.showMaximized()
+            subwindow.widget().deserialize(subWndData)
+            subwindow.widget().scene.history.clear()
+            subwindow.widget().has_been_modified = False

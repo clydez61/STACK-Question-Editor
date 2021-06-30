@@ -13,15 +13,16 @@ DEBUG_CONTEXT = False
 
 class StackSubWindow(NodeEditorWidget):
     nodeDataModified = pyqtSignal(dict)
+
     def __init__(self):
         super().__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
 
-        self.setTitle()
-
         self.initNewNodeActions()
 
         self.initData()
+
+        self.setTitle()
 
         self.scene.addHasBeenModifiedListener(self.setTitle)
         self.scene.addDragEnterListener(self.onDragEnter)
@@ -31,6 +32,7 @@ class StackSubWindow(NodeEditorWidget):
         self._close_event_listeners = []
 
     def initData(self):
+        self._treeName = ''
         self.PRTValue = ''
         self.feedbackVar = ''
 
@@ -55,7 +57,9 @@ class StackSubWindow(NodeEditorWidget):
         return context_menu
 
     def setTitle(self):
-        self.setWindowTitle(self.getUserFriendlyFilename())
+        name = self.treeName
+        name = name + ("*" if self.isModified() else "")
+        self.setWindowTitle(name)
 
     def addCloseEventListener(self, callback):
         self._close_event_listeners.append(callback)
@@ -181,13 +185,25 @@ class StackSubWindow(NodeEditorWidget):
 
     def treeSerialize(self):
         res = OrderedDict()
+        res['treeName'] = self.treeName
         res['PRTValue'] = self.PRTValue
         res['feedbackVar'] = self.feedbackVar
         return res
 
     def treeDeserialize(self, data):
+        self.treeName = data['treeName']
         self.PRTValue = data['PRTValue']
         self.feedbackVar = data['feedbackVar']
+
+    @property
+    def treeName(self):
+        return self._treeName
+
+    @treeName.setter
+    def treeName(self, name):
+        self._treeName = name
+        self.setTitle()
+
 
     def serialize(self):
         nodeData = self.scene.serialize()
@@ -201,4 +217,7 @@ class StackSubWindow(NodeEditorWidget):
         self.treeDeserialize(data['treeData'])
         self.scene.deserialize(data['nodeData'])
 
-        
+    def exportSerialize(self):
+        nodeData = self.scene.serialize()
+        for node in nodeData:
+            print(node)

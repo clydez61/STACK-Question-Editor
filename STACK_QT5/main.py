@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+
 #from Input_Dialog import Dialog
 import resource
 import json
@@ -19,6 +20,8 @@ import syntax_pars
 list = []
 WINDOW_SIZE = 0
 selectedfonts = {}
+
+# TODO: Match QText box size with the blue box in previewer
 
 class MainWindow(QtWidgets.QMainWindow):    
     def __init__(self):
@@ -118,8 +121,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_header.mouseMoveEvent = moveWindow    
         self.left_menu_toggle_btn.clicked.connect(lambda: self.slideLeftMenu())    
 
-      
-
         #Setting up rich text bar
         
         
@@ -163,6 +164,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(title)
 
     def onOpen(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             fname, filter = QFileDialog.getOpenFileName(self, 'Open STACK question from file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
 
@@ -170,12 +172,22 @@ class MainWindow(QtWidgets.QMainWindow):
                 with open(fname, 'r') as file:
                     data = json.loads(file.read())
                     self.deserialize(data['nonNodeData'])
+
+                    for subwnd in self.nodeEditor.mdiArea.subWindowList():
+                        subwnd.close()
+
+                    currentWidget = self.stackedWidget.currentWidget()
+                    self.stackedWidget.setCurrentWidget(self.tree_page)
                     self.nodeEditor.deserialize(data['nodeData'])
                     self.filename = fname
+                    self.stackedWidget.setCurrentWidget(currentWidget)
 
                 self.setTitle()
                 self.setWindowModified(False)
         except Exception as e: dumpException(e)
+
+        self.clearFocus()
+        QApplication.restoreOverrideCursor()
 
     def onSave(self):
         data = self.combineNonNodeAndNodeData()
@@ -193,9 +205,9 @@ class MainWindow(QtWidgets.QMainWindow):
             fname, filter = QFileDialog.getSaveFileName(self, 'Save STACK question to file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
             if fname == '': return False
 
-            self.setWindowTitle(fname)
             self.saveToFile(data, fname)
             self.filename = fname
+            self.setTitle()
             return True
         except Exception as e: dumpException(e)
 
@@ -668,7 +680,6 @@ class MainWindow(QtWidgets.QMainWindow):
             
             self.qtext_box.setHtml(textformat)
 
-
     def htmltoggle2(self):
         textformat = self.gfeedback_box.toPlainText()        
         if self.html_btn2.isChecked():
@@ -844,7 +855,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.restoreButton.setIcon(QtGui.QIcon(u":/icons/icons/cil-window-maximize.png"))#Show maximize icon
 
     def mousePressEvent(self, event):
-       
         # Get the current position of the mouse
         self.clickPosition = event.globalPos()
     
@@ -868,7 +878,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEndValue(newWidth)#end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
-
 
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
