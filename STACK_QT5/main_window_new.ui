@@ -594,19 +594,12 @@ background-color: rgb(51, 51, 51);
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="tsize_box">
-                   <property name="maximumSize">
-                    <size>
-                     <width>50</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
+                  <widget class="QComboBox" name="tsize_box">
                    <property name="toolTip">
                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font Size&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">color: rgb(255, 255, 222);
-</string>
+                    <string notr="true">color: rgb(255, 255, 222);</string>
                    </property>
                   </widget>
                  </item>
@@ -668,6 +661,9 @@ background-color: rgb(51, 51, 51);
                     <iconset>
                      <normaloff>icons/bold.png</normaloff>icons/bold.png</iconset>
                    </property>
+                   <property name="shortcut">
+                    <string>Ctrl+B</string>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -688,6 +684,9 @@ background-color: rgb(51, 51, 51);
                     <iconset>
                      <normaloff>icons/italic.png</normaloff>icons/italic.png</iconset>
                    </property>
+                   <property name="shortcut">
+                    <string>Ctrl+I</string>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -707,6 +706,9 @@ background-color: rgb(51, 51, 51);
                    <property name="icon">
                     <iconset>
                      <normaloff>icons/underline.png</normaloff>icons/underline.png</iconset>
+                   </property>
+                   <property name="shortcut">
+                    <string>Ctrl+U</string>
                    </property>
                   </widget>
                  </item>
@@ -927,7 +929,7 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                    <x>0</x>
                    <y>0</y>
                    <width>496</width>
-                   <height>479</height>
+                   <height>477</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1278,7 +1280,7 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>63</width>
+                   <width>80</width>
                    <height>18</height>
                   </rect>
                  </property>
@@ -1356,7 +1358,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="styleSheet">

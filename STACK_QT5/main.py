@@ -14,20 +14,31 @@ from stack_sub_window import *
 from stack_drag_listbox import *
 from stack_conf import *
 from stack_conf_nodes import *
-
+from stacked_input import *
 import syntax_pars
 list = []
 WINDOW_SIZE = 0
 selectedfonts = {}
+selectedsizes = {}
+syntax_dict = {}
+float_dict = {}
+lowestterm_dict = {}
+hideanswer_dict = {}
+allowempty_dict = {}
+simplify_dict = {}
 
-class MainWindow(QtWidgets.QMainWindow):    
+class MainWindow(QtWidgets.QMainWindow):
+    
+   
+    
     def __init__(self):
         super(MainWindow,self).__init__()
         uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         
-        self.filename = None
+        
 
+        self.filename = None
         self.Dialog = Dialog()
         self.setTitle()
         self.actionSave.triggered.connect(lambda:self.onSave())
@@ -60,13 +71,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.NewName = None
         self.NewSize = None
         self.NewAns = None
-        self.MoreButton = None
+        self.MoreButton = QPushButton
         self.dialog_syntax = None
-        self.history = None
+     
         self.row = None
         self.column = None
         self.NewLayout = None
         self.NewGrid = None
+        self.NewSyntax = None
+        self.NewFloat = None
+        self.Newlowest = None
+        self.HideAnswer = None
+        self.AllowEmpty = None
+        self.Simplify = None
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -125,14 +142,16 @@ class MainWindow(QtWidgets.QMainWindow):
         
         #self.qtext_box.checkFontSignal.connect(self.checkFont)
         self.qtext_box.selectionChanged.connect(self.updatefont)
+        self.qtext_box.selectionChanged.connect(self.updatesize)
+        
         self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
         
         self.tfont_box.activated.connect(self.setFont)
+    
+
+        self.tsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24"])
         
-
-
-        self.tsize_box.setValue(14)
-        self.tsize_box.valueChanged.connect(self.setFontSize)
+        self.tsize_box.activated.connect(self.setFontSize)
 
         self.tbold_btn.setCheckable(True)
         self.tbold_btn.toggle()
@@ -175,6 +194,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 self.setTitle()
                 self.setWindowModified(False)
+
         except Exception as e: dumpException(e)
 
     def onSave(self):
@@ -213,11 +233,10 @@ class MainWindow(QtWidgets.QMainWindow):
         font = self.tfont_box.currentText()
         self.qtext_box.setCurrentFont(QFont(font)) 
         selectedfonts[self.tfont_box.currentText()] = self.handleSelectionChanged()
-        for textfont, cursorindex in selectedfonts.items():
-            print(cursorindex)
+
         #just set for the following cursor locations, set font to ""
 
-        print(selectedfonts)
+
 
         
        
@@ -228,12 +247,25 @@ class MainWindow(QtWidgets.QMainWindow):
         for textfont, cursorindex in selectedfonts.items():
             if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
                 self.tfont_box.setCurrentText(textfont)
+                break
             else:
                 self.tfont_box.setCurrentText('Arial')
-        
+  
+
     def setFontSize(self):
-        value = self.tsize_box.value()
-        self.qtext_box.setFontPointSize(value)
+        value = self.tsize_box.currentText()
+        self.qtext_box.setFontPointSize(float(value))
+        selectedsizes[self.tsize_box.currentText()] = self.handleSelectionChanged()
+        print(selectedsizes)
+
+    def updatesize(self):
+        cursor2 = self.qtext_box.textCursor()
+        for textsize, cursorindex in selectedsizes.items():
+            if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
+                self.tsize_box.setCurrentText(textsize)
+                break
+            else:
+                self.tsize_box.setCurrentText('12')
 
     def setColor(self):         
         color = QColorDialog.getColor()
@@ -306,141 +338,185 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
     def expand(self,row,column):
+        exec(f'global more_btn_checked; more_btn_checked = self.input_btn{str(row)}_{str(column)}.isChecked()')
+        if more_btn_checked == True:
+            exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
+
+            NewSyntax = f"input_syntax{str(row)}_{str(column)}"
+            NewFloat = f"input_float{str(row)}_{str(column)}"
+            NewSyntaxL = f"label_syntax{str(row)}_{str(column)}"
+            NewFloatL = f"label_float{str(row)}_{str(column)}"
+            NewlowestL = f"label_lowestTerms{str(row)}_{str(column)}"
+            Newlowest =  f"input_lowestTerms{str(row)}_{str(column)}"
+            
+            
+            HideAnswer = f"input_hideanswer{str(row)}_{str(column)}"
+            AllowEmpty = f"input_allowempty{str(row)}_{str(column)}"
+            Simplify = f"input_simplify{str(row)}_{str(column)}"
+            NewextraOptions = f"label_extraOptions{str(row)}_{str(column)}"
+            symbols = {"self": self,"QLabel":QLabel,"QTextEdit":QTextEdit,"Qt":Qt,"QComboBox":QComboBox}
+
+            
+            self.NewSyntax = NewSyntax
+            self.NewFloat = NewFloat
+            self.Newlowest = Newlowest
+            self.HideAnswer = HideAnswer
+            self.AllowEmpty = AllowEmpty
+            self.Simplify = Simplify
+
+            exec(f'self.input_btn{row}_{column}.setParent(None)')
+            
+            exec(f'self.label_syntax = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,NewSyntaxL,self.label_syntax)
+            self.label_syntax.setObjectName(u"label_size")
+            self.label_syntax.setText("Syntax Hints")       
+            self.label_syntax.setMaximumSize(QSize(16777215, 30))
+            self.label_syntax.setAlignment(Qt.AlignVCenter)
+            #self.formLayout_2.addRow(5, QFormLayout.LabelRole, self.label_syntax)
+
+            exec(f'self.input_syntax = QTextEdit(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,NewSyntax,self.input_syntax)
+            self.input_syntax.setObjectName(u'input_size')
+            self.input_syntax.setMaximumSize(QSize(16777215, 100))
         
-        
-        exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_syntax,self.input_syntax)',symbols)
+            
+            #self.formLayout_2.addRow(self.label_syntax,self.input_frame)
+            #self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.input_syntax)
 
-        NewSyntax = f"input_syntax{str(row)}_{str(column)}"
-        NewFloat = f"input_float{str(row)}_{str(column)}"
-        #NewSyntaxL = f"label_syntax{str(row)}_{str(column)}"
-        #NewFloatL = f"label_float{str(row)}_{str(column)}"
-        #NewlowestL = f"label_lowestTerms{str(row)}_{str(column)}"
-        Newlowest =  f"input_lowestTerms{str(row)}_{str(column)}"
-        NewGrid = f"NewGrid{str(row)}_{str(column)}"
-        HideButton =  f"hide_btn{str(row)}_{str(column)}"
+            #self.label_float = QLabel(self.input_frame)
+            exec(f'self.label_float = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,NewFloatL,self.label_float)
+            self.label_float.setObjectName(u"input_float")
+            self.label_float.setText("Forbid Float")
 
-        symbols = {"self": self,"QLabel":QLabel,"QTextEdit":QTextEdit,"Qt":Qt,}
+            
+
+            #self.input_float = QComboBox(self.input_frame)
+            exec(f'self.input_float = QComboBox(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,NewFloat,self.input_float)
+            self.input_float.addItem(u"Yes")
+            self.input_float.addItem(u"No")
+            
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_float,self.input_float)',symbols)
+            
+            #self.label_lowestTerms = QLabel(self.input_frame)
+            exec(f'self.label_lowestTerms = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,NewlowestL,self.label_lowestTerms)   
+            self.label_lowestTerms.setText("Lowest Terms")
+            
+
+            #self.input_lowestTerms = QComboBox(self.input_frame)
+            exec(f'self.input_lowestTerms = QComboBox(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,Newlowest,self.input_lowestTerms)
+            self.input_lowestTerms.addItem(u"No")
+            self.input_lowestTerms.addItem(u"Yes")
+
+            
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_lowestTerms,self.input_lowestTerms)',symbols)
+
+            #self.label_extraOptions = QLabel(self.input_frame)
+            exec(f'self.label_extraOptions = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
+            setattr(self,NewextraOptions,self.label_extraOptions)
+            
+                
+            self.label_extraOptions.setText("Extra Options")
+
+
+            
+            
+            self.input_hideanswer = QCheckBox(self.input_frame)
+            setattr(self,HideAnswer,self.input_hideanswer)
+            self.input_hideanswer.setObjectName(u"input_hideanswer")
+            self.input_hideanswer.setText("Hide Answer")
+
+
+            self.input_allowempty = QCheckBox(self.input_frame)
+            setattr(self,AllowEmpty,self.input_allowempty)
+            self.input_allowempty.setObjectName(u"input_allowempty")
+            self.input_allowempty.setText("Allow Empty")
+            
+            self.input_simplify = QCheckBox(self.input_frame)
+            setattr(self,Simplify,self.input_simplify)
+            self.input_simplify.setText("Simplify")
+            
 
 
 
+            
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_extraOptions,self.input_hideanswer)',symbols)
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_allowempty)',symbols)
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_simplify)',symbols)
 
-        exec(f'self.input_btn{row}_{column}.hide()')
-        exec(f'self.label_syntax = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
-      
-        self.label_syntax.setObjectName(u"label_size")
-        self.label_syntax.setText("Syntax Hints")       
-        self.label_syntax.setMaximumSize(QSize(16777215, 30))
-        self.label_syntax.setAlignment(Qt.AlignVCenter)
-        #self.formLayout_2.addRow(5, QFormLayout.LabelRole, self.label_syntax)
+            exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.input_btn{row}_{column})',symbols)
 
-        exec(f'self.input_syntax = QTextEdit(self.input_frame{str(row)}_{str(column)})',symbols)
-        setattr(self,NewSyntax,self.input_syntax)
-        self.input_syntax.setObjectName(u'input_size')
-        self.input_syntax.setMaximumSize(QSize(16777215, 100))
-    
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_syntax,self.input_syntax)',symbols)
-        
-        #self.formLayout_2.addRow(self.label_syntax,self.input_frame)
-        #self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.input_syntax)
 
-        self.label_float = QLabel(self.input_frame)
-     
-        self.label_float.setObjectName(u"input_float")
-        self.label_float.setText("Forbid Float")
-
-        
-
-        self.input_float = QComboBox(self.input_frame)
-        setattr(self,NewFloat,self.input_float)
-        self.input_float.addItem(u"Yes")
-        self.input_float.addItem(u"No")
-        
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_float,self.input_float)',symbols)
-
-        self.label_lowestTerms = QLabel(self.input_frame)
            
-        self.label_lowestTerms.setText("Lowest Terms")
+            try:
+                exec(f'self.input_syntax{str(row)}_{str(column)}.setText(syntax_dict["{str(row)}_{str(column)}"])')
+                
+                exec(f'self.input_float{str(row)}_{str(column)}.setCurrentText(float_dict["{str(row)}_{str(column)}"])')
+                exec(f'self.input_lowestTerms{str(row)}_{str(column)}.setCurrentText(lowestterm_dict["{str(row)}_{str(column)}"])')
+                if hideanswer_dict[f"{str(row)}_{str(column)}"] == True:
+                    exec(f'self.input_hideanswer{str(row)}_{str(column)}.setChecked(True)')
+                else:
+                    exec(f'self.input_hideanswer{str(row)}_{str(column)}.setChecked(False)')
+                if allowempty_dict[f"{str(row)}_{str(column)}"] == True:
+                    exec(f'self.input_allowempty{str(row)}_{str(column)}.setChecked(True)')
+                else:
+                    exec(f'self.input_allowempty{str(row)}_{str(column)}.setChecked(False)')
+                if simplify_dict[f"{str(row)}_{str(column)}"] == True:
+                    exec(f'self.input_simplify{str(row)}_{str(column)}.setChecked(True)')
+                else:
+                    exec(f'self.input_simplify{str(row)}_{str(column)}.setChecked(False)')
+            except:
+                pass
+        else:
+            #save the input fields before removing
+            '''syntax_dict = {}
+            float_dict = {}
+            lowestterm_dict = {}
+            hideanswer_dict = {}
+            allowempty_dict = {}
+            simplify_dict = {}''' 
+            widgetname = f'{row}_{column}'
+            exec(f'global syntax; syntax = self.input_syntax{str(row)}_{str(column)}.toPlainText()')                               
+            syntax_dict.update({"{}".format(widgetname):syntax})
+
+            exec(f'global allow_float; allow_float = self.input_float{str(row)}_{str(column)}.currentText()')
+            float_dict.update({"{}".format(widgetname):allow_float})
+            
+            exec(f'global lowest_terms; lowest_terms = self.input_lowestTerms{str(row)}_{str(column)}.currentText()')
+            lowestterm_dict.update({"{}".format(widgetname):lowest_terms})
+
+            exec(f"global hide_answer; hide_answer = self.input_hideanswer{str(row)}_{str(column)}.isChecked()")
+            hideanswer_dict.update({"{}".format(widgetname):hide_answer})
+
+            exec(f"global allow_empty; allow_empty = self.input_allowempty{str(row)}_{str(column)}.isChecked()")
+            allowempty_dict.update({"{}".format(widgetname):allow_empty})
+
+            exec(f"global simplify; simplify = self.input_simplify{str(row)}_{str(column)}.isChecked()")
+            simplify_dict.update({"{}".format(widgetname):simplify})
+            
+            exec(f'self.label_syntax{str(row)}_{str(column)}.setParent(None)')
+            exec(f'self.input_syntax{str(row)}_{str(column)}.setParent(None)')
+
+            exec(f'self.label_float{str(row)}_{str(column)}.setParent(None)')
+            exec(f'self.input_float{str(row)}_{str(column)}.setParent(None)')
+
+            exec(f"self.label_lowestTerms{str(row)}_{str(column)}.setParent(None)")
+            exec(f"self.input_lowestTerms{str(row)}_{str(column)}.setParent(None)")
+
+            exec(f"self.input_hideanswer{str(row)}_{str(column)}.setParent(None)")
+            exec(f"self.input_allowempty{str(row)}_{str(column)}.setParent(None)")
+            exec(f"self.input_simplify{str(row)}_{str(column)}.setParent(None)")
+            exec(f"self.label_extraOptions{str(row)}_{str(column)}.setParent(None)")
+            
+
+            #exec(f"self.input")
+            #exec(f"self.hide_btn{str(row)}_{str(column)}.setText('More..')")
         
 
-        self.input_lowestTerms = QComboBox(self.input_frame)
-        setattr(self,Newlowest,self.input_lowestTerms)
-        self.input_lowestTerms.addItem(u"Yes")
-        self.input_lowestTerms.addItem(u"No")
-
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_lowestTerms,self.input_lowestTerms)',symbols)
-
-        self.label_extraOptions = QLabel(self.input_frame)
-        #setattr(self,NewExtra,self.label_lowestTerms)        
-        self.label_extraOptions.setText("Extra Options")
-
-
-        
-        setattr(self,NewGrid,self.gridLayout)
-        self.input_hideanswer = QCheckBox(self.input_frame)
-        self.input_hideanswer.setObjectName(u"input_hideanswer")
-        self.input_hideanswer.setText("Hide Answer")
-
-
-        self.input_allowempty = QCheckBox(self.input_frame)
-        self.input_allowempty.setObjectName(u"input_allowempty")
-        self.input_allowempty.setText("Allow Empty")
-        
-        self.input_simplify = QCheckBox(self.input_frame)
-        self.input_simplify.setText("Simplify")
-        
-
-
-
-        
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_extraOptions,self.input_hideanswer)',symbols)
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_allowempty)',symbols)
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_simplify)',symbols)
-
-        self.hide_btn = QPushButton(self.input_frame)
-        setattr(self,HideButton,self.hide_btn)        
-        self.hide_btn.setText(u"Hide")
-        exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.hide_btn)',symbols)
-        exec(f'self.hide_btn{str(row)}_{str(column)}.clicked.connect(lambda:self.restore({row},{column}))',symbols)
-        
-        #exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.input_allowempty)',symbols)
-        #exec(f'self.input_layout{str(row)}_{str(column)}.setAlignment(Qt.AlignRight)',symbols)
-
-        
-    def restore(self,row,column): #not sure if needed to go back?
-        
-        NewSyntax = f"input_syntax{str(row)}_{str(column)}"
-        NewFloat = f"input_float{str(row)}_{str(column)}"
-        #NewSyntaxL = f"label_syntax{str(row)}_{str(column)}"
-        #NewFloatL = f"label_float{str(row)}_{str(column)}"
-        #NewlowestL = f"label_lowestTerms{str(row)}_{str(column)}"
-        Newlowest =  f"input_lowestTerms{str(row)}_{str(column)}"
-        NewGrid = f"NewGrid{str(row)}_{str(column)}"
-        HideButton =  f"hide_btn{str(row)}_{str(column)}"
-        print(NewSyntax)
-
-        exec(f'self.input_syntax{str(row)}_{str(column)}.setParent(None)')
-        exec(f'self.input_float{str(row)}_{str(column)}.setParent(None)')
-        exec(f"self.input_lowestTerms{str(row)}_{str(column)}.setParent(None)")
-
-        #self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
-    def set(self): #action after clicking the save button , passes 2nd window info to 1st window
-        QApplication.processEvents()
-        #self.connectClass = Dialog()
-        syntax_content = {}
-        
-        for index, elem in enumerate(self.inputs):
-            rows, lastrow = divmod(index, 4)                            
-            self.Dialog.new_dialog(rows,lastrow)
-            #index = 2, added 2
-            exec(f'current_syntax = self.Dialog.input_syntax{rows}_{lastrow}.toPlainText()') #retrieve syntax hint
-
-            #exec(f'syntax_content{rows}_{lastrow} = []; syntax_content{rows}_{lastrow}.append(current_syntax) ')
-
-            #exec(f'print(self.connectClass.input_float{rows}_{lastrow}.currentText())')
-        
-        #exec(f'print(syntax_content{rows}_{lastrow})')
-        
-        self.Dialog.close()   
 
     def UpdateInput(self):
         QApplication.processEvents()
@@ -456,7 +532,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.addInput(rows,lastrow)
             
             #exec(f'self.input_btn{row}_{column}.clicked.connect(lambda: self.expand({row},{column}))',symbols) 
-            exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols)        
+            exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols)   
+                  
             exec(f'self.input_name{rows}_{lastrow}.setText("{elem[8:-2]}")')
             exec(f'self.input_size{rows}_{lastrow}.setText("5")')
         
@@ -514,7 +591,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_name.setObjectName(u'input_name')
         self.input_name.setMaximumSize(QSize(16777215, 30))
 
-        
+        print(NewFrame)
        
         setattr(self,NewName,self.input_name)
 
@@ -571,7 +648,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.more_btn = QPushButton(self.NewFrame)
         setattr(self,MoreButton,self.more_btn)
         self.more_btn.setObjectName(u"more_btn")
-        self.more_btn.setText(u"More..")
+        self.more_btn.setText(u"More..")        
+        self.more_btn.setCheckable(True)
+        
+
+
         symbols = {"self": self}
         
         
@@ -581,7 +662,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.more_btn)
 
         
-        #self.gridLayout_2.addWidget(self.input_frame, 1, 0, 1, 1)
+        
         self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
         self.row = row
         self.column = column
