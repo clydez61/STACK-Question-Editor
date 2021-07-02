@@ -22,6 +22,12 @@ selectedfonts = {}
 selectedsizes = {}
 syntax_dict = {}
 float_dict = {}
+
+#retrieve input info
+varname_dict = {}
+vartype_dict = {}
+varans_dict = {}
+varboxsize_dict = {}
 lowestterm_dict = {}
 hideanswer_dict = {}
 allowempty_dict = {}
@@ -45,7 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionOpen.triggered.connect(lambda:self.onOpen())
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
-        
+        self.actionTemporary_save.triggered.connect(lambda:self.retrieveInput())
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
@@ -71,9 +77,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.NewName = None
         self.NewSize = None
         self.NewAns = None
+        self.NewType = None
         self.MoreButton = QPushButton
         self.dialog_syntax = None
-     
+        self.widgetname = None
         self.row = None
         self.column = None
         self.NewLayout = None
@@ -309,7 +316,7 @@ class MainWindow(QtWidgets.QMainWindow):
             qtext_code = qtext_code.replace(elements,"{" + elements + "}")
         #self.preview_box.setStyleSheet("color: rgb(51, 51, 51);")
         
-        print(qtext_code)
+        
         self.preview_box.setText(qtext_code)
 
         
@@ -338,6 +345,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
     def expand(self,row,column):
+
         exec(f'global more_btn_checked; more_btn_checked = self.input_btn{str(row)}_{str(column)}.isChecked()')
         if more_btn_checked == True:
             exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
@@ -439,20 +447,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.input_simplify = QCheckBox(self.input_frame)
             setattr(self,Simplify,self.input_simplify)
             self.input_simplify.setText("Simplify")
-            
-
-
-
-            
+                       
             exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_extraOptions,self.input_hideanswer)',symbols)
             exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_allowempty)',symbols)
             exec(f'self.input_layout{str(row)}_{str(column)}.addRow("",self.input_simplify)',symbols)
 
             exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.input_btn{row}_{column})',symbols)
 
+            exec(f'self.input_btn{str(row)}_{str(column)}.setText("Save")',symbols)
 
-           
+            
+            
             try:
+                
                 exec(f'self.input_syntax{str(row)}_{str(column)}.setText(syntax_dict["{str(row)}_{str(column)}"])')
                 
                 exec(f'self.input_float{str(row)}_{str(column)}.setCurrentText(float_dict["{str(row)}_{str(column)}"])')
@@ -472,32 +479,13 @@ class MainWindow(QtWidgets.QMainWindow):
             except:
                 pass
         else:
+            
             #save the input fields before removing
-            '''syntax_dict = {}
-            float_dict = {}
-            lowestterm_dict = {}
-            hideanswer_dict = {}
-            allowempty_dict = {}
-            simplify_dict = {}''' 
-            widgetname = f'{row}_{column}'
-            exec(f'global syntax; syntax = self.input_syntax{str(row)}_{str(column)}.toPlainText()')                               
-            syntax_dict.update({"{}".format(widgetname):syntax})
-
-            exec(f'global allow_float; allow_float = self.input_float{str(row)}_{str(column)}.currentText()')
-            float_dict.update({"{}".format(widgetname):allow_float})
+            self.normal_dict_save(row,column)
+            self.expand_dict_save(row,column)
             
-            exec(f'global lowest_terms; lowest_terms = self.input_lowestTerms{str(row)}_{str(column)}.currentText()')
-            lowestterm_dict.update({"{}".format(widgetname):lowest_terms})
+            exec(f'self.input_btn{str(row)}_{str(column)}.setText("More..")')
 
-            exec(f"global hide_answer; hide_answer = self.input_hideanswer{str(row)}_{str(column)}.isChecked()")
-            hideanswer_dict.update({"{}".format(widgetname):hide_answer})
-
-            exec(f"global allow_empty; allow_empty = self.input_allowempty{str(row)}_{str(column)}.isChecked()")
-            allowempty_dict.update({"{}".format(widgetname):allow_empty})
-
-            exec(f"global simplify; simplify = self.input_simplify{str(row)}_{str(column)}.isChecked()")
-            simplify_dict.update({"{}".format(widgetname):simplify})
-            
             exec(f'self.label_syntax{str(row)}_{str(column)}.setParent(None)')
             exec(f'self.input_syntax{str(row)}_{str(column)}.setParent(None)')
 
@@ -512,16 +500,81 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f"self.input_simplify{str(row)}_{str(column)}.setParent(None)")
             exec(f"self.label_extraOptions{str(row)}_{str(column)}.setParent(None)")
             
+            
+    def expand_dict_save(self,row,column):
+        QApplication.processEvents()
+        widgetname = f'{row}_{column}'
+        exec(f'global syntax; syntax = self.input_syntax{str(row)}_{str(column)}.toPlainText()')                               
+        syntax_dict.update({"{}".format(widgetname):syntax})
 
-            #exec(f"self.input")
-            #exec(f"self.hide_btn{str(row)}_{str(column)}.setText('More..')")
+        exec(f'global allow_float; allow_float = self.input_float{str(row)}_{str(column)}.currentText()')
+        float_dict.update({"{}".format(widgetname):allow_float})
+        
+        exec(f'global lowest_terms; lowest_terms = self.input_lowestTerms{str(row)}_{str(column)}.currentText()')
+        lowestterm_dict.update({"{}".format(widgetname):lowest_terms})
+
+        exec(f"global hide_answer; hide_answer = self.input_hideanswer{str(row)}_{str(column)}.isChecked()")
+        hideanswer_dict.update({"{}".format(widgetname):hide_answer})
+
+        exec(f"global allow_empty; allow_empty = self.input_allowempty{str(row)}_{str(column)}.isChecked()")
+        allowempty_dict.update({"{}".format(widgetname):allow_empty})
+
+        exec(f"global simplify; simplify = self.input_simplify{str(row)}_{str(column)}.isChecked()")
+        simplify_dict.update({"{}".format(widgetname):simplify})                  
+            
         
 
 
+        self.widgetname = widgetname
+
+    def normal_dict_save(self,row,column):
+        QApplication.processEvents()
+        widgetname = f'{row}_{column}'
+
+        exec(f"global varname; varname = self.input_name{str(row)}_{str(column)}.toPlainText()")
+        varname_dict.update({"{}".format(widgetname):varname})
+
+
+        exec(f"global vartype; vartype = self.input_type{str(row)}_{str(column)}.currentText()")
+        vartype_dict.update({"{}".format(widgetname):vartype})
+
+        exec(f"global varboxsize; varboxsize = self.input_size{str(row)}_{str(column)}.toPlainText()")
+        varboxsize_dict.update({"{}".format(widgetname):varboxsize})
+
+        exec(f"global varans; varans = self.input_ans{str(row)}_{str(column)}.toPlainText()")
+        varans_dict.update({"{}".format(widgetname):varans})
+        
+        
+        
+        
+
+    def retrieveInput(self):
+        #copy this line to your save function,before you call dicts
+        for i in range(self.row+1):
+            for j in range(self.column+1):
+                QApplication.processEvents()
+                self.normal_dict_save(i,j)
+                try:
+                    self.expand_dict_save(i,j)
+                except:
+                    pass
+        
+        # I made dictionaries for each term it will automatically update as user fill in,
+        # you just need to call them, here below is the list of dicts, the key name is in the format of "row"_"column"
+        # this function "retreieveInput" currently binded to the "Help -> Temporary save" on the menubar, feel free to remove
+        # Also now you can type whatever input name you want inside [[]], changed it 
+
+        print(syntax_dict,float_dict,lowestterm_dict, hideanswer_dict ,allowempty_dict ,simplify_dict )
+        print(varname_dict,vartype_dict,varans_dict,varboxsize_dict)
+        
+        print('input retrieved')
+        
+
     def UpdateInput(self):
         QApplication.processEvents()
+        
         current_text = self.qtext_box.toPlainText()
-        inputs = re.findall(r'\[\[input:[a-zA-z0-9]+\]\]', current_text) 
+        inputs = re.findall(r'\[\[[\w-]+\]\] ', current_text) 
         symbols = {"self": self}
         try:
             exec(f'self.input_frame.setParent(None)')
@@ -531,12 +584,15 @@ class MainWindow(QtWidgets.QMainWindow):
             rows, lastrow = divmod(index, 4)                            
             self.addInput(rows,lastrow)
             
-            #exec(f'self.input_btn{row}_{column}.clicked.connect(lambda: self.expand({row},{column}))',symbols) 
-            exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols)   
-                  
-            exec(f'self.input_name{rows}_{lastrow}.setText("{elem[8:-2]}")')
-            exec(f'self.input_size{rows}_{lastrow}.setText("5")')
-        
+            exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols) 
+            widgetname2 = f'{rows}_{lastrow}'              
+            
+            self.input_name.setText(elem[2:-2])            
+            self.input_size.setText("5")
+            
+            #self.input_size.toPlainText() for Box Size
+            #unicode(self.input_type.currentText()) for Input Type
+            
         
         #To store or save user input fo "input" section:
         #self.input_name.toPlainText() for Name
@@ -563,6 +619,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.NewName = NewName
         self.NewSize = NewSize
         self.NewAns = NewAns
+        self.NewType = NewType
         self.MoreButton = MoreButton
         self.NewLayout = NewLayout
         self.input_frame = QFrame(self.ScrollPage)
@@ -578,6 +635,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ScrollPage.setStyleSheet(u"#QFrame{border:2px solid rgb(255,0,0)}")
         self.formLayout_2 = QFormLayout(self.input_frame)
         self.formLayout_2.setObjectName(u"formLayout_2")
+
         setattr(self, NewLayout, self.formLayout_2)
         self.label_name = QLabel(self.input_frame)
         self.label_name.setObjectName(u"label_name")
@@ -591,7 +649,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_name.setObjectName(u'input_name')
         self.input_name.setMaximumSize(QSize(16777215, 30))
 
-        print(NewFrame)
+        
+        
        
         setattr(self,NewName,self.input_name)
 
@@ -604,6 +663,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_type)
 
         self.input_type = QComboBox(self.input_frame)
+        setattr(self,NewType,self.input_type)
         self.input_type.addItem(u"Algebraic Input")
         self.input_type.addItem(u"Checkbox")
         self.input_type.addItem(u"Drop down List")
