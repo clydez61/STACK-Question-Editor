@@ -65,8 +65,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.inputs_page))
         self.tree_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.tree_page))
         self.highlight = syntax_pars.PythonHighlighter(self.qvar_box.document())
-        self.highlight2 = syntax_pars.PythonHighlighter(self.qtext_box.document())
-        self.highlight3 = syntax_pars.PythonHighlighter(self.preview_box.document())
+        #self.highlight2 = syntax_pars.PythonHighlighter(self.qtext_box.document())
+        #self.highlight3 = syntax_pars.PythonHighlighter(self.preview_box.document())
         self.tree_btn.clicked.connect(self.updateEditMenu)
         self.preview_btn.clicked.connect(self.preview)
 
@@ -91,6 +91,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.HideAnswer = None
         self.AllowEmpty = None
         self.Simplify = None
+        self.cursor = None
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -147,9 +148,12 @@ class MainWindow(QtWidgets.QMainWindow):
         #Setting up rich text bar
         
         
-        #self.qtext_box.checkFontSignal.connect(self.checkFont)
+        
         self.qtext_box.selectionChanged.connect(self.updatefont)
+        self.qtext_box.textChanged.connect(self.resetfont)
         self.qtext_box.selectionChanged.connect(self.updatesize)
+        self.qtext_box.textChanged.connect(self.resetsize)
+        
         
         self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
         
@@ -157,7 +161,8 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
         self.tsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24"])
-        
+        self.qtext_box.setFontPointSize(float(12))
+        self.tsize_box.setCurrentText('12')
         self.tsize_box.activated.connect(self.setFontSize)
 
         self.tbold_btn.setCheckable(True)
@@ -233,46 +238,86 @@ class MainWindow(QtWidgets.QMainWindow):
             self.setWindowModified(False)
 
     def handleSelectionChanged(self):
+        
         cursor = self.qtext_box.textCursor()
+        
         return [cursor.selectionStart(), cursor.selectionEnd()];
+        
         
     def setFont(self):
         font = self.tfont_box.currentText()
+        self.qtext_box.blockSignals(True)
         self.qtext_box.setCurrentFont(QFont(font)) 
+        self.qtext_box.blockSignals(False)
         selectedfonts[self.tfont_box.currentText()] = self.handleSelectionChanged()
-
+        
+        
         #just set for the following cursor locations, set font to ""
-
-
 
         
        
         # update the text-edit
     def updatefont(self):
-        cursor2 = self.qtext_box.textCursor()
-        #print(cursor2.selectionStart(),cursor2.selectionEnd())
+        
+        cursor2 = self.qtext_box.textCursor() 
+        
         for textfont, cursorindex in selectedfonts.items():
-            if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
-                self.tfont_box.setCurrentText(textfont)
+            if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:                    
+                self.tfont_box.setCurrentText(textfont)    
+                print("setting given font")                
                 break
-            else:
-                self.tfont_box.setCurrentText('Arial')
-  
+            else:                    
+                self.tfont_box.setCurrentText("Arial")
+                print("setting arial")
 
+
+                
+        
+        
+        
+
+    def resetfont(self):
+        
+        for textfont, cursorindex in selectedfonts.items():
+            if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
+                selectedfonts[textfont] = [cursorindex[0],len(self.qtext_box.toPlainText())]
+                
+            elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
+                    
+                selectedfonts[textfont] = [-1,-1]
+                #self.tfont_box.setCurrentText("Arial")
     def setFontSize(self):
+        
         value = self.tsize_box.currentText()
+        self.qtext_box.blockSignals(True)
         self.qtext_box.setFontPointSize(float(value))
+        self.qtext_box.blockSignals(False)
         selectedsizes[self.tsize_box.currentText()] = self.handleSelectionChanged()
-        print(selectedsizes)
+        
 
     def updatesize(self):
+        
         cursor2 = self.qtext_box.textCursor()
+        
         for textsize, cursorindex in selectedsizes.items():
             if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
+                
                 self.tsize_box.setCurrentText(textsize)
+                
                 break
-            else:
+            else:               
                 self.tsize_box.setCurrentText('12')
+     
+    def resetsize(self):
+        for textsize, cursorindex in selectedsizes.items():
+            if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
+                selectedsizes[textsize] = [cursorindex[0],len(self.qtext_box.toPlainText())]
+                
+            elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
+                    
+                selectedsizes[textsize] = [-1,-1]
+                #self.tfont_box.setCurrentText("Arial")        
+        
 
     def setColor(self):         
         color = QColorDialog.getColor()
@@ -545,9 +590,6 @@ class MainWindow(QtWidgets.QMainWindow):
         varans_dict.update({"{}".format(widgetname):varans})
         
         
-        
-        
-
     def retrieveInput(self):
         #copy this line to your save function,before you call dicts
         for i in range(self.row+1):
@@ -594,11 +636,6 @@ class MainWindow(QtWidgets.QMainWindow):
             #unicode(self.input_type.currentText()) for Input Type
             
         
-        #To store or save user input fo "input" section:
-        #self.input_name.toPlainText() for Name
-        #self.input_ans.toPlainText() for Model answer
-        #self.input_size.toPlainText() for Box Size
-        #unicode(self.input_type.currentText()) for Input Type
         self.inputs = inputs    
 
             #self.addInput()
