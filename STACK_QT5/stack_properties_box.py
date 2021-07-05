@@ -12,20 +12,25 @@ from math import ceil
 class PropertiesBox(QStackedWidget):
     treeDataSignal = pyqtSignal(dict)
     nodeDataSignal = pyqtSignal(dict)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
 
     def initUI(self):
         noSubWindowLayout = QVBoxLayout()
-        noSubWindowLayout.setAlignment(Qt.AlignTop)
         noneSelectedLayout = QVBoxLayout()
         nodeSelectedLayout = QVBoxLayout()
 
         noSubWindowText = QLabel("A potential response tree has not been selected yet!")
         noSubWindowText.setWordWrap(True)
+        noSubWindowText.setAlignment(Qt.AlignTop)
         noSubWindowLayout.addWidget(noSubWindowText)
 
+        noneSelectedLayout.addWidget(QLabel("Tree Name"))
+        self.treeName = QLineEdit()
+        self.treeName.textChanged.connect(self.transmitTreeData)
+        noneSelectedLayout.addWidget(self.treeName)
         noneSelectedLayout.addWidget(QLabel("Potential Repsone Tree Mark:"))
         self.PRTValue = QLineEdit()
         self.PRTValue.textChanged.connect(self.transmitTreeData)
@@ -106,11 +111,13 @@ class PropertiesBox(QStackedWidget):
 
     def transmitTreeData(self):
         transmit = {}
+        transmit['treeName'] = self.treeName.text()
         transmit['PRTValue'] = self.PRTValue.text()
         transmit['feedbackVar'] = self.feedbackVar.toPlainText()
         self.treeDataSignal.emit(transmit)
 
     def displayTreeData(self, data):
+        self.treeName.setText(data['treeName'])
         self.PRTValue.setText(data['PRTValue'])
         self.feedbackVar.setPlainText(data['feedbackVar'])
 
