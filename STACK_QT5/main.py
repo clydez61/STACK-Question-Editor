@@ -14,7 +14,6 @@ from stack_sub_window import *
 from stack_drag_listbox import *
 from stack_conf import *
 from stack_conf_nodes import *
-from stacked_input import *
 import syntax_pars
 list = []
 WINDOW_SIZE = 0
