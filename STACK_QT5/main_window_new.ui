@@ -795,6 +795,23 @@ background-color: rgb(51, 51, 51);
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QPushButton" name="html_btn">
+                   <property name="statusTip">
+                    <string>we</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/cil-code.png</normaloff>:/icons/icons/cil-code.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -864,44 +881,6 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="2">
-               <widget class="QFrame" name="right_side_menu">
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(0, 0, 0);</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_4">
-                 <item>
-                  <widget class="QPushButton" name="html_btn">
-                   <property name="statusTip">
-                    <string>we</string>
-                   </property>
-                   <property name="whatsThis">
-                    <string/>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="local.qrc">
-                     <normaloff>:/icons/icons/cil-code.png</normaloff>:/icons/icons/cil-code.png</iconset>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
               <item row="3" column="1">
                <widget class="QPushButton" name="preview_btn">
                 <property name="styleSheet">
@@ -929,7 +908,7 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>496</width>
+                   <width>522</width>
                    <height>477</height>
                   </rect>
                  </property>
@@ -1131,12 +1110,11 @@ background-color: rgb(51, 51, 51);
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
               <item row="1" column="0">
-               <widget class="QTextEdit" name="gfeedback_box"/>
-              </item>
-              <item row="1" column="2">
-               <widget class="QFrame" name="right_side_menu2">
+               <widget class="QFrame" name="rich_text_bar_2">
                 <property name="styleSheet">
-                 <string notr="true">background-color: rgb(0, 0, 0);</string>
+                 <string notr="true">QPushButton:hover{
+	background-color: rgb(0, 92, 157);
+}</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
@@ -1144,9 +1122,243 @@ background-color: rgb(51, 51, 51);
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_5">
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QComboBox" name="gfont_box">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(255, 255, 222);
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="gsize_box">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font Size&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(255, 255, 222);</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gtext_color_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Text Color&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/text-color.png</normaloff>icons/text-color.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gbcolor_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Text Highlighting&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/background-color.png</normaloff>icons/background-color.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gbold_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bold Text&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/bold.png</normaloff>icons/bold.png</iconset>
+                   </property>
+                   <property name="shortcut">
+                    <string>Ctrl+B</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gitalic_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Italic Text&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/italic.png</normaloff>icons/italic.png</iconset>
+                   </property>
+                   <property name="shortcut">
+                    <string>Ctrl+I</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gunderline_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Underline Text&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/underline.png</normaloff>icons/underline.png</iconset>
+                   </property>
+                   <property name="shortcut">
+                    <string>Ctrl+U</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gordered_list_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ordered List&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/unordered-list.png</normaloff>icons/unordered-list.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gleft_align_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align Left&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/align-left.png</normaloff>icons/align-left.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gcenter_align_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align Center&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/align-center.png</normaloff>icons/align-center.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="gright_align_btn">
+                   <property name="maximumSize">
+                    <size>
+                     <width>40</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align Right&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>icons/align-right.png</normaloff>icons/align-right.png</iconset>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QPushButton" name="html_btn2">
+                   <property name="statusTip">
+                    <string>we</string>
+                   </property>
+                   <property name="whatsThis">
+                    <string/>
+                   </property>
                    <property name="text">
                     <string/>
                    </property>
@@ -1158,6 +1370,41 @@ background-color: rgb(51, 51, 51);
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QScrollArea" name="scrollArea_2">
+                <property name="styleSheet">
+                 <string notr="true">
+background-color: rgb(255, 243, 205);</string>
+                </property>
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>522</width>
+                   <height>477</height>
+                  </rect>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <item>
+                   <widget class="QTextBrowser" name="gpreview_box">
+                    <property name="styleSheet">
+                     <string notr="true">color: rgb(5, 32, 37);
+
+border-color: rgb(190, 229, 235);</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QTextEdit" name="gfeedback_box"/>
               </item>
               <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
                <widget class="QLabel" name="sfeedback_label">
@@ -1176,8 +1423,16 @@ background-color: rgb(51, 51, 51);
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QTextEdit" name="sfeedback_box"/>
+              <item row="3" column="1">
+               <widget class="QPushButton" name="gpreview_btn">
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(255, 255, 222);
+font: 75 14pt &quot;MS Sans Serif&quot;;</string>
+                </property>
+                <property name="text">
+                 <string>Preview</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -1281,8 +1536,8 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
+                   <width>80</width>
+                   <height>18</height>
                   </rect>
                  </property>
                  <property name="styleSheet">

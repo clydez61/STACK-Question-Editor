@@ -20,6 +20,8 @@ list = []
 WINDOW_SIZE = 0
 selectedfonts = {}
 selectedsizes = {}
+gselectedfonts = {}
+gselectedsizes = {}
 syntax_dict = {}
 float_dict = {}
 
@@ -68,8 +70,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.highlight2 = syntax_pars.PythonHighlighter(self.qtext_box.document())
         #self.highlight3 = syntax_pars.PythonHighlighter(self.preview_box.document())
         self.tree_btn.clicked.connect(self.updateEditMenu)
-        self.preview_btn.clicked.connect(self.preview)
-
+        self.preview_btn.clicked.connect(lambda:self.preview(1))
+        self.gpreview_btn.clicked.connect(lambda:self.preview(2))
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
         self.savefile = None
         self.inputs = None
@@ -100,15 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #setting ToolTip
 
         #html button for question text
-        self.html_btn.setCheckable(True)
-        self.html_btn.toggle()
-        self.html_btn.clicked.connect(lambda:self.htmltoggle())
-        
 
-        #html button for general feedback
-        self.html_btn2.setCheckable(True)
-        self.html_btn2.toggle()
-        self.html_btn2.clicked.connect(lambda:self.htmltoggle2())
         
 
         
@@ -145,45 +139,82 @@ class MainWindow(QtWidgets.QMainWindow):
 
       
 
-        #Setting up rich text bar
+    #Setting up rich text bar
+        self.html_btn.setCheckable(True)       
+        self.html_btn.clicked.connect(lambda:self.htmltoggle(1))
+        
+
+        #html button for general feedback
+        self.html_btn2.setCheckable(True)      
+        self.html_btn2.clicked.connect(lambda:self.htmltoggle(2))
         
         
+        self.qtext_box.selectionChanged.connect(lambda:self.updatefont(1))
+        self.qtext_box.textChanged.connect(lambda:self.resetfont(1))
+        self.qtext_box.selectionChanged.connect(lambda:self.updatesize(1))
+        self.qtext_box.textChanged.connect(lambda:self.resetsize(1))
         
-        self.qtext_box.selectionChanged.connect(self.updatefont)
-        self.qtext_box.textChanged.connect(self.resetfont)
-        self.qtext_box.selectionChanged.connect(self.updatesize)
-        self.qtext_box.textChanged.connect(self.resetsize)
+        self.gfeedback_box.selectionChanged.connect(lambda:self.updatefont(2))
+        self.gfeedback_box.textChanged.connect(lambda:self.resetfont(2))
+        self.gfeedback_box.selectionChanged.connect(lambda:self.updatesize(2))
+        self.gfeedback_box.textChanged.connect(lambda:self.resetsize(2))
         
-        
+
         self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
-        
-        self.tfont_box.activated.connect(self.setFont)
+        self.tfont_box.activated.connect(lambda:self.setFont(1))
     
+        self.gfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
+        self.gfont_box.activated.connect(lambda:self.setFont(2))    
+
 
         self.tsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24"])
         self.qtext_box.setFontPointSize(float(12))
         self.tsize_box.setCurrentText('12')
-        self.tsize_box.activated.connect(self.setFontSize)
+        self.tsize_box.activated.connect(lambda:self.setFontSize(1))
 
-        self.tbold_btn.setCheckable(True)
-        self.tbold_btn.toggle()
-        self.tbold_btn.clicked.connect(self.boldText)
+        self.gsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24"])
+        self.gfeedback_box.setFontPointSize(float(12))
+        self.gsize_box.setCurrentText('12')
+        self.gsize_box.activated.connect(lambda:self.setFontSize(2))        
+
+
+        self.tbold_btn.setCheckable(True)     
+        self.tbold_btn.clicked.connect(lambda:self.boldText(1))
+
+        self.gbold_btn.setCheckable(True)        
+        self.gbold_btn.clicked.connect(lambda:self.boldText(2))
         
+
         self.titalic_btn.setCheckable(True)
-        self.titalic_btn.toggle()
-        self.titalic_btn.clicked.connect(self.italicText)
+        self.titalic_btn.clicked.connect(lambda:self.italicText(1))
+
+        self.gitalic_btn.setCheckable(True)
+        self.gitalic_btn.clicked.connect(lambda:self.italicText(2))
 
         self.tunderline_btn.setCheckable(True)
-        self.tunderline_btn.toggle()
-        self.tunderline_btn.clicked.connect(self.underlineText)
+        self.tunderline_btn.clicked.connect(lambda:self.underlineText(1))
+
+        self.gunderline_btn.setCheckable(True)
+        self.gunderline_btn.clicked.connect(lambda:self.underlineText(2))
 
         self.tleft_align_btn.clicked.connect(lambda : self.qtext_box.setAlignment(Qt.AlignLeft))
         self.tcenter_align_btn.clicked.connect(lambda : self.qtext_box.setAlignment(Qt.AlignCenter))
         self.tright_align_btn.clicked.connect(lambda : self.qtext_box.setAlignment(Qt.AlignRight))
+
+        self.gleft_align_btn.clicked.connect(lambda : self.gfeedback_box.setAlignment(Qt.AlignLeft))
+        self.gcenter_align_btn.clicked.connect(lambda : self.gfeedback_box.setAlignment(Qt.AlignCenter))
+        self.gright_align_btn.clicked.connect(lambda : self.gfeedback_box.setAlignment(Qt.AlignRight))
   
-        self.tordered_list_btn.clicked.connect(self.bulletList)
-        self.ttext_color_btn.clicked.connect(self.setColor)
-        self.tbcolor_btn.clicked.connect(self.setBackgroundColor)
+        self.tordered_list_btn.clicked.connect(lambda:self.bulletList(1))
+        self.ttext_color_btn.clicked.connect(lambda:self.setColor(1))
+        self.tbcolor_btn.clicked.connect(lambda:self.setBackgroundColor(1))
+
+        self.gordered_list_btn.clicked.connect(lambda:self.bulletList(2))
+        self.gtext_color_btn.clicked.connect(lambda:self.setColor(2))
+        self.gbcolor_btn.clicked.connect(lambda:self.setBackgroundColor(2))
+
+        
+        
 
         self.show()
 
@@ -242,128 +273,216 @@ class MainWindow(QtWidgets.QMainWindow):
         cursor = self.qtext_box.textCursor()
         
         return [cursor.selectionStart(), cursor.selectionEnd()];
+    
+    def handleSelectionChanged2(self):
         
+        cursor3 = self.gfeedback_box.textCursor()
         
-    def setFont(self):
-        font = self.tfont_box.currentText()
-        self.qtext_box.blockSignals(True)
-        self.qtext_box.setCurrentFont(QFont(font)) 
-        self.qtext_box.blockSignals(False)
-        selectedfonts[self.tfont_box.currentText()] = self.handleSelectionChanged()
+        return [cursor3.selectionStart(), cursor3.selectionEnd()];
         
+    def setFont(self,n):
+        if n == 1:
+            font = self.tfont_box.currentText()
+            self.qtext_box.blockSignals(True)
+            self.qtext_box.setCurrentFont(QFont(font)) 
+            self.qtext_box.blockSignals(False)
+            selectedfonts[self.tfont_box.currentText()] = self.handleSelectionChanged()
+        if n == 2:
+            font = self.gfont_box.currentText()
+            self.gfeedback_box.blockSignals(True)
+            self.gfeedback_box.setCurrentFont(QFont(font)) 
+            self.gfeedback_box.blockSignals(False)
+            gselectedfonts[self.gfont_box.currentText()] = self.handleSelectionChanged2()        
         
         #just set for the following cursor locations, set font to ""
 
         
        
-        # update the text-edit
-    def updatefont(self):
         
-        cursor2 = self.qtext_box.textCursor() 
-        
-        for textfont, cursorindex in selectedfonts.items():
-            if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:                    
-                self.tfont_box.setCurrentText(textfont)    
-                print("setting given font")                
-                break
-            else:                    
-                self.tfont_box.setCurrentText("Arial")
-                print("setting arial")
+    def updatefont(self,n):
+        if n == 1:
+            cursor2 = self.qtext_box.textCursor() 
+            
+            for textfont, cursorindex in selectedfonts.items():
+                if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:                    
+                    self.tfont_box.setCurrentText(textfont)    
+                                
+                    break
+                else:                    
+                    self.tfont_box.setCurrentText("Arial")     
+        if n == 2:
+            cursor4 = self.gfeedback_box.textCursor() 
+            
+            for textfont, cursorindex in gselectedfonts.items():
+                if cursor4.selectionStart() >= cursorindex[0] and cursor4.selectionEnd() <= cursorindex[1]:                    
+                    self.gfont_box.setCurrentText(textfont)    
+                                
+                    break
+                else:                    
+                    self.gfont_box.setCurrentText("Arial")                           
 
-
-                
-        
-        
-        
-
-    def resetfont(self):
-        
-        for textfont, cursorindex in selectedfonts.items():
-            if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
-                selectedfonts[textfont] = [cursorindex[0],len(self.qtext_box.toPlainText())]
-                
-            elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
-                    
-                selectedfonts[textfont] = [-1,-1]
-                #self.tfont_box.setCurrentText("Arial")
-    def setFontSize(self):
-        
-        value = self.tsize_box.currentText()
-        self.qtext_box.blockSignals(True)
-        self.qtext_box.setFontPointSize(float(value))
-        self.qtext_box.blockSignals(False)
-        selectedsizes[self.tsize_box.currentText()] = self.handleSelectionChanged()
-        
-
-    def updatesize(self):
-        
-        cursor2 = self.qtext_box.textCursor()
-        
-        for textsize, cursorindex in selectedsizes.items():
-            if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
-                
-                self.tsize_box.setCurrentText(textsize)
-                
-                break
-            else:               
-                self.tsize_box.setCurrentText('12')
      
-    def resetsize(self):
-        for textsize, cursorindex in selectedsizes.items():
-            if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
-                selectedsizes[textsize] = [cursorindex[0],len(self.qtext_box.toPlainText())]
-                
-            elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
+
+    def resetfont(self,n):
+        if n == 1:
+            for textfont, cursorindex in selectedfonts.items():
+                if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
+                    selectedfonts[textfont] = [cursorindex[0],len(self.qtext_box.toPlainText())]
                     
-                selectedsizes[textsize] = [-1,-1]
-                #self.tfont_box.setCurrentText("Arial")        
+                elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
+                        
+                    selectedfonts[textfont] = [-1,-1]
+        if n == 2:
+            for textfont, cursorindex in gselectedfonts.items():
+                if len(self.gfeedback_box.toPlainText()) < cursorindex[1] and len(self.gfeedback_box.toPlainText()) > cursorindex[0]:
+                    gselectedfonts[textfont] = [cursorindex[0],len(self.gfeedback_box.toPlainText())]
+                    
+                elif len(self.gfeedback_box.toPlainText()) <= cursorindex[0]:
+                        
+                    gselectedfonts[textfont] = [-1,-1]            
+                #self.tfont_box.setCurrentText("Arial")
+
+    def setFontSize(self,n):
+        if n == 1:
+            value = self.tsize_box.currentText()
+            self.qtext_box.blockSignals(True)
+            self.qtext_box.setFontPointSize(float(value))
+            self.qtext_box.blockSignals(False)
+            selectedsizes[self.tsize_box.currentText()] = self.handleSelectionChanged()
+        if n == 2:
+            value = self.gsize_box.currentText()
+            self.gfeedback_box.blockSignals(True)
+            self.gfeedback_box.setFontPointSize(float(value))
+            self.gfeedback_box.blockSignals(False)
+            gselectedsizes[self.gsize_box.currentText()] = self.handleSelectionChanged2()
+
+    def updatesize(self,n):
+        if n == 1:
+            cursor2 = self.qtext_box.textCursor()
+            
+            for textsize, cursorindex in selectedsizes.items():
+                if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:
+                    
+                    self.tsize_box.setCurrentText(textsize)
+                    
+                    break
+                else:               
+                    self.tsize_box.setCurrentText('12')
+        if n == 2:
+            cursor4 = self.qtext_box.textCursor()
+            
+            for textsize, cursorindex in gselectedsizes.items():
+                if cursor4.selectionStart() >= cursorindex[0] and cursor4.selectionEnd() <= cursorindex[1]:
+                    
+                    self.gsize_box.setCurrentText(textsize)
+                    
+                    break
+                else:               
+                    self.gsize_box.setCurrentText('12')       
+
+    def resetsize(self,n):
+        if n == 1:
+            for textsize, cursorindex in selectedsizes.items():
+                if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
+                    selectedsizes[textsize] = [cursorindex[0],len(self.qtext_box.toPlainText())]
+                    
+                elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
+                        
+                    selectedsizes[textsize] = [-1,-1]
+                    #self.tfont_box.setCurrentText("Arial") 
+        if n == 2:
+            for textsize, cursorindex in gselectedsizes.items():
+                if len(self.gfeedback_box.toPlainText()) < cursorindex[1] and len(self.gfeedback_box.toPlainText()) > cursorindex[0]:
+                    gselectedsizes[textsize] = [cursorindex[0],len(self.gfeedback_box.toPlainText())]
+                    
+                elif len(self.gfeedback_box.toPlainText()) <= cursorindex[0]:
+                        
+                    gselectedsizes[textsize] = [-1,-1]
         
 
-    def setColor(self):         
+    def setColor(self,n):         
         color = QColorDialog.getColor()
-        self.qtext_box.setTextColor(color)
-
-    def setBackgroundColor(self):     
+        if n == 1:
+            self.qtext_box.setTextColor(color)
+        if n == 2:
+            self.gfeedback_box.setTextColor(color)
+            
+    def setBackgroundColor(self,n):     
         color = QColorDialog.getColor()
-        self.qtext_box.setTextBackgroundColor(color)
+        if n == 1:
+            self.qtext_box.setTextBackgroundColor(color)
+        if n == 2:
+            self.gfeedback_box.setTextBackgroundColor(color)
 
-    def boldText(self):
-        if self.tbold_btn.isChecked():
-            self.qtext_box.setFontWeight(QFont.Bold)
-        else:
-            self.qtext_box.setFontWeight(QFont.Normal)  
+    def boldText(self,n):
+        if n == 1:
+            if self.tbold_btn.isChecked():
+                self.qtext_box.setFontWeight(QFont.Bold)
+            else:
+                self.qtext_box.setFontWeight(QFont.Normal)  
+        if n == 2:
+            if self.gbold_btn.isChecked():
+                self.gfeedback_box.setFontWeight(QFont.Bold)
+            else:
+                self.gfeedback.setFontWeight(QFont.Normal)            
 
-    def italicText(self):
+    def italicText(self,n):
         state = self.qtext_box.fontItalic()
-        self.qtext_box.setFontItalic(not(state)) 
+        if n == 1:
+            self.qtext_box.setFontItalic(not(state)) 
+        if n == 2:
+            self.gfeedback_box.setFontItalic(not(state)) 
 
-    def underlineText(self):
+    def underlineText(self,n):
         state = self.qtext_box.fontUnderline()
-        self.qtext_box.setFontUnderline(not(state))     
+        if n == 1:
+            self.qtext_box.setFontUnderline(not(state))     
+        if n == 2:
+            self.gfeedback_box.setFontUnderline(not(state)) 
 
-    def bulletList(self):
-        cursor = self.qtext_box.textCursor()
-        cursor.insertList(QtGui.QTextListFormat.ListDisc)
+    def bulletList(self,n):        
+        if n == 1:
+            cursor = self.qtext_box.textCursor()
+            cursor.insertList(QtGui.QTextListFormat.ListDisc)
+        if n == 2:
+            cursor = self.gfeedback_box.textCursor()
+            cursor.insertList(QtGui.QTextListFormat.ListDisc)
 
-    def preview(self):
-        QApplication.processEvents()
-        qtext_code = self.qtext_box.toPlainText()
+    def preview(self,n):
+        if n == 1:
+            QApplication.processEvents()
+            qtext_code = self.qtext_box.toPlainText()
+            
+            self.qtext_box.setAcceptRichText(True)
+            self.preview_box.setAcceptRichText(True)
+            
+            qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
+            stack_var = re.findall(r'\@[a-zA-z0-9]+\@', qtext_code)        
         
-        self.qtext_box.setAcceptRichText(True)
-        self.preview_box.setAcceptRichText(True)
-        #self.preview_box.setStyleSheet("color: rgb(85, 0, 255);")
-        qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
-        stack_var = re.findall(r'\@[a-zA-z0-9]+\@', qtext_code)
+            for elements in stack_var: 
+                #font-size:8pt; to change            
+                qtext_code = qtext_code.replace(elements,"{" + elements + "}")
+            
+            
+            
+            self.preview_box.setText(qtext_code)
+        if n == 2:
+            QApplication.processEvents()
+            qtext_code = self.gfeedback_box.toPlainText()
+            
+            self.gfeedback_box.setAcceptRichText(True)
+            self.gpreview_box.setAcceptRichText(True)
+            
+            qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
+            stack_var = re.findall(r'\@[a-zA-z0-9]+\@', qtext_code)        
         
-        
-        for elements in stack_var: 
-            #font-size:8pt; to change            
-            qtext_code = qtext_code.replace(elements,"{" + elements + "}")
-        #self.preview_box.setStyleSheet("color: rgb(51, 51, 51);")
-        
-        
-        self.preview_box.setText(qtext_code)
-
+            for elements in stack_var: 
+                #font-size:8pt; to change            
+                qtext_code = qtext_code.replace(elements,"{" + elements + "}")
+            
+            
+            
+            self.gpreview_box.setText(qtext_code)
         
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
@@ -769,7 +888,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qvar_box.document().modificationChanged.connect(self.setWindowModified)
         self.qtext_box.document().modificationChanged.connect(self.setWindowModified)
         self.gfeedback_box.document().modificationChanged.connect(self.setWindowModified)
-        self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
+        #self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
         self.grade_box.document().modificationChanged.connect(self.setWindowModified)
         
         self.ID_box.document().modificationChanged.connect(self.setWindowModified)
@@ -830,38 +949,39 @@ class MainWindow(QtWidgets.QMainWindow):
             subwnd.show()
         except Exception as e: dumpException(e)
 
-    def htmltoggle(self):
-        textformat = self.qtext_box.toPlainText()        
-        if self.html_btn.isChecked():
-            htmlformat = repr(self.qtext_box.toPlainText())
-            
-            htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
-            print(htmlformat)
-            
-            self.qtext_box.setPlainText(htmlformat)
+    def htmltoggle(self,n):
+        if n == 1:
+            textformat = self.qtext_box.toPlainText()        
+            if self.html_btn.isChecked():
+                htmlformat = repr(self.qtext_box.toPlainText())
+                
+                htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
+                print(htmlformat)
+                
+                self.qtext_box.setPlainText(htmlformat)
 
-            self.html_btn.setStyleSheet("background-color : lightblue")
+                self.html_btn.setStyleSheet("background-color : lightblue")
+    
+            else:
+                
+                self.qtext_box.setHtml(textformat)
+        if n == 2:
+            textformat = self.gfeedback_box.toPlainText()        
+            if self.html_btn2.isChecked():
+                htmlformat = repr(self.gfeedback_box.toPlainText())
+                
+                htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
+                
+                
+                self.gfeedback_box.setPlainText(htmlformat)
+
+                self.html_btn2.setStyleSheet("background-color : lightblue")
+    
+            else:
+                
+                self.gfeedback_box.setHtml(textformat)   
   
-        else:
-            
-            self.qtext_box.setHtml(textformat)
-
-
-    def htmltoggle2(self):
-        textformat = self.gfeedback_box.toPlainText()        
-        if self.html_btn2.isChecked():
-            htmlformat = repr(self.gfeedback_box.toPlainText())
-            
-            htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
-            
-            
-            self.gfeedback_box.setPlainText(htmlformat)
-
-            self.html_btn2.setStyleSheet("background-color : lightblue")
-  
-        else:
-            
-            self.gfeedback_box.setHtml(textformat)    
+ 
 
     def onExport(self):
         print(self.isWindowModified())
