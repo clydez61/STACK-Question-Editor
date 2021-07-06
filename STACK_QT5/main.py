@@ -734,7 +734,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QApplication.processEvents()
         
         current_text = self.qtext_box.toPlainText()
-        inputs = re.findall(r'\[\[[\w-]+\]\] ', current_text) 
+        inputs = re.findall(r'\[\[[\w-]+\]\]', current_text) 
         symbols = {"self": self}
         try:
             exec(f'self.input_frame.setParent(None)')
@@ -753,7 +753,6 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.input_size.toPlainText() for Box Size
             #unicode(self.input_type.currentText()) for Input Type
             
-        
         self.inputs = inputs    
 
             #self.addInput()
@@ -1171,7 +1170,6 @@ class MainWindow(QtWidgets.QMainWindow):
         qvar = self.qvar_box.toPlainText()
         qtext = self.qtext_box.toPlainText()
         generalfeedback = self.gfeedback_box.toPlainText()
-        specificfeedback = self.sfeedback_box.toPlainText()
         grade = self.grade_box.toPlainText()
         mainid = self.ID_box.toPlainText()
         qnote = self.qnote_box.toPlainText()
@@ -1179,8 +1177,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return OrderedDict([
             ('questionVar', qvar),
             ('questionText', qtext),
+            ('inputs', self.serializeInputs()),
             ('generalFeedback', generalfeedback),
-            ('specificFeedback', specificfeedback),
             ('grade', grade),
             ('mainID', mainid),
             ('questionNote', qnote),
@@ -1191,8 +1189,8 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             self.qvar_box.setPlainText(data['questionVar'])
             self.qtext_box.setPlainText(data['questionText'])
+            self.deserializeInputs(data['inputs'])
             self.gfeedback_box.setPlainText(data['generalFeedback'])
-            self.sfeedback_box.setPlainText(data['specificFeedback'])
             self.grade_box.setPlainText(data['grade'])
             self.ID_box.setPlainText(data['mainID'])
             self.qnote_box.setPlainText(data['questionNote'])
@@ -1207,6 +1205,28 @@ class MainWindow(QtWidgets.QMainWindow):
             ('nodeData', nodeData), 
         ])
         return data
+
+    def serializeInputs(self):
+        inputs = []
+        for key in syntax_dict:
+            inputs.append(
+                OrderedDict(
+                    ('varName', syntax_dict[key]),
+                    ('varType', vartype_dict[key]),
+                    ('varAns', varans_dict[key]),
+                    ('varBoxSize', varboxsize_dict[key]),
+                    ('syntax', syntax_dict[key]),
+                    ('float', float_dict[key]),
+                    ('lowestTerm', lowestterm_dict[key]),
+                    ('hideAnswer', hideanswer_dict[key]),
+                    ('allowEmpty', allowempty_dict[key]),
+                    ('simplify', simplify_dict[key]),
+                )
+            )
+        return inputs
+
+    def deserializeInputs(self, data, hashmap=[]):
+        pass
 
 class Dialog(QtWidgets.QDialog):
     def __init__(self):

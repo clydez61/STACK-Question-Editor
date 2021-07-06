@@ -7,6 +7,8 @@ from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_socket import LEFT_CENTER, RIGHT_CENTER
 
+DEBUG = False
+
 class StackGraphicsNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
@@ -65,5 +67,6 @@ class StackNode(Node):
 
     def deserialize(self, data, hashmap=[], restore_id=True, *args, **kwargs):
         res = super().deserialize(data, hashmap, restore_id, *args, **kwargs)
-        print("Deserialized StackNode '%s'" % self.__class__.__name__, "res:", res)
+        if DEBUG:
+            print("Deserialized StackNode '%s'" % self.__class__.__name__, "res:", res)
         return res
