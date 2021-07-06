@@ -1168,8 +1168,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
-        qtext = self.qtext_box.toPlainText()
-        generalfeedback = self.gfeedback_box.toPlainText()
+        qtext = self.qtext_box.toHtml()
+        generalfeedback = self.gfeedback_box.toHtml()
         grade = self.grade_box.toPlainText()
         mainid = self.ID_box.toPlainText()
         qnote = self.qnote_box.toPlainText()
@@ -1188,9 +1188,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def deserialize(self, data, hashmap=[]):
         try:
             self.qvar_box.setPlainText(data['questionVar'])
-            self.qtext_box.setPlainText(data['questionText'])
+            self.qtext_box.setHtml(data['questionText'])
             self.deserializeInputs(data['inputs'])
-            self.gfeedback_box.setPlainText(data['generalFeedback'])
+            self.gfeedback_box.setHtml(data['generalFeedback'])
             self.grade_box.setPlainText(data['grade'])
             self.ID_box.setPlainText(data['mainID'])
             self.qnote_box.setPlainText(data['questionNote'])
