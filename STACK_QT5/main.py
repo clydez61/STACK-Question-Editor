@@ -3,10 +3,12 @@ from PyQt5 import QtWidgets,QtGui,QtCore,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-#from Input_Dialog import Dialog
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+
 import resource
 import json
 from pylatexenc.latex2text import LatexNodes2Text
+import mdtex2html
 from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
 from stack_window import StackWindow
@@ -44,7 +46,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         
         
-
+        
         self.filename = None
         self.Dialog = Dialog()
         self.setTitle()
@@ -69,9 +71,12 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.highlight2 = syntax_pars.PythonHighlighter(self.qtext_box.document())
         #self.highlight3 = syntax_pars.PythonHighlighter(self.preview_box.document())
         self.tree_btn.clicked.connect(self.updateEditMenu)
-        self.preview_btn.clicked.connect(lambda:self.preview(1))
-        self.gpreview_btn.clicked.connect(lambda:self.preview(2))
-        self.update_btn.clicked.connect(lambda: self.UpdateInput())
+
+
+        self.qtext_box.textChanged.connect(lambda:self.preview(1))
+        self.gfeedback_box.textChanged.connect(lambda:self.preview(2))
+
+        self.qtext_box.textChanged.connect(lambda: self.UpdateInput())
         self.savefile = None
         self.inputs = None
         self.NewFrame = None
@@ -102,8 +107,28 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #html button for question text
 
-        
+        self.preview_box = QWebEngineView(self.previewBaseWidget)
+        self.preview_box.setObjectName(u"preview_box")
+        self.preview_box.setStyleSheet(u"/*color: rgb(5, 32, 37);*/\n"
+"/* background-color: rgb(233, 246, 248) */\n"
+"\n"
+"background-color: rgb(51, 51, 51);"
+"border-color: rgb(190, 229, 235);")
 
+
+        self.horizontalLayout_7.addWidget(self.preview_box)
+
+        self.previewScroll_box.setWidget(self.previewBaseWidget)
+
+        self.gridLayout.addWidget(self.previewScroll_box, 2, 1, 1, 1)        
+        
+        self.gpreview_box = QWebEngineView(self.scrollAreaWidgetContents)
+        self.gpreview_box.setObjectName(u"gpreview_box")
+        self.gpreview_box.setStyleSheet(u"color: rgb(5, 32, 37);\n"
+"\n"
+"border-color: rgb(190, 229, 235);")
+
+        self.horizontalLayout_8.addWidget(self.gpreview_box)
         
         self.empty_icon = QIcon(".")
 
@@ -217,6 +242,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.show()
 
+
+
+
     def setTitle(self):
         title = "STACK Question Editor - "
         title = title + (os.path.basename(self.filename) + '[*]' if self.filename is not None else "New Question[*]")
@@ -293,9 +321,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.gfeedback_box.blockSignals(False)
             gselectedfonts[self.gfont_box.currentText()] = self.handleSelectionChanged2()        
         
-        #just set for the following cursor locations, set font to ""
-
-        
+        #just set for the following cursor locations, set font to ""        
        
         
     def updatefont(self,n):
@@ -449,39 +475,50 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def preview(self,n):
         if n == 1:
-            QApplication.processEvents()
-            qtext_code = self.qtext_box.toPlainText()
+            #QApplication.processEvents()
+            qtext_code = self.qtext_box.toHtml()
             
-            self.qtext_box.setAcceptRichText(True)
-            self.preview_box.setAcceptRichText(True)
+            #self.qtext_box.setAcceptRichText(True)
+           
             
-            qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
-            stack_var = re.findall(r'\@[a-zA-z0-9]+\@', qtext_code)        
-        
-            for elements in stack_var: 
-                #font-size:8pt; to change            
-                qtext_code = qtext_code.replace(elements,"{" + elements + "}")
+            #qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
+            #qtext_code = mdtex2html.convert(qtext_code)
+            stack_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code) 
+
+  
+            htmlstart= """
+             <html><head>
+             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
+             </script></head>
+             <body>
+             <mathjax>             
+             """
+            htmlend = '</mathjax></body></html>'  
+            
+            displaycode = htmlstart + qtext_code + htmlend                  
             
             
-            
-            self.preview_box.setText(qtext_code)
+            self.preview_box.setHtml(displaycode)
         if n == 2:
-            QApplication.processEvents()
-            qtext_code = self.gfeedback_box.toPlainText()
+            #QApplication.processEvents()
+
+            qtext_code = self.gfeedback_box.toHtml()
             
-            self.gfeedback_box.setAcceptRichText(True)
-            self.gpreview_box.setAcceptRichText(True)
+            self.gfeedback_box.setAcceptRichText(True)    
             
-            qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
-            stack_var = re.findall(r'\@[a-zA-z0-9]+\@', qtext_code)        
-        
-            for elements in stack_var: 
-                #font-size:8pt; to change            
-                qtext_code = qtext_code.replace(elements,"{" + elements + "}")
+            stack_var2 = re.findall(r'\@[\w-]+\@', qtext_code)        
+            htmlstart= """
+             <html><head>
+             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
+             </script></head>
+             <body>
+             <mathjax>             
+             """
+            htmlend = '</mathjax></body></html>'  
             
+            displaycode2 = htmlstart + qtext_code + htmlend        
             
-            
-            self.gpreview_box.setText(qtext_code)
+            self.gpreview_box.setHtml(displaycode2)
         
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
@@ -511,7 +548,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         exec(f'global more_btn_checked; more_btn_checked = self.input_btn{str(row)}_{str(column)}.isChecked()')
         if more_btn_checked == True:
-            exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
+            #exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
 
             NewSyntax = f"input_syntax{str(row)}_{str(column)}"
             NewFloat = f"input_float{str(row)}_{str(column)}"
@@ -684,9 +721,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         exec(f"global simplify; simplify = self.input_simplify{str(row)}_{str(column)}.isChecked()")
         simplify_dict.update({"{}".format(widgetname):simplify})                  
-            
-        
-
+                   
 
         self.widgetname = widgetname
 
@@ -779,8 +814,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_frame = QFrame(self.ScrollPage)
         setattr(self, NewFrame, self.input_frame)
 
-        self.input_frame.setMinimumSize(QSize(100, 100))
-        self.input_frame.setMaximumSize(QSize(300, 300))
+        
+        #self.input_frame.setMinimumSize(QSize(100, 100))
+        #self.input_frame.setMaximumSize(QSize(300, 300))
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.input_frame.sizePolicy().hasHeightForWidth())
+        self.input_frame.setSizePolicy(sizePolicy)     
         
         self.input_frame.setFrameShape(QFrame.StyledPanel)
         self.input_frame.setFrameShadow(QFrame.Raised)
@@ -1264,3 +1305,4 @@ if __name__ == '__main__':
     
     window.show()
     sys.exit(app.exec_())   
+
