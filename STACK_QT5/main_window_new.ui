@@ -514,7 +514,11 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
+<<<<<<< HEAD
              <number>4</number>
+=======
+             <number>2</number>
+>>>>>>> db11ec10b891d29e1c1ffa06545a33fe9e0be6fb
             </property>
             <widget class="QWidget" name="qvar_page">
              <property name="styleSheet">
@@ -849,14 +853,6 @@ background-color: rgb(51, 51, 51);
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QTextEdit" name="qtext_box">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(51, 51, 51);
-font: 12pt &quot;Arial&quot;;</string>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="0" alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="qtext_label">
                 <property name="toolTip">
@@ -895,7 +891,7 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
               <item row="2" column="1">
                <widget class="QScrollArea" name="previewScroll_box">
                 <property name="styleSheet">
-                 <string notr="true">background-color: rgb(255, 255, 255);</string>
+                 <string notr="true">background-color: rgb(51, 51, 51);</string>
                 </property>
                 <property name="horizontalScrollBarPolicy">
                  <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -1080,23 +1076,16 @@ p, li { white-space: pre-wrap; }
                     <zorder>lineEdit</zorder>
                    </widget>
                   </item>
-                  <item>
-                   <widget class="QTextBrowser" name="preview_box">
-                    <property name="styleSheet">
-                     <string notr="true">color: rgb(5, 32, 37);
-background-color: rgb(233, 246, 248);
-border-color: rgb(190, 229, 235);</string>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Plain</enum>
-                    </property>
-                    <property name="sizeAdjustPolicy">
-                     <enum>QAbstractScrollArea::AdjustIgnored</enum>
-                    </property>
-                   </widget>
-                  </item>
                  </layout>
                 </widget>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QTextEdit" name="qtext_box">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(51, 51, 51);
+font: 12pt &quot;Arial&quot;;</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -1371,15 +1360,13 @@ background-color: rgb(51, 51, 51);
                 </layout>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QScrollArea" name="scrollArea_2">
+              <item row="2" column="0">
+               <widget class="QTextEdit" name="gfeedback_box">
                 <property name="styleSheet">
-                 <string notr="true">
-background-color: rgb(255, 243, 205);</string>
+                 <string notr="true">background-color: rgb(51, 51, 51);
+font: 12pt &quot;Arial&quot;;</string>
                 </property>
-                <property name="widgetResizable">
-                 <bool>true</bool>
-                </property>
+<<<<<<< HEAD
                 <widget class="QWidget" name="scrollAreaWidgetContents">
                  <property name="geometry">
                   <rect>
@@ -1401,15 +1388,14 @@ border-color: rgb(190, 229, 235);</string>
                   </item>
                  </layout>
                 </widget>
+=======
+>>>>>>> db11ec10b891d29e1c1ffa06545a33fe9e0be6fb
                </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QTextEdit" name="gfeedback_box"/>
               </item>
               <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
                <widget class="QLabel" name="sfeedback_label">
                 <property name="text">
-                 <string>Specific Feedback</string>
+                 <string>Feedback Preview</string>
                 </property>
                </widget>
               </item>
@@ -1432,6 +1418,28 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 <property name="text">
                  <string>Preview</string>
                 </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QScrollArea" name="scrollArea_2">
+                <property name="styleSheet">
+                 <string notr="true">
+background-color: rgb(255, 243, 205);</string>
+                </property>
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>522</width>
+                   <height>477</height>
+                  </rect>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_8"/>
+                </widget>
                </widget>
               </item>
              </layout>
@@ -1528,6 +1536,7 @@ background-color: rgb(51, 51, 51);
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QScrollArea" name="scrollArea">
+<<<<<<< HEAD
                 <property name="verticalScrollBarPolicy">
                  <enum>Qt::ScrollBarAsNeeded</enum>
                 </property>
@@ -1536,6 +1545,10 @@ background-color: rgb(51, 51, 51);
                 </property>
                 <property name="sizeAdjustPolicy">
                  <enum>QAbstractScrollArea::AdjustToContents</enum>
+=======
+                <property name="horizontalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+>>>>>>> db11ec10b891d29e1c1ffa06545a33fe9e0be6fb
                 </property>
                 <property name="widgetResizable">
                  <bool>true</bool>
@@ -1545,8 +1558,13 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
+<<<<<<< HEAD
                    <width>1052</width>
                    <height>577</height>
+=======
+                   <width>98</width>
+                   <height>28</height>
+>>>>>>> db11ec10b891d29e1c1ffa06545a33fe9e0be6fb
                   </rect>
                  </property>
                  <property name="sizePolicy">
