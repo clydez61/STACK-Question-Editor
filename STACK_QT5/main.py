@@ -241,13 +241,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onSave(self):
         data = self.combineNonNodeAndNodeData()
-        if not self.isWindowModified():
-            return
+        # if not self.isWindowModified():
+            # NOTE(Arthur): Skipping the return since the "input" section of this software does not
+            # set window as modified when the "input" is modified
+            # return
+        # else:
+        if self.filename is not None:
+            self.saveToFile(data, self.filename)
         else:
-            if self.filename is not None:
-                self.saveToFile(data, self.filename)
-            else:
-                self.onSaveAs()
+            self.onSaveAs()
 
     def onSaveAs(self):
         try:
@@ -714,10 +716,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for j in range(self.column+1):
                 QApplication.processEvents()
                 self.normal_dict_save(i,j)
-                try:
-                    self.expand_dict_save(i,j)
-                except:
-                    pass
+                self.expand_dict_save(i,j)
         
         # I made dictionaries for each term it will automatically update as user fill in,
         # you just need to call them, here below is the list of dicts, the key name is in the format of "row"_"column"
@@ -727,7 +726,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(syntax_dict,float_dict,lowestterm_dict, hideanswer_dict ,allowempty_dict ,simplify_dict )
         print(varname_dict,vartype_dict,varans_dict,varboxsize_dict)
         
-        print('input retrieved')
+        # print('input retrieved')
         
 
     def UpdateInput(self):
@@ -753,6 +752,13 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.input_size.toPlainText() for Box Size
             #unicode(self.input_type.currentText()) for Input Type
             
+            #NOTE(Arthur): Very janky workaround to init the data in the 'more...' section
+            exec(f'self.input_btn{rows}_{lastrow}.toggle()', symbols)
+            self.expand(rows, lastrow)
+            exec(f'self.input_btn{rows}_{lastrow}.toggle()', symbols)
+            self.expand(rows, lastrow)
+
+
         self.inputs = inputs    
 
             #self.addInput()
@@ -880,6 +886,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gridLayout_2.addWidget(self.input_frame, row, column, 1, 1)
         self.row = row
         self.column = column
+
+        return self.formLayout_2
 
     def checkModified(self):
         #set up checks to see if window is modified
@@ -1208,10 +1216,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def serializeInputs(self):
         inputs = []
-        for key in syntax_dict:
+        self.retrieveInput()
+        for key in varname_dict:
             inputs.append(
-                OrderedDict(
-                    ('varName', syntax_dict[key]),
+                OrderedDict([
+                    ('varName', varname_dict[key]),
                     ('varType', vartype_dict[key]),
                     ('varAns', varans_dict[key]),
                     ('varBoxSize', varboxsize_dict[key]),
@@ -1221,12 +1230,43 @@ class MainWindow(QtWidgets.QMainWindow):
                     ('hideAnswer', hideanswer_dict[key]),
                     ('allowEmpty', allowempty_dict[key]),
                     ('simplify', simplify_dict[key]),
-                )
+                ])
             )
         return inputs
 
     def deserializeInputs(self, data, hashmap=[]):
-        pass
+        symbols = {"self": self}
+
+        try:
+            exec(f'self.input_frame.setParent(None)')
+        except:
+            pass
+        for index, subData in enumerate(data):
+            rows, lastrow = divmod(index, 4)                          
+            self.addInput(rows,lastrow)
+
+            exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols)
+
+            self.input_name.setText(subData['varName'])                  
+            self.input_type.setCurrentIndex(self.input_type.findText(subData['varType']))         
+            self.input_ans.setText(subData['varAns'])
+            self.input_size.setText(subData['varBoxSize'])
+
+            #NOTE(Arthur): Very janky workaround to init and store the data in the 'more...' section
+            exec(f'self.input_btn{rows}_{lastrow}.toggle()', symbols)
+            self.expand(rows, lastrow)
+
+            self.input_syntax.setText(subData['syntax'])
+            self.input_float.setCurrentIndex(self.input_float.findText(subData['float']))
+            self.input_lowestTerms.setCurrentIndex(self.input_lowestTerms.findText(subData['lowestTerm']))
+            self.input_hideanswer.setCheckState(subData['hideAnswer'])
+            self.input_allowempty.setCheckState(subData['allowEmpty'])
+            self.input_simplify.setCheckState(subData['simplify'])
+
+            exec(f'self.input_btn{rows}_{lastrow}.toggle()', symbols)
+            self.expand(rows, lastrow)
+
+        #self.inputs = inputs
 
 class Dialog(QtWidgets.QDialog):
     def __init__(self):

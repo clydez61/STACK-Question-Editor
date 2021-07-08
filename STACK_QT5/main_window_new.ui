@@ -514,7 +514,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>4</number>
             </property>
             <widget class="QWidget" name="qvar_page">
              <property name="styleSheet">
@@ -908,8 +908,8 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>522</width>
-                   <height>477</height>
+                   <width>191</width>
+                   <height>164</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1385,8 +1385,8 @@ background-color: rgb(255, 243, 205);</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>522</width>
-                   <height>477</height>
+                   <width>89</width>
+                   <height>89</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -1528,6 +1528,15 @@ background-color: rgb(51, 51, 51);
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QScrollArea" name="scrollArea">
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAsNeeded</enum>
+                </property>
+                <property name="horizontalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAsNeeded</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QAbstractScrollArea::AdjustToContents</enum>
+                </property>
                 <property name="widgetResizable">
                  <bool>true</bool>
                 </property>
@@ -1536,9 +1545,15 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>80</width>
-                   <height>18</height>
+                   <width>1052</width>
+                   <height>577</height>
                   </rect>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">#input_frame{
@@ -1614,7 +1629,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
