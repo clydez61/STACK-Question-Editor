@@ -36,6 +36,10 @@ hideanswer_dict = {}
 allowempty_dict = {}
 simplify_dict = {}
 
+if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 class MainWindow(QtWidgets.QMainWindow):
     
    
@@ -44,11 +48,11 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow,self).__init__()
         uic.loadUi(os.path.join(os.path.dirname(__file__),"main_window_new.ui"),self)
         #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        
+
         
         
         self.filename = None
-        self.Dialog = Dialog()
+        
         self.setTitle()
         self.actionSave.triggered.connect(lambda:self.onSave())
         self.actionOpen.triggered.connect(lambda:self.onOpen())
@@ -75,8 +79,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.qtext_box.textChanged.connect(lambda:self.preview(1))
         self.gfeedback_box.textChanged.connect(lambda:self.preview(2))
+        
 
-        self.qtext_box.textChanged.connect(lambda: self.UpdateInput())
+
+        self.update_btn.clicked.connect(lambda: self.UpdateInput())
         self.savefile = None
         self.inputs = None
         self.NewFrame = None
@@ -98,6 +104,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.AllowEmpty = None
         self.Simplify = None
         self.cursor = None
+        self.more_btn_checked = None
         self.setStyleSheet("""QToolTip { 
                            background-color: black; 
                            color: white; 
@@ -237,6 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gtext_color_btn.clicked.connect(lambda:self.setColor(2))
         self.gbcolor_btn.clicked.connect(lambda:self.setBackgroundColor(2))
 
+        
         
         
 
@@ -547,8 +555,8 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
     def expand(self,row,column):
-
-        exec(f'global more_btn_checked; more_btn_checked = self.input_btn{str(row)}_{str(column)}.isChecked()')
+        #self.more_btn_checked = more_btn_checked
+        exec(f'global more_btn_checked ; more_btn_checked= self.input_btn{str(row)}_{str(column)}.isChecked()')
         if more_btn_checked == True:
             #exec(f'self.input_frame{str(row)}_{str(column)}.setMaximumSize(QSize(300, 330))')
 
@@ -573,7 +581,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.HideAnswer = HideAnswer
             self.AllowEmpty = AllowEmpty
             self.Simplify = Simplify
-
+            
             exec(f'self.input_btn{row}_{column}.setParent(None)')
             
             exec(f'self.label_syntax = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
@@ -701,7 +709,8 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f"self.input_allowempty{str(row)}_{str(column)}.setParent(None)")
             exec(f"self.input_simplify{str(row)}_{str(column)}.setParent(None)")
             exec(f"self.label_extraOptions{str(row)}_{str(column)}.setParent(None)")
-            
+        
+ 
             
     def expand_dict_save(self,row,column):
         QApplication.processEvents()
@@ -770,19 +779,26 @@ class MainWindow(QtWidgets.QMainWindow):
         current_text = self.qtext_box.toPlainText()
         inputs = re.findall(r'\[\[[\w-]+\]\]', current_text) 
         symbols = {"self": self}
+        
         try:
-            exec(f'self.input_frame.setParent(None)')
+            exec(f'self.input_frame{str(self.row)}_{str(self.column)}.setParent(None)')
         except:
             pass
         for index, elem in enumerate(inputs):
-            rows, lastrow = divmod(index, 4)                            
+            rows, lastrow = divmod(index, 4) 
+                   
             self.addInput(rows,lastrow)
-            
+
             exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols) 
             widgetname2 = f'{rows}_{lastrow}'              
-            
+
+      
+
             self.input_name.setText(elem[2:-2])            
             self.input_size.setText("5")
+
+            
+
             
             #self.input_size.toPlainText() for Box Size
             #unicode(self.input_type.currentText()) for Input Type
@@ -822,7 +838,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         
         #self.input_frame.setMinimumSize(QSize(100, 100))
-        #self.input_frame.setMaximumSize(QSize(300, 300))
+        self.input_frame.setMaximumWidth(250)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -839,6 +855,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         setattr(self, NewLayout, self.formLayout_2)
         self.label_name = QLabel(self.input_frame)
+        
         self.label_name.setObjectName(u"label_name")
         self.label_name.setText("Name")
         self.label_name.setToolTip("The Name of the Input, can be used in the potential tree section\n Edit through the Question Text Section")
@@ -847,6 +864,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_name)
 
         self.input_name = QTextEdit(self.input_frame)
+        
         self.input_name.setObjectName(u'input_name')
         self.input_name.setMaximumSize(QSize(16777215, 30))
 
@@ -997,33 +1015,21 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as e: dumpException(e)
 
     def htmltoggle(self,n):
-        if n == 1:
+        if n == 1: 
             textformat = self.qtext_box.toPlainText()        
             if self.html_btn.isChecked():
-                htmlformat = repr(self.qtext_box.toPlainText())
                 
-                htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
-                print(htmlformat)
-                
+                htmlformat = self.qtext_box.toHtml()              
                 self.qtext_box.setPlainText(htmlformat)
 
-                self.html_btn.setStyleSheet("background-color : lightblue")
-    
-            else:
-                
+            else:                
                 self.qtext_box.setHtml(textformat)
         if n == 2:
             textformat = self.gfeedback_box.toPlainText()        
             if self.html_btn2.isChecked():
-                htmlformat = repr(self.gfeedback_box.toPlainText())
-                
-                htmlformat = r'<p>' + textformat.replace("\n", "<br>") + r'</p>'
-                
-                
-                self.gfeedback_box.setPlainText(htmlformat)
 
-                self.html_btn2.setStyleSheet("background-color : lightblue")
-    
+                htmlformat = self.gfeedback_box.toHtml()                                
+                self.gfeedback_box.setPlainText(htmlformat)                    
             else:
                 
                 self.gfeedback_box.setHtml(textformat)   
@@ -1309,32 +1315,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #self.inputs = inputs
 
-class Dialog(QtWidgets.QDialog):
-    def __init__(self):
-        super(Dialog, self).__init__()
-        uic.loadUi(os.path.join(os.path.dirname(__file__),"InputDialog.ui"),self)
-        self.NewFrameD = None
-        self.NewSyntax = None
-        self.NewFloat = None
-        self.NewButton2 = None
-        
-    def saving(self):
-        QApplication.processEvents()
-        
-    def new_dialog(self,row,column):
-        NewFrameD = f"input_frameD{str(row)}_{str(column)}"
-        NewSyntax = f"input_syntax{str(row)}_{str(column)}"
-        NewButton2 = f"input_save_btn{str(row)}_{str(column)}"
-        print(NewSyntax)
-        NewFloat  = f"input_float{str(row)}_{str(column)}"
-        self.NewFrameD = NewFrameD
-        self.NewSyntax = NewSyntax
-        self.NewFloat = NewFloat
-        self.NewButton2 = NewButton2
-        setattr(self, NewFrameD, self.input_frameD)
-        setattr(self, NewSyntax, self.input_syntax)
-        setattr(self, NewFloat, self.input_float)
-        setattr(self, NewButton2, self.input_save_btn)
+
         
 
 if __name__ == '__main__':

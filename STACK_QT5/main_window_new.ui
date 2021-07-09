@@ -338,7 +338,7 @@ QPushButton:pressed {
               <number>0</number>
              </property>
              <item row="1" column="0" colspan="2">
-              <widget class="QPushButton" name="qedit_btn">
+              <widget class="QPushButton" name="qvar_btn">
                <property name="minimumSize">
                 <size>
                  <width>100</width>
@@ -346,13 +346,13 @@ QPushButton:pressed {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-image: url(:/icons/icons/cil-airplay.png);
+                <string notr="true">background-image: url(:/icons/icons/cil-3d.png);
 background-repeat: none;
 padding-left: 50px;
 background-position: center left;</string>
                </property>
                <property name="text">
-                <string>Display</string>
+                <string>Variables</string>
                </property>
               </widget>
              </item>
@@ -446,7 +446,7 @@ background-position: center left;</string>
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QPushButton" name="qvar_btn">
+              <widget class="QPushButton" name="qedit_btn">
                <property name="minimumSize">
                 <size>
                  <width>100</width>
@@ -454,14 +454,15 @@ background-position: center left;</string>
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-image: url(:/icons/icons/cil-3d.png);
+                <string notr="true">
+background-image: url(:/icons/icons/cil-airplay.png);
 background-repeat: none;
 padding-left: 50px;
 
 background-position: center left;</string>
                </property>
                <property name="text">
-                <string>Variables</string>
+                <string>Display</string>
                </property>
               </widget>
              </item>
@@ -514,7 +515,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-            <number>2</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="qvar_page">
              <property name="styleSheet">
@@ -900,8 +901,8 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>191</width>
-                   <height>164</height>
+                   <width>522</width>
+                   <height>477</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1081,6 +1082,9 @@ p, li { white-space: pre-wrap; }
                 <property name="styleSheet">
                  <string notr="true">background-color: rgb(51, 51, 51);
 font: 12pt &quot;Arial&quot;;</string>
+                </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -1362,6 +1366,9 @@ background-color: rgb(51, 51, 51);
                  <string notr="true">background-color: rgb(51, 51, 51);
 font: 12pt &quot;Arial&quot;;</string>
                 </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
+                </property>
                </widget>
               </item>
               <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
@@ -1406,8 +1413,8 @@ background-color: rgb(255, 243, 205);</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>522</width>
-                   <height>477</height>
+                   <width>98</width>
+                   <height>28</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_8"/>
@@ -1425,7 +1432,11 @@ background-color: rgb(51, 51, 51);
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
               <item row="2" column="1">
-               <widget class="QTextEdit" name="qnote_box"/>
+               <widget class="QTextEdit" name="qnote_box">
+                <property name="acceptRichText">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="qnote_label">
@@ -1438,7 +1449,11 @@ background-color: rgb(51, 51, 51);
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QTextEdit" name="tag_box"/>
+               <widget class="QTextEdit" name="tag_box">
+                <property name="acceptRichText">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
               <item row="0" column="1">
                <widget class="QTextEdit" name="grade_box">
@@ -1450,6 +1465,9 @@ background-color: rgb(51, 51, 51);
                 </property>
                 <property name="verticalScrollBarPolicy">
                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -1499,6 +1517,9 @@ background-color: rgb(51, 51, 51);
                 </property>
                 <property name="verticalScrollBarPolicy">
                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -1603,7 +1624,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="styleSheet">
