@@ -98,9 +98,6 @@ class PropertiesBox(QStackedWidget):
         self.originalFeedbackHeight = self.trueFeedback.document().size().height()
 
     def wrapHeightToContents(self):
-        pass
-        fm = QFontMetrics(self.trueFeedback.currentFont())
-
         docTrueHeightGrow = self.trueFeedback.document().size().height()
         docFalseHeightGrow = self.falseFeedback.document().size().height()
         docFeedbackVarHeightGrow = self.feedbackVar.document().size().height()

@@ -285,6 +285,7 @@ class StackWindow(NodeEditorWindow):
         self.nodesDock.setFloating(False)
 
         self.propertiesWidgetScroll = QScrollArea()
+        self.propertiesWidgetScroll.setWidgetResizable(True)
         self.propertiesWidget = PropertiesBox()
         self.propertiesWidget.nodeDataSignal.connect(self.storeNodeData)
 
