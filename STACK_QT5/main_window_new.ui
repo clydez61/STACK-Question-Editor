@@ -902,7 +902,7 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                    <x>0</x>
                    <y>0</y>
                    <width>522</width>
-                   <height>477</height>
+                   <height>479</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1624,7 +1624,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -1663,7 +1663,6 @@ color: rgb(255, 255, 222);</string>
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionTemporary_save"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>

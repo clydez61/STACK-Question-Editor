@@ -177,43 +177,6 @@ class StackWindow(NodeEditorWindow):
             # self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e: dumpException(e)
 
-    def updateWindowMenu(self):
-        pass
-        # self.windowMenu.clear()
-
-        # toolbar_nodes = self.windowMenu.addAction("Nodes Toolbar")
-        # toolbar_nodes.setCheckable(True)
-        # toolbar_nodes.triggered.connect(self.onWindowNodesToolbar)
-        # toolbar_nodes.setChecked(self.nodesDock.isVisible())
-
-        # self.windowMenu.addSeparator()
-
-        # self.windowMenu.addAction(self.actClose)
-        # self.windowMenu.addAction(self.actCloseAll)
-        # self.windowMenu.addSeparator()
-        # self.windowMenu.addAction(self.actTile)
-        # self.windowMenu.addAction(self.actCascade)
-        # self.windowMenu.addSeparator()
-        # self.windowMenu.addAction(self.actNext)
-        # self.windowMenu.addAction(self.actPrevious)
-        # self.windowMenu.addAction(self.actSeparator)
-
-        # windows = self.mdiArea.subWindowList()
-        # self.actSeparator.setVisible(len(windows) != 0)
-
-        # for i, window in enumerate(windows):
-        #     child = window.widget()
-
-        #     text = "%d %s" % (i + 1, child.getUserFriendlyFilename())
-        #     if i < 9:
-        #         text = '&' + text
-
-        #     action = self.windowMenu.addAction(text)
-        #     action.setCheckable(True)
-        #     action.setChecked(child is self.getCurrentNodeEditorWidget())
-        #     action.triggered.connect(self.windowMapper.map)
-        #     self.windowMapper.setMapping(action, window)
-
     def mouseReleaseEvent(self, event):
         self.updateEditorPropertiesBox()
         super().mouseReleaseEvent(event)
@@ -328,17 +291,35 @@ class StackWindow(NodeEditorWindow):
             i = i+1
 
     def onSubWndClose(self, widget, event):
-        existing = self.findMdiChild(widget.filename)
+        existing = self.findMdiChild(widget.treeName)
         self.mdiArea.setActiveSubWindow(existing)
-        
+
         if self.maybeSave():
             event.accept()
         else:
             event.ignore()
 
-    def findMdiChild(self, filename):
+    def maybeSave(self):
+        if not self.isModified():
+            return True
+
+        res = QMessageBox.warning(self, "About to lose your work?",
+        "Are you sure you want to discard this tree?\nThis action cannot be undone!",
+                QMessageBox.Discard | QMessageBox.Cancel
+              )
+
+        if res == QMessageBox.Cancel:
+            return False
+
+        return True
+
+    def closeAllSubWnd(self):
         for window in self.mdiArea.subWindowList():
-            if window.widget().filename == filename:
+            window.close()
+
+    def findMdiChild(self, treeName):
+        for window in self.mdiArea.subWindowList():
+            if window.widget().treeName == treeName:
                 return window
         return None
 

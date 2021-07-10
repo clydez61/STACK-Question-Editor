@@ -58,7 +58,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionOpen.triggered.connect(lambda:self.onOpen())
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
-        self.actionTemporary_save.triggered.connect(lambda:self.retrieveInput())
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         #self.closeButton.clicked.connect(lambda: self.close()) 
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
@@ -117,10 +116,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.preview_box = QWebEngineView(self.previewBaseWidget)
         self.preview_box.setObjectName(u"preview_box")
         self.preview_box.setStyleSheet(u"/*color: rgb(5, 32, 37);*/\n"
-"/* background-color: rgb(233, 246, 248) */\n"
-"\n"
-"background-color: rgb(51, 51, 51);"
-"border-color: rgb(190, 229, 235);")
+            "/* background-color: rgb(233, 246, 248) */\n"
+            "\n"
+            "background-color: rgb(51, 51, 51);"
+            "border-color: rgb(190, 229, 235);")
 
 
         self.horizontalLayout_7.addWidget(self.preview_box)
@@ -132,8 +131,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gpreview_box = QWebEngineView(self.scrollAreaWidgetContents)
         self.gpreview_box.setObjectName(u"gpreview_box")
         self.gpreview_box.setStyleSheet(u"color: rgb(5, 32, 37);\n"
-"\n"
-"border-color: rgb(190, 229, 235);")
+            "\n"
+            "border-color: rgb(190, 229, 235);")
 
         self.horizontalLayout_8.addWidget(self.gpreview_box)
         
@@ -251,7 +250,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
 
+    def clearInputs(self):
+        item = self.gridLayout_2.itemAt(0)
 
+        while item is not None:
+            item.widget().setParent(None)
+            item = self.gridLayout_2.itemAt(0)
 
     def setTitle(self):
         title = "STACK Question Editor - "
@@ -264,6 +268,8 @@ class MainWindow(QtWidgets.QMainWindow):
             fname, filter = QFileDialog.getOpenFileName(self, 'Open STACK question from file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
 
             if fname != '' and os.path.isfile(fname):
+                self.nodeEditor.closeAllSubWnd()
+                self.clearInputs()
                 with open(fname, 'r') as file:
                     data = json.loads(file.read())
                     self.deserialize(data['nonNodeData'])
@@ -276,10 +282,11 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as e: dumpException(e)
 
     def onSave(self):
-        data = self.combineNonNodeAndNodeData()
+        data = self.serialize()
         # if not self.isWindowModified():
             # NOTE(Arthur): Skipping the return since the "input" section of this software does not
             # set window as modified when the "input" is modified
+
             # return
         # else:
         if self.filename is not None:
@@ -289,7 +296,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def onSaveAs(self):
         try:
-            data = self.combineNonNodeAndNodeData()
+            data = self.serialize()
             fname, filter = QFileDialog.getSaveFileName(self, 'Save STACK question to file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
             if fname == '': return False
 
@@ -331,8 +338,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.gfeedback_box.blockSignals(False)
             gselectedfonts[self.gfont_box.currentText()] = self.handleSelectionChanged2()        
         
-        #just set for the following cursor locations, set font to ""        
-       
+        #just set for the following cursor locations, set font to ""             
         
     def updatefont(self,n):
         if n == 1:
@@ -355,8 +361,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     break
                 else:                    
                     self.gfont_box.setCurrentText("Arial")                           
-
-     
 
     def resetfont(self,n):
         if n == 1:
@@ -434,7 +438,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         
                     gselectedsizes[textsize] = [-1,-1]
         
-
     def setColor(self,n):         
         color = QColorDialog.getColor()
         if n == 1:
@@ -552,7 +555,6 @@ class MainWindow(QtWidgets.QMainWindow):
             pass
         
         self.Dialog.show()
-    
 
     def expand(self,row,column):
         #self.more_btn_checked = more_btn_checked
@@ -709,8 +711,6 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f"self.input_allowempty{str(row)}_{str(column)}.setParent(None)")
             exec(f"self.input_simplify{str(row)}_{str(column)}.setParent(None)")
             exec(f"self.label_extraOptions{str(row)}_{str(column)}.setParent(None)")
-        
- 
             
     def expand_dict_save(self,row,column):
         QApplication.processEvents()
@@ -751,11 +751,11 @@ class MainWindow(QtWidgets.QMainWindow):
         varboxsize_dict.update({"{}".format(widgetname):varboxsize})
 
         exec(f"global varans; varans = self.input_ans{str(row)}_{str(column)}.toPlainText()")
-        varans_dict.update({"{}".format(widgetname):varans})
-        
+        varans_dict.update({"{}".format(widgetname):varans})    
         
     def retrieveInput(self):
         #copy this line to your save function,before you call dicts
+        if self.row == None: return False
         for i in range(self.row+1):
             for j in range(self.column+1):
                 QApplication.processEvents()
@@ -770,8 +770,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print(syntax_dict,float_dict,lowestterm_dict, hideanswer_dict ,allowempty_dict ,simplify_dict )
         print(varname_dict,vartype_dict,varans_dict,varboxsize_dict)
         
-        # print('input retrieved')
-        
+        # print('input retrieved')       
 
     def UpdateInput(self):
         QApplication.processEvents()
@@ -791,8 +790,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols) 
             widgetname2 = f'{rows}_{lastrow}'              
-
-      
 
             self.input_name.setText(elem[2:-2])            
             self.input_size.setText("5")
@@ -1033,13 +1030,9 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 
                 self.gfeedback_box.setHtml(textformat)   
-  
- 
-
-    def onExport(self):
-        print(self.isWindowModified())
 
     def open(self):
+        #NOTE(Arthur): Relic function, may be used for translating .py files to something saveable in the future
         fname = QFileDialog.getOpenFileName(self,'Open File','STACK_QT5','(*.py)') #(*.py *.xml *.txt)
         path = fname[0]
         split_string = path.rsplit("/",1)
@@ -1073,107 +1066,59 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tag_box.setText(result)
             print(f"path is {imp_path}, name is {imp_name}")
 
-    def save_as(self):
-        if not self.isWindowModified():
-            return
-        savefile, _ = QFileDialog.getSaveFileName(self,'Save File','STACK_QT5','(*.py)')
-        if savefile:
-            pyout = open(savefile,'w')
-            pyout.write("question = {")
+    def onExport(self):
+        fileExport, filter = QFileDialog.getSaveFileName(self,'Save File','STACK_QT5','(*.py)')
+        if fileExport == '': return False
+        
+        self.exportToFile(fileExport)
 
-            #writing question text
-            pyout.write('   "questiontext":"""\n')
-            pyout.write(str(self.qtext_box.toPlainText()))
-            pyout.write('\n""",\n')
+    def exportToFile(self, fileExport):
+        pyout = open(fileExport,'w')
+        pyout.write("question = {")
 
-            #writing question variables
-            pyout.write('   "questionvariables":"""\n')
-            pyout.write(str(self.qvar_box.toPlainText()))
-            pyout.write('\n""",\n')
+        #writing question text
+        pyout.write('   "questiontext":"""\n')
+        pyout.write(str(self.qtext_box.toPlainText()))
+        pyout.write('\n""",\n')
 
-            #writing general feedback
-            pyout.write('   "generalfeedback":"""\n')
-            pyout.write(str(self.gfeedback_box.toPlainText()))
-            pyout.write('\n""",\n')
-            
-            #writing default grade
-            pyout.write('   "defaultgrade":')
-            pyout.write('"' + str(self.grade_box.toPlainText()) + '",\n')
+        #writing question variables
+        pyout.write('   "questionvariables":"""\n')
+        pyout.write(str(self.qvar_box.toPlainText()))
+        pyout.write('\n""",\n')
 
-            #writing question note
-            pyout.write('   "questionnote":"""\n')
-            pyout.write(str(self.qnote_box.toPlainText()))
-            pyout.write('\n""",\n')
+        #writing general feedback
+        pyout.write('   "generalfeedback":"""\n')
+        pyout.write(str(self.gfeedback_box.toPlainText()))
+        pyout.write('\n""",\n')
+        
+        #writing default grade
+        pyout.write('   "defaultgrade":')
+        pyout.write('"' + str(self.grade_box.toPlainText()) + '",\n')
 
-            # writing tags
-            pyout.write('   "tags":{\n')
-            pyout.write('       "tag": [\n')                
-            pyout.write(str(self.tag_box.toPlainText()) + '\n')
-            pyout.write('       ]\n')
-            pyout.write('   },\n')
+        #writing question note
+        pyout.write('   "questionnote":"""\n')
+        pyout.write(str(self.qnote_box.toPlainText()))
+        pyout.write('\n""",\n')
 
-            #writing ID
-            pyout.write('   "idnumber":')
-            pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
+        # writing tags
+        pyout.write('   "tags":{\n')
+        pyout.write('       "tag": [\n')                
+        pyout.write(str(self.tag_box.toPlainText()) + '\n')
+        pyout.write('       ]\n')
+        pyout.write('   },\n')
 
-            #penalty
-      
-          
-            pyout.write("\n}")
-                                    
-            self.savefile = savefile
-            self.setWindowTitle(str(os.path.basename(savefile)))
+        #writing ID
+        pyout.write('   "idnumber":')
+        pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
 
-    def save(self):
-        # if savefile[0] already exists, then save, if savefile[0] does not, then open save_file    
-        if not self.isWindowModified():
-            return
+        #penalty
+    
+        
+        pyout.write("\n}")
+                                
+        self.savefile = savefile
+        self.setWindowTitle(str(os.path.basename(savefile)))
 
-        if not self.savefile:
-            self.save_as()
-        else:
-            pyout = open(self.savefile,'w')
-            pyout.write("question = {")
-
-            #writing question text
-            pyout.write('   "questiontext":"""\n')
-            pyout.write(str(self.qtext_box.toPlainText()))
-            pyout.write('\n""",\n')
-
-            #writing question variables
-            pyout.write('   "questionvariables":"""\n')
-            pyout.write(str(self.qvar_box.toPlainText()))
-            pyout.write('\n""",\n')
-
-            #writing general feedback
-            pyout.write('   "generalfeedback":"""\n')
-            pyout.write(str(self.gfeedback_box.toPlainText()))
-            pyout.write('\n""",\n')
-            
-            #writing default grade
-            pyout.write('   "defaultgrade":')
-            pyout.write('"' + str(self.grade_box.toPlainText()) + '",\n')
-
-            #writing question note
-            pyout.write('   "questionnote":"""\n')
-            pyout.write(str(self.qnote_box.toPlainText()))
-            pyout.write('\n""",\n')
-
-            # writing tags
-            pyout.write('   "tags":{\n')
-            pyout.write('       "tag": [\n')                
-            pyout.write(str(self.tag_box.toPlainText()) + '\n')
-            pyout.write('       ]\n')
-            pyout.write('   },\n')
-
-            #writing ID
-            pyout.write('   "idnumber":')
-            pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
-
-            #penalty
-
-            pyout.write("\n}")
-   
     def restore_or_maximize_window(self):
         # Global windows state
         global WINDOW_SIZE #The default value is zero to show that the size is not maximized
@@ -1194,8 +1139,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # Update button icon when window is minimized
             self.restoreButton.setIcon(QtGui.QIcon(u":/icons/icons/cil-window-maximize.png"))#Show maximize icon
 
-    def mousePressEvent(self, event):
-       
+    def mousePressEvent(self, event):    
         # Get the current position of the mouse
         self.clickPosition = event.globalPos()
     
@@ -1220,24 +1164,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
 
-
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
         qtext = self.qtext_box.toHtml()
+        inputs = self.serializeInputs()
         generalfeedback = self.gfeedback_box.toHtml()
         grade = self.grade_box.toPlainText()
         mainid = self.ID_box.toPlainText()
         qnote = self.qnote_box.toPlainText()
         tags = self.tag_box.toPlainText()
+        nodeData = self.nodeEditor.serialize()
         return OrderedDict([
-            ('questionVar', qvar),
-            ('questionText', qtext),
-            ('inputs', self.serializeInputs()),
-            ('generalFeedback', generalfeedback),
-            ('grade', grade),
-            ('mainID', mainid),
-            ('questionNote', qnote),
-            ('tags', tags),
+            ('nonNodeData', OrderedDict([
+                ('questionVar', qvar),
+                ('questionText', qtext),
+                ('inputs', inputs),
+                ('generalFeedback', generalfeedback),
+                ('grade', grade),
+                ('mainID', mainid),
+                ('questionNote', qnote),
+                ('tags', tags)])
+            ),
+            ('nodeData', nodeData),
         ])
     
     def deserialize(self, data, hashmap=[]):
@@ -1252,18 +1200,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tag_box.setPlainText(data['tags'])
         except Exception as e: dumpException(e)
 
-    def combineNonNodeAndNodeData(self):
-        nonNodeData = self.serialize()
-        nodeData = self.nodeEditor.serialize()
-        data = OrderedDict([
-            ('nonNodeData', nonNodeData),
-            ('nodeData', nodeData), 
-        ])
-        return data
-
     def serializeInputs(self):
         inputs = []
-        self.retrieveInput()
+        if self.retrieveInput() == False: return inputs
         for key in varname_dict:
             inputs.append(
                 OrderedDict([
