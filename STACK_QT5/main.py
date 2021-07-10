@@ -158,10 +158,10 @@ class MainWindow(QtWidgets.QMainWindow):
             # Detect if the window is  normal size
             # ###############################################  
             if self.isMaximized() == False: #Not maximized
-                # Move window only when window is normal size  
+                # Move window only when window is normal size   
                 # ###############################################
                 #if left mouse button is clicked (Only accept left mouse button clicks)
-                #FIXME: hasatrr() is a hacky fix, come up with solution to prevent click-drag of left-menu toggle button.
+                #FIXME(Arthur): hasatrr() is a hacky fix, come up with solution to prevent click-drag of left-menu toggle button.
                 if e.buttons() == Qt.LeftButton and hasattr(self, 'clickPosition'):  
                     #Move window 
                     self.move(self.pos() + e.globalPos() - self.clickPosition)
@@ -368,8 +368,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:                    
                     self.gfont_box.setCurrentText("Arial")                           
 
-<<<<<<< HEAD
-=======
     def createVariables(self):
         global qvar_content
         global stack_var
@@ -417,7 +415,6 @@ class MainWindow(QtWidgets.QMainWindow):
         
                 
 
->>>>>>> 0266cd1d24ab4b92b9e0058cae2b85ffe7d7d20f
     def resetfont(self,n):
         if n == 1:
             for textfont, cursorindex in selectedfonts.items():
@@ -1015,7 +1012,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.sfeedback_box.document().modificationChanged.connect(self.setWindowModified)
         self.grade_box.document().modificationChanged.connect(self.setWindowModified)
         
-        self.ID_box.document().modificationChanged.connect(self.setWindowModified)
         self.qnote_box.document().modificationChanged.connect(self.setWindowModified)
         self.tag_box.document().modificationChanged.connect(self.setWindowModified)
 
@@ -1118,7 +1114,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sfeedback_box.insertPlainText(mod.question.get('specificfeedback')[1:-1])               
             self.grade_box.setPlainText(mod.question.get('defaultgrade'))     
             #self.penalty_box.setPlainText(mod.question.get('penalty'))
-            self.ID_box.setPlainText(mod.question.get('idnumber'))       
             self.qnote_box.setPlainText(mod.question.get('questionnote')[1:-1])  
 
             key = mod.question.get('tags')
@@ -1135,51 +1130,45 @@ class MainWindow(QtWidgets.QMainWindow):
         self.exportToFile(fileExport)
 
     def exportToFile(self, fileExport):
-        pyout = open(fileExport,'w')
-        pyout.write("question = {")
+        with open(fileExport,'w') as file:
 
-        #writing question text
-        pyout.write('   "questiontext":"""\n')
-        pyout.write(str(self.qtext_box.toPlainText()))
-        pyout.write('\n""",\n')
+            file.write("question = {")
 
-        #writing question variables
-        pyout.write('   "questionvariables":"""\n')
-        pyout.write(str(self.qvar_box.toPlainText()))
-        pyout.write('\n""",\n')
+            #writing question text
+            file.write('   "questiontext":"""\n')
+            file.write(str(self.qtext_box.toHtml()))
+            file.write('\n""",\n')
 
-        #writing general feedback
-        pyout.write('   "generalfeedback":"""\n')
-        pyout.write(str(self.gfeedback_box.toPlainText()))
-        pyout.write('\n""",\n')
+            #writing question variables
+            file.write('   "questionvariables":"""\n')
+            file.write(str(self.qvar_box.toPlainText()))
+            file.write('\n""",\n')
+
+            #writing general feedback
+            file.write('   "generalfeedback":"""\n')
+            file.write(str(self.gfeedback_box.toHtml()))
+            file.write('\n""",\n')
+            
+            #writing default grade
+            file.write('   "defaultgrade":')
+            file.write('"' + str(self.grade_box.toPlainText()) + '",\n')
+
+            #writing question note
+            file.write('   "questionnote":"""\n')
+            file.write(str(self.qnote_box.toPlainText()))
+            file.write('\n""",\n')
+
+            # writing tags
+            file.write('   "tags":{\n')
+            file.write('       "tag": [\n')                
+            file.write(str(self.tag_box.toPlainText()) + '\n')
+            file.write('       ]\n')
+            file.write('   },\n')
+
+            #penalty
         
-        #writing default grade
-        pyout.write('   "defaultgrade":')
-        pyout.write('"' + str(self.grade_box.toPlainText()) + '",\n')
-
-        #writing question note
-        pyout.write('   "questionnote":"""\n')
-        pyout.write(str(self.qnote_box.toPlainText()))
-        pyout.write('\n""",\n')
-
-        # writing tags
-        pyout.write('   "tags":{\n')
-        pyout.write('       "tag": [\n')                
-        pyout.write(str(self.tag_box.toPlainText()) + '\n')
-        pyout.write('       ]\n')
-        pyout.write('   },\n')
-
-        #writing ID
-        pyout.write('   "idnumber":')
-        pyout.write('"' + str(self.ID_box.toPlainText()) + '",\n')
-
-        #penalty
-    
-        
-        pyout.write("\n}")
-                                
-        self.savefile = savefile
-        self.setWindowTitle(str(os.path.basename(savefile)))
+            
+            file.write("\n}")
 
     def restore_or_maximize_window(self):
         # Global windows state
@@ -1232,7 +1221,6 @@ class MainWindow(QtWidgets.QMainWindow):
         inputs = self.serializeInputs()
         generalfeedback = self.gfeedback_box.toHtml()
         grade = self.grade_box.toPlainText()
-        mainid = self.ID_box.toPlainText()
         qnote = self.qnote_box.toPlainText()
         tags = self.tag_box.toPlainText()
         nodeData = self.nodeEditor.serialize()
@@ -1243,7 +1231,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 ('inputs', inputs),
                 ('generalFeedback', generalfeedback),
                 ('grade', grade),
-                ('mainID', mainid),
                 ('questionNote', qnote),
                 ('tags', tags)])
             ),
@@ -1257,7 +1244,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.deserializeInputs(data['inputs'])
             self.gfeedback_box.setHtml(data['generalFeedback'])
             self.grade_box.setPlainText(data['grade'])
-            self.ID_box.setPlainText(data['mainID'])
             self.qnote_box.setPlainText(data['questionNote'])
             self.tag_box.setPlainText(data['tags'])
         except Exception as e: dumpException(e)
