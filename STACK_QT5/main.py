@@ -35,13 +35,16 @@ lowestterm_dict = {}
 hideanswer_dict = {}
 allowempty_dict = {}
 simplify_dict = {}
-
+qvar_content = ''
+reserved_content = ''
+qvar_definition = []
+qvar_declaration = []
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 class MainWindow(QtWidgets.QMainWindow):
-    
+    qvar_content = ''    
    
     
     def __init__(self):
@@ -183,6 +186,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qtext_box.textChanged.connect(lambda:self.resetfont(1))
         self.qtext_box.selectionChanged.connect(lambda:self.updatesize(1))
         self.qtext_box.textChanged.connect(lambda:self.resetsize(1))
+        self.qtext_box.textChanged.connect(lambda:self.createVariables())
+        self.qvar_box.textChanged.connect(lambda:self.reserveVariables())
+
         
         self.gfeedback_box.selectionChanged.connect(lambda:self.updatefont(2))
         self.gfeedback_box.textChanged.connect(lambda:self.resetfont(2))
@@ -246,7 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
         
-
+        
         self.show()
 
 
@@ -362,6 +368,56 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:                    
                     self.gfont_box.setCurrentText("Arial")                           
 
+<<<<<<< HEAD
+=======
+    def createVariables(self):
+        global qvar_content
+        global stack_var
+        global input_var
+        
+        if self.html_btn.isChecked() == False:
+            qtext_code = self.qtext_box.toPlainText()
+            stack_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)
+            input_var = re.findall(r'\[\[[\w-]+\]\]', qtext_code)
+            for index,variables in enumerate(stack_var):
+                stack_var[index] = variables[2:-2] + ':' 
+                try:
+                    stack_var[index] = stack_var[index] + qvar_definition[index] 
+                except:
+                    pass
+                stack_var[index] = stack_var[index] + '\n'
+            vardetection = ''.join(stack_var)            
+            self.qvar_box.setPlainText(r'/*Define Randomized/Plain Value variables*/' + '\n')
+            self.qvar_box.appendPlainText(vardetection)
+            for index,variables in enumerate(input_var):
+                input_var[index] = variables[2:-2] + ':' 
+                try:
+                    input_var[index] = input_var[index] + qvar_definition[index] 
+                except:
+                    pass
+                input_var[index] = input_var[index] + '\n'    
+            vardetection2 = ''.join(input_var)
+           
+            
+            self.qvar_box.appendPlainText(r'/*Define Answer Variables through Algebraic expressions*/' + '\n')
+            self.qvar_box.appendPlainText(vardetection2)
+                          
+
+    def reserveVariables(self): #detects changes in qvar_edit
+        global reserved_content
+        global qvar_definition
+        
+
+        reserved_content = self.qvar_box.toPlainText()
+        
+        qvars = re.split('[:\n]',reserved_content)
+
+        if qvars != []:               
+            qvar_definition = qvars[1::2]         
+        
+                
+
+>>>>>>> 0266cd1d24ab4b92b9e0058cae2b85ffe7d7d20f
     def resetfont(self,n):
         if n == 1:
             for textfont, cursorindex in selectedfonts.items():
@@ -496,8 +552,13 @@ class MainWindow(QtWidgets.QMainWindow):
             
             #qtext_code = LatexNodes2Text().latex_to_text(qtext_code)
             #qtext_code = mdtex2html.convert(qtext_code)
-            stack_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code) 
+            
+            stack_var = re.findall(r'\[\[[\w-]+\]\]', qtext_code)
 
+            for variables in stack_var:
+                qtext_code = qtext_code.replace(variables,'_____')
+
+                
   
             htmlstart= """
              <html><head>
@@ -519,7 +580,8 @@ class MainWindow(QtWidgets.QMainWindow):
             
             self.gfeedback_box.setAcceptRichText(True)    
             
-            stack_var2 = re.findall(r'\@[\w-]+\@', qtext_code)        
+
+
             htmlstart= """
              <html><head>
              <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
