@@ -223,6 +223,27 @@ class StackSubWindow(NodeEditorWidget):
         self.scene.deserialize(data['nodeData'])
 
     def exportSerialize(self):
+        export = OrderedDict()
         nodeData = self.scene.serialize()
+        i = 0
         for node in nodeData['nodes']:
-            nodeID = node["Test"]
+            node['name'] = i
+            i = i+1
+
+        for node in nodeData['nodes']:
+            for inputSocket in node['inputs']:
+                if inputSocket['socket_type'] is 2:
+                    nodeInputID = inputSocket['id']
+
+            for outputSocket in node['outputs']:
+                if outputSocket['socket_type'] is 1:
+                    nodeTrueOutputID = outputSocket['id']
+
+                if outputSocket['socket_type'] is 4:
+                    nodeFalseOutputID = outputSocket['id']
+
+            node['truenextmode'] = -1
+            node['falsenextmode'] = -1
+
+
+        

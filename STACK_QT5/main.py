@@ -1199,7 +1199,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Get current left menu width
         width = self.left_side_menu.width()
 
-        # If minimizedw
+        # If minimized
         if width == 50:
             # Expand menu
             newWidth = 150
