@@ -1193,12 +1193,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def mousePressEvent(self, event):    
         # Get the current position of the mouse
         self.clickPosition = event.globalPos()
+        super().mousePressEvent(event)
     
     def slideLeftMenu(self):
         # Get current left menu width
         width = self.left_side_menu.width()
 
-        # If minimized
+        # If minimizedw
         if width == 50:
             # Expand menu
             newWidth = 150
