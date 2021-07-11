@@ -1,9 +1,9 @@
 import sys, os, importlib,re
-from PyQt5 import QtWidgets,QtGui,QtCore,uic
+from PyQt5 import QtWidgets,QtGui,QtCore,QtWebEngineWidgets,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import *
 
 import resource
 import json
@@ -114,7 +114,8 @@ class MainWindow(QtWidgets.QMainWindow):
                            }""")
         #setting ToolTip
 
-        #html button for question text
+        #setting rich text bar images
+        
 
         self.preview_box = QWebEngineView(self.previewBaseWidget)
         self.preview_box.setObjectName(u"preview_box")
@@ -872,6 +873,14 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.addInput()
             #i+=1
 
+    def automateInputSave(self,current_qtext):
+        if self.html_btn.isChecked() == False:
+            inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
+            for input in inputAutomation:
+                newinput = r'[[input:' + input[2:] + r" [[validation:" + input[2:]
+                current_qtext = current_qtext.replace(input,newinput)
+        return current_qtext
+
     def addInput(self,row,column): #triggers by clicking update 
         
         NewFrame = f"input_frame{str(row)}_{str(column)}"
@@ -1137,7 +1146,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             #writing question text
             file.write('   "questiontext":"""\n')
-            file.write(str(self.qtext_box.toHtml()))
+            file.write(str(self.automateInputSave(self.qtext_box.toHtml())))
             file.write('\n""",\n')
 
             #writing question variables
@@ -1159,7 +1168,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file.write(str(self.qnote_box.toPlainText()))
             file.write('\n""",\n')
 
-            # writing tags
+            # writing tags 
             file.write('   "tags":{\n')
             file.write('       "tag": [\n')                
             file.write(str(self.tag_box.toPlainText()) + '\n')

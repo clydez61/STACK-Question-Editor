@@ -167,7 +167,6 @@
     <file>icons/cil-x-circle.png</file>
     <file>icons/cil-zoom-in.png</file>
     <file>icons/cil-zoom-out.png</file>
-    <file>icons/var.png</file>
     <file>icons/sampletext.png</file>
     <file>icons/align-left.png</file>
     <file>icons/align-center.png</file>
@@ -176,6 +175,13 @@
     <file>icons/italic.png</file>
     <file>icons/unordered-list.png</file>
     <file>icons/numbered-list.png</file>
+    <file>icons/background-color.png</file>
+    <file>icons/text-color.png</file>
+    <file>icons/underline.png</file>
+    <file>icons/unflagged.png</file>
+    <file>icons/in.png</file>
+    <file>icons/status_icons.png</file>
+    
   </qresource>
   <qresource prefix="images"/>
   <qresource/>

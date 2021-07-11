@@ -10,7 +10,7 @@ class StackNode_PRT_Node(StackNode):
     op_code = OP_NODE_PRT_NODE
     op_title = "PRT Node"
     content_label_objname = "stack_node_in/out"
-
+  
     def __init__(self, scene):
         super().__init__(scene, inputs=[2], outputs=[1,4])
 

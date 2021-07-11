@@ -15,7 +15,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMenu::item{background: rgb(51, 51, 51)}QMenu::item:selected{background:#616161}
-QFrame{}</string>
+QFrame{}
+font: 14pt &quot;MS Sans Serif&quot;;</string>
   </property>
   <property name="locale">
    <locale language="English" country="Canada"/>
@@ -515,7 +516,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>5</number>
             </property>
             <widget class="QWidget" name="qvar_page">
              <property name="styleSheet">
@@ -620,8 +621,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/text-color.png</normaloff>icons/text-color.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/text-color.png</normaloff>:/icons/icons/text-color.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -640,8 +641,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/background-color.png</normaloff>icons/background-color.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/background-color.png</normaloff>:/icons/icons/background-color.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -660,8 +661,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/bold.png</normaloff>icons/bold.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/bold.png</normaloff>:/icons/icons/bold.png</iconset>
                    </property>
                    <property name="shortcut">
                     <string>Ctrl+B</string>
@@ -683,8 +684,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/italic.png</normaloff>icons/italic.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/italic.png</normaloff>:/icons/icons/italic.png</iconset>
                    </property>
                    <property name="shortcut">
                     <string>Ctrl+I</string>
@@ -706,8 +707,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/underline.png</normaloff>icons/underline.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/underline.png</normaloff>:/icons/icons/underline.png</iconset>
                    </property>
                    <property name="shortcut">
                     <string>Ctrl+U</string>
@@ -729,8 +730,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/unordered-list.png</normaloff>icons/unordered-list.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/unordered-list.png</normaloff>:/icons/icons/unordered-list.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -752,8 +753,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/align-left.png</normaloff>icons/align-left.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/align-left.png</normaloff>:/icons/icons/align-left.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -772,8 +773,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/align-center.png</normaloff>icons/align-center.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/align-center.png</normaloff>:/icons/icons/align-center.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -792,8 +793,8 @@ background-color: rgb(51, 51, 51);
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/align-right.png</normaloff>icons/align-right.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/align-right.png</normaloff>:/icons/icons/align-right.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1055,7 +1056,7 @@ border: none</string>
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;./icons/unflagged.png&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Flag question&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/icons/icons/unflagged.png&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Flag question&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
                       </widget>
                      </item>
@@ -1178,8 +1179,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/text-color.png</normaloff>icons/text-color.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/text-color.png</normaloff>:/icons/icons/text-color.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1198,8 +1199,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/background-color.png</normaloff>icons/background-color.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/background-color.png</normaloff>:/icons/icons/background-color.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1218,8 +1219,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/bold.png</normaloff>icons/bold.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/bold.png</normaloff>:/icons/icons/bold.png</iconset>
                    </property>
                    <property name="shortcut">
                     <string>Ctrl+B</string>
@@ -1241,8 +1242,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/italic.png</normaloff>icons/italic.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/italic.png</normaloff>:/icons/icons/italic.png</iconset>
                    </property>
                    <property name="shortcut">
                     <string>Ctrl+I</string>
@@ -1264,8 +1265,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/underline.png</normaloff>icons/underline.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/underline.png</normaloff>:/icons/icons/underline.png</iconset>
                    </property>
                    <property name="shortcut">
                     <string>Ctrl+U</string>
@@ -1287,8 +1288,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/unordered-list.png</normaloff>icons/unordered-list.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/unordered-list.png</normaloff>:/icons/icons/unordered-list.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1310,8 +1311,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/align-left.png</normaloff>icons/align-left.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/align-left.png</normaloff>:/icons/icons/align-left.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1330,8 +1331,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/align-center.png</normaloff>icons/align-center.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/align-center.png</normaloff>:/icons/icons/align-center.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1350,8 +1351,8 @@ background-color: rgb(255, 243, 205);</string>
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
-                     <normaloff>icons/align-right.png</normaloff>icons/align-right.png</iconset>
+                    <iconset resource="local.qrc">
+                     <normaloff>:/icons/icons/align-right.png</normaloff>:/icons/icons/align-right.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -1518,6 +1519,12 @@ border:2px solid rgb(255,0,0)
              </layout>
             </widget>
             <widget class="QWidget" name="tree_page">
+             <property name="styleSheet">
+              <string notr="true">font: 14pt &quot;MS Sans Serif&quot;;
+color: rgb(255, 255, 222);
+
+</string>
+             </property>
              <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
                <layout class="QGridLayout" name="NodeEditorLayout"/>
