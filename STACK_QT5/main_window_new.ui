@@ -515,7 +515,7 @@ background-color: rgb(51, 51, 51);
 </string>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="qvar_page">
              <property name="styleSheet">
@@ -587,7 +587,7 @@ background-color: rgb(51, 51, 51);
                  <item>
                   <widget class="QComboBox" name="tfont_box">
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">color: rgb(255, 255, 222);
@@ -799,6 +799,9 @@ background-color: rgb(51, 51, 51);
                  </item>
                  <item>
                   <widget class="QPushButton" name="html_btn">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Html&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="statusTip">
                     <string>we</string>
                    </property>
@@ -826,7 +829,7 @@ background-color: rgb(51, 51, 51);
                  </size>
                 </property>
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click on &amp;quot;Preview&amp;quot; to see what the code in &amp;quot;Question Text&amp;quot; generates for student view when they open the question&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates live preview for the code in &amp;quot;Question Text&amp;quot;. Shows what students would see when they attempt the question&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="toolTipDuration">
                  <number>-1</number>
@@ -854,7 +857,7 @@ background-color: rgb(51, 51, 51);
               <item row="0" column="0" alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="qtext_label">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text of the question that will be displayed to students.&lt;/p&gt;&lt;p&gt;Mathematics can be included using LATEX syntax. Use the LATEX delineator \( . . . \) for inline maths and \[ . . . \] for displayed maths.&lt;/p&gt;&lt;p&gt;Use {@ . . . @} to include any variable values created in the &amp;quot;Question Variable&amp;quot; section&lt;/p&gt;&lt;p&gt;Sample Question:&lt;/p&gt;&lt;p&gt;---Question variables---&lt;/p&gt;&lt;p&gt;base : 1+rand(4)&lt;/p&gt;&lt;p&gt;height : 2+rand(5)&lt;/p&gt;&lt;p&gt;area: base * height /2&lt;/p&gt;&lt;p&gt;---Question Text---&lt;/p&gt;&lt;p&gt;Given a triangle with base = {@base@}, height = {height@}, determine the area. [[input:area_student]]&lt;/p&gt;&lt;p&gt;Output:&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text of the question that will be displayed to students.&lt;/p&gt;&lt;p&gt;Mathematics can be included using LATEX syntax. Use the LATEX delineator \( . . . \) for inline maths and \[ . . . \] for displayed maths.&lt;/p&gt;&lt;p&gt;Use {@ . . . @} to declare any randomized given variable values. &lt;/p&gt;&lt;p&gt;Use [[ . . . ]] to declare a value that require student input. In our syntax, if your defined standard answer is &amp;quot;area&amp;quot;, then student input value would be &amp;quot;_area&amp;quot;&lt;/p&gt;&lt;p&gt;Sample Question:&lt;/p&gt;&lt;p&gt;---Question variables---&lt;/p&gt;&lt;p&gt;base : 1+rand(4)&lt;/p&gt;&lt;p&gt;height : 2+rand(5)&lt;/p&gt;&lt;p&gt;area: base * height /2&lt;/p&gt;&lt;p&gt;---Question Text---&lt;/p&gt;&lt;p&gt;Given a triangle with base = {@base@}, height = {height@}, determine the area. [[area_student]]&lt;/p&gt;&lt;p&gt;---Student Preview---&lt;/p&gt;&lt;p&gt;Copy &amp;amp; Paste the content into the two fields and check &amp;quot;Student Preview&amp;quot; for output result&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Question Text</string>
@@ -875,17 +878,6 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
-               <widget class="QPushButton" name="preview_btn">
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 222);
-font: 75 14pt &quot;MS Sans Serif&quot;;</string>
-                </property>
-                <property name="text">
-                 <string>Preview</string>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="1">
                <widget class="QScrollArea" name="previewScroll_box">
                 <property name="styleSheet">
@@ -902,8 +894,8 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>114</width>
-                   <height>164</height>
+                   <width>522</width>
+                   <height>477</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1099,6 +1091,28 @@ background-color: rgb(51, 51, 51);
 }</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
+              <item row="2" column="1">
+               <widget class="QScrollArea" name="scrollArea_2">
+                <property name="styleSheet">
+                 <string notr="true">
+background-color: rgb(255, 243, 205);</string>
+                </property>
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>522</width>
+                   <height>514</height>
+                  </rect>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_8"/>
+                </widget>
+               </widget>
+              </item>
               <item row="1" column="0">
                <widget class="QFrame" name="rich_text_bar_2">
                 <property name="styleSheet">
@@ -1131,7 +1145,7 @@ background-color: rgb(51, 51, 51);
                  <item>
                   <widget class="QComboBox" name="gfont_box">
                    <property name="toolTip">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select Font&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">color: rgb(255, 255, 222);
@@ -1343,6 +1357,9 @@ background-color: rgb(51, 51, 51);
                  </item>
                  <item>
                   <widget class="QPushButton" name="html_btn2">
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Html&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
                    <property name="statusTip">
                     <string>we</string>
                    </property>
@@ -1361,6 +1378,16 @@ background-color: rgb(51, 51, 51);
                 </layout>
                </widget>
               </item>
+              <item row="0" column="0" alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="gfeedback_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text given to the student once they have used all their permitted attempts at the question, or once they have given a correct answer. It is typically used to give a worked solution to the particular randomised question instance asked.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This section behaves similarly to the Question text section: LATEX formatting can be included as well as values of any question variables.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>General Feedback</string>
+                </property>
+               </widget>
+              </item>
               <item row="2" column="0">
                <widget class="QTextEdit" name="gfeedback_box">
                 <property name="styleSheet">
@@ -1374,52 +1401,12 @@ font: 12pt &quot;Arial&quot;;</string>
               </item>
               <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
                <widget class="QLabel" name="sfeedback_label">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generates live preview for the code in &amp;quot;General Feedback&amp;quot;. Shows what students would see when they attempt the question&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Feedback Preview</string>
                 </property>
-               </widget>
-              </item>
-              <item row="0" column="0" alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="gfeedback_label">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the text given to the student once they have used all their permitted attempts at the question, or once they have given a correct answer. It is typically used to give a worked solution to the particular randomised question instance asked.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;This section behaves similarly to the Question text section: LATEX formatting can be included as well as values of any question variables.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>General Feedback</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QPushButton" name="gpreview_btn">
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(255, 255, 222);
-font: 75 14pt &quot;MS Sans Serif&quot;;</string>
-                </property>
-                <property name="text">
-                 <string>Preview</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QScrollArea" name="scrollArea_2">
-                <property name="styleSheet">
-                 <string notr="true">
-background-color: rgb(255, 243, 205);</string>
-                </property>
-                <property name="widgetResizable">
-                 <bool>true</bool>
-                </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
-                  </rect>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_8"/>
-                </widget>
                </widget>
               </item>
              </layout>
@@ -1478,7 +1465,7 @@ background-color: rgb(51, 51, 51);
               <item row="2" column="0">
                <widget class="QLabel" name="tag_label">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This section of the form allows user-speci ed tags (identi er texts) to be added to a question. Within the Question bank, questions can be searched for by tags. Tags can also be used within a quiz, to allow an included question to be randomly selected from all questions with particular tags.&lt;/p&gt;&lt;p&gt;Syntax: One line per tag&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This section of the form allows user-specified tags (identifier texts) to be added to a question. Within the Question bank, questions can be searched for by tags. Tags can also be used within a quiz, to allow an included question to be randomly selected from all questions with particular tags.&lt;/p&gt;&lt;p&gt;Syntax: One line per tag&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>Tags</string>
@@ -1509,8 +1496,8 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
+                   <width>1052</width>
+                   <height>575</height>
                   </rect>
                  </property>
                  <property name="sizePolicy">
@@ -1593,7 +1580,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="styleSheet">
