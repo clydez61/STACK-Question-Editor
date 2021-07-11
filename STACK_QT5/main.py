@@ -850,7 +850,8 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols) 
             widgetname2 = f'{rows}_{lastrow}'              
 
-            self.input_name.setText(elem[2:-2])            
+            self.input_name.setText('_' + elem[2:-2])  
+            self.input_ans.setText(elem[2:-2])          
             self.input_size.setText("5")
 
             
