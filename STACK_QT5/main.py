@@ -307,9 +307,9 @@ class MainWindow(QtWidgets.QMainWindow):
             fname, filter = QFileDialog.getSaveFileName(self, 'Save STACK question to file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
             if fname == '': return False
 
-            self.setWindowTitle(fname)
             self.saveToFile(data, fname)
             self.filename = fname
+            self.setTitle()
             return True
         except Exception as e: dumpException(e)
 
@@ -318,6 +318,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file.write(json.dumps(data, indent=4))
             #print("saving to", filename, "was successful.")
             self.setWindowModified(False)
+            self.nodeEditor.setSubWndModifiedFalse()
 
     def handleSelectionChanged(self):
         
@@ -1138,6 +1139,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileExport == '': return False
         
         self.exportToFile(fileExport)
+        print(self.nodeEditor.exportSerialize())
 
     def exportToFile(self, fileExport):
         with open(fileExport,'w') as file:

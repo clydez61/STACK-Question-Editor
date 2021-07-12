@@ -314,6 +314,11 @@ class StackWindow(NodeEditorWindow):
 
         return True
 
+    def setSubWndModifiedFalse(self):
+        for window in self.mdiArea.subWindowList():
+            window.widget().scene.has_been_modified = False
+            window.widget().setTitle()
+
     def closeAllSubWnd(self):
         for window in self.mdiArea.subWindowList():
             window.close()
@@ -347,3 +352,9 @@ class StackWindow(NodeEditorWindow):
             subwindow.widget().deserialize(subWndData)
             subwindow.widget().scene.history.clear()
             subwindow.widget().has_been_modified = False
+
+    def exportSerialize(self):
+        export = []
+        for window in self.mdiArea.subWindowList():
+            export.append(window.widget().exportSerialize())
+        return export

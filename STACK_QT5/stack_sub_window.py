@@ -190,15 +190,15 @@ class StackSubWindow(NodeEditorWidget):
 
     def treeSerialize(self):
         res = OrderedDict()
-        res['treeName'] = self.treeName
-        res['PRTValue'] = self.PRTValue
-        res['feedbackVar'] = self.feedbackVar
+        res['name'] = self.treeName
+        res['value'] = self.PRTValue
+        res['feedbackvariables'] = self.feedbackVar
         return res
 
     def treeDeserialize(self, data):
-        self.treeName = data['treeName']
-        self.PRTValue = data['PRTValue']
-        self.feedbackVar = data['feedbackVar']
+        self.treeName = data['name']
+        self.PRTValue = data['value']
+        self.feedbackVar = data['feedbackvariables']
 
     @property
     def treeName(self):
@@ -224,26 +224,47 @@ class StackSubWindow(NodeEditorWidget):
 
     def exportSerialize(self):
         export = OrderedDict()
+        nodes = []
         nodeData = self.scene.serialize()
+        treeData = self.treeSerialize()
+
+        export.update(treeData)
+
         i = 0
+        nodeIDMap = {}
+        nodeInputMap = {}
+        nodeTrueMap = {}
+        nodeFalseMap = {}
         for node in nodeData['nodes']:
-            node['name'] = i
+            nodeIDMap[node['id']] = i
+
+            for inputSocket in node['inputs']:
+                if inputSocket['socket_type'] == 2:
+                    nodeInputMap[inputSocket['id']] = i
+
+            for outputSocket in node['outputs']:
+                if outputSocket['socket_type'] == 1:
+                    nodeTrueMap[i] = outputSocket['id']
+
+                if outputSocket['socket_type'] == 4:
+                    nodeFalseMap[i] = outputSocket['id']
+
             i = i+1
 
         for node in nodeData['nodes']:
-            for inputSocket in node['inputs']:
-                if inputSocket['socket_type'] is 2:
-                    nodeInputID = inputSocket['id']
+            node['truenextnode'] = -1
+            node['falsenextnode'] = -1
+            node['name'] = nodeIDMap[node['id']]
 
-            for outputSocket in node['outputs']:
-                if outputSocket['socket_type'] is 1:
-                    nodeTrueOutputID = outputSocket['id']
+            for edge in nodeData['edges']:
+                if nodeTrueMap[node['name']] == edge['start']:
+                    node['truenextnode'] = nodeInputMap[edge['end']]
 
-                if outputSocket['socket_type'] is 4:
-                    nodeFalseOutputID = outputSocket['id']
+                elif nodeFalseMap[node['name']] == edge['start']:
+                    node['falsenextnode'] = nodeInputMap[edge['end']]
 
-            node['truenextmode'] = -1
-            node['falsenextmode'] = -1
+            nodes.append(node)
 
+        export['node'] = nodes
 
-        
+        return export

@@ -108,40 +108,40 @@ class PropertiesBox(QStackedWidget):
 
     def transmitTreeData(self):
         transmit = {}
-        transmit['treeName'] = self.treeName.text()
-        transmit['PRTValue'] = self.PRTValue.text()
-        transmit['feedbackVar'] = self.feedbackVar.toPlainText()
+        transmit['name'] = self.treeName.text()
+        transmit['value'] = self.PRTValue.text()
+        transmit['feedbackvariables'] = self.feedbackVar.toPlainText()
         self.treeDataSignal.emit(transmit)
 
     def displayTreeData(self, data):
-        self.treeName.setText(data['treeName'])
-        self.PRTValue.setText(data['PRTValue'])
-        self.feedbackVar.setPlainText(data['feedbackVar'])
+        self.treeName.setText(data['name'])
+        self.PRTValue.setText(data['value'])
+        self.feedbackVar.setPlainText(data['feedbackvariables'])
 
     def displayNodeData(self, data):
         self.sans.setText(data['sans'])
         self.tans.setText(data['tans'])
-        self.testType.setCurrentIndex(self.testType.findText(data['testType']))
-        self.testOption.setText(data['testOption'])
-        self.scoreTrue.setText(data['scoreTrue'])
-        self.scoreFalse.setText(data['scoreFalse'])
-        self.trueFeedback.setPlainText(data['trueFeedback'])
-        self.falseFeedback.setPlainText(data['falseFeedback'])
+        self.testType.setCurrentIndex(self.testType.findText(data['answertest']))
+        self.testOption.setText(data['testoptions'])
+        self.scoreTrue.setText(data['truescore'])
+        self.scoreFalse.setText(data['falsescore'])
+        self.trueFeedback.setPlainText(data['truefeedback'])
+        self.falseFeedback.setPlainText(data['falsefeedback'])
 
     def transmitNodeData(self):
         transmit = {}
         transmit['sans'] = self.sans.text()
         transmit['tans'] = self.tans.text()
-        transmit['testType'] = self.testType.currentText()
-        transmit['testOption'] = self.testOption.text()
-        transmit['modTrue'] = '+'
-        transmit['scoreTrue'] = self.scoreTrue.text()
-        transmit['penaltyTrue'] = ''
-        transmit['modFalse'] = '-'
-        transmit['scoreFalse'] = self.scoreFalse.text()
-        transmit['penaltyFalse'] = ''
-        transmit['trueFeedback'] = self.trueFeedback.toPlainText()
-        transmit['falseFeedback'] = self.falseFeedback.toPlainText()
+        transmit['answertest'] = self.testType.currentText()
+        transmit['testoptions'] = self.testOption.text()
+        transmit['truescoremode'] = '+'
+        transmit['truescore'] = self.scoreTrue.text()
+        transmit['truepenalty'] = ''
+        transmit['falsescoremode'] = '-'
+        transmit['falsescore'] = self.scoreFalse.text()
+        transmit['falsepenalty'] = ''
+        transmit['truefeedback'] = self.trueFeedback.toPlainText()
+        transmit['falsefeedback'] = self.falseFeedback.toPlainText()
         self.nodeDataSignal.emit(transmit)
 
     def setNoSubWindowLayout(self):

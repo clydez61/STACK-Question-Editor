@@ -79,16 +79,16 @@ class StackInputContent(StackContent):
         res = super().serialize()
         res['sans'] = self.dataSans
         res['tans'] = self.dataTans
-        res['testType'] = self.dataTestType
-        res['testOption'] = self.dataTestOption
-        res['modTrue'] = self.dataModTrue
-        res['scoreTrue'] = self.dataScoreTrue
-        res['penaltyTrue'] = self.dataPenaltyTrue
-        res['modFalse'] = self.dataModFalse
-        res['scoreFalse'] = self.dataScoreFalse
-        res['penaltyFalse'] = self.dataPenaltyFalse
-        res['trueFeedback'] = self.dataTrueFeedback
-        res['falseFeedback'] = self.dataFalseFeedback
+        res['answertest'] = self.dataTestType
+        res['testoptions'] = self.dataTestOption
+        res['truescoremode'] = self.dataModTrue
+        res['truescore'] = self.dataScoreTrue
+        res['truepenalty'] = self.dataPenaltyTrue
+        res['falsescoremode'] = self.dataModFalse
+        res['falsescore'] = self.dataScoreFalse
+        res['falsepenalty'] = self.dataPenaltyFalse
+        res['truefeedback'] = self.dataTrueFeedback
+        res['falsefeedback'] = self.dataFalseFeedback
 
         return res
 
@@ -99,18 +99,18 @@ class StackInputContent(StackContent):
             self.sans.setText(self.dataSans)
             self.dataTans = data['tans']
             self.tans.setText(self.dataTans)
-            self.dataTestType = data['testType']
+            self.dataTestType = data['answertest']
             self.testType.setCurrentIndex(self.testType.findText(self.dataTestType))
-            self.dataTestOption = data['testOption']
+            self.dataTestOption = data['testoptions']
             self.testOption.setText(self.dataTestOption)
-            self.dataModTrue = data['modTrue']
-            self.dataScoreTrue = data['scoreTrue']
-            self.dataPenaltyTrue = data['penaltyTrue']
-            self.dataModFalse = data['modFalse']
-            self.dataScoreFalse = data['scoreFalse']
-            self.dataPenaltyFalse = data['penaltyFalse']
-            self.dataTrueFeedback = data['trueFeedback']
-            self.dataFalseFeedback = data['falseFeedback']
+            self.dataModTrue = data['truescoremode']
+            self.dataScoreTrue = data['truescore']
+            self.dataPenaltyTrue = data['truepenalty']
+            self.dataModFalse = data['falsescoremode']
+            self.dataScoreFalse = data['falsescore']
+            self.dataPenaltyFalse = data['falsepenalty']
+            self.dataTrueFeedback = data['truefeedback']
+            self.dataFalseFeedback = data['falsefeedback']
             return True & res
         except Exception as e:
             dumpException(e)
