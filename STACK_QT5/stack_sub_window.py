@@ -232,14 +232,14 @@ class StackSubWindow(NodeEditorWidget):
 
         for node in nodeData['nodes']:
             for inputSocket in node['inputs']:
-                if inputSocket['socket_type'] is 2:
+                if inputSocket['socket_type'] == 2:
                     nodeInputID = inputSocket['id']
 
             for outputSocket in node['outputs']:
-                if outputSocket['socket_type'] is 1:
+                if outputSocket['socket_type'] == 1:
                     nodeTrueOutputID = outputSocket['id']
 
-                if outputSocket['socket_type'] is 4:
+                if outputSocket['socket_type'] == 4:
                     nodeFalseOutputID = outputSocket['id']
 
             node['truenextmode'] = -1
