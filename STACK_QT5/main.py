@@ -1149,7 +1149,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileExport == '': return False
         
         self.exportToFile(fileExport)
-        print(self.nodeEditor.exportSerialize())
+        print(json.dumps(self.nodeEditor.exportSerialize(), indent=4))
 
     def exportToFile(self, fileExport):
         with open(fileExport,'w') as file:

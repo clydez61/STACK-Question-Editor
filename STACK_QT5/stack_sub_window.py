@@ -252,18 +252,19 @@ class StackSubWindow(NodeEditorWidget):
             i = i+1
 
         for node in nodeData['nodes']:
-            node['truenextnode'] = -1
-            node['falsenextnode'] = -1
-            node['name'] = nodeIDMap[node['id']]
+            nodeContent = node['content']
+            nodeContent['truenextnode'] = -1
+            nodeContent['falsenextnode'] = -1
+            nodeContent['name'] = nodeIDMap[node['id']]
 
             for edge in nodeData['edges']:
-                if nodeTrueMap[node['name']] == edge['start']:
-                    node['truenextnode'] = nodeInputMap[edge['end']]
+                if nodeTrueMap[nodeContent['name']] == edge['start']:
+                    nodeContent['truenextnode'] = nodeInputMap[edge['end']]
 
-                elif nodeFalseMap[node['name']] == edge['start']:
-                    node['falsenextnode'] = nodeInputMap[edge['end']]
+                elif nodeFalseMap[nodeContent['name']] == edge['start']:
+                    nodeContent['falsenextnode'] = nodeInputMap[edge['end']]
 
-            nodes.append(node)
+            nodes.append(nodeContent)
 
         export['node'] = nodes
 
