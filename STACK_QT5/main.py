@@ -62,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
-        #self.closeButton.clicked.connect(lambda: self.close()) 
+        
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
        
         
@@ -85,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         self.update_btn.clicked.connect(lambda: self.UpdateInput())
+        self.force_close = True
         self.savefile = None
         self.inputs = None
         self.NewFrame = None
@@ -265,11 +266,12 @@ class MainWindow(QtWidgets.QMainWindow):
             item = self.gridLayout_2.itemAt(0)
 
     def setTitle(self):
+        global title
         title = "STACK Question Editor - "
         title = title + (os.path.basename(self.filename) + '[*]' if self.filename is not None else "New Question[*]")
 
         self.setWindowTitle(title)
-
+        
     def onOpen(self):
         try:
             fname, filter = QFileDialog.getOpenFileName(self, 'Open STACK question from file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
@@ -302,6 +304,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.onSaveAs()
 
     def onSaveAs(self):
+        global title
         try:
             data = self.serialize()
             fname, filter = QFileDialog.getSaveFileName(self, 'Save STACK question to file', os.path.dirname(__file__), 'STACK Question (*.json);;All files (*)')
@@ -650,6 +653,7 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f'self.label_syntax = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
             setattr(self,NewSyntaxL,self.label_syntax)
             self.label_syntax.setObjectName(u"label_size")
+            self.label_syntax.setToolTip("The syntax hint will appear in the answer box\n whenever this is left blank by the student.")
             self.label_syntax.setText("Syntax Hints")       
             self.label_syntax.setMaximumSize(QSize(16777215, 30))
             self.label_syntax.setAlignment(Qt.AlignVCenter)
@@ -662,13 +666,11 @@ class MainWindow(QtWidgets.QMainWindow):
         
             exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_syntax,self.input_syntax)',symbols)
             
-            #self.formLayout_2.addRow(self.label_syntax,self.input_frame)
-            #self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.input_syntax)
-
             #self.label_float = QLabel(self.input_frame)
             exec(f'self.label_float = QLabel(self.input_frame{str(row)}_{str(column)})',symbols)
             setattr(self,NewFloatL,self.label_float)
             self.label_float.setObjectName(u"input_float")
+            self.label_float.setToolTip("If set to yes, then any answer of the student \nwhich has a floating-point number will be rejected as invalid.")
             self.label_float.setText("Forbid Float")
 
             
@@ -690,6 +692,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.input_lowestTerms = QComboBox(self.input_frame)
             exec(f'self.input_lowestTerms = QComboBox(self.input_frame{str(row)}_{str(column)})',symbols)
             setattr(self,Newlowest,self.input_lowestTerms)
+            self.label_lowestTerms.setToolTip("When this option is set to yes, \n any coefficients or other rational numbers in an expression, \n must be written in lowest terms. \n Otherwise the answer is rejected as 'invalid'.")
             self.input_lowestTerms.addItem(u"No")
             self.input_lowestTerms.addItem(u"Yes")
 
@@ -707,17 +710,21 @@ class MainWindow(QtWidgets.QMainWindow):
             
             
             self.input_hideanswer = QCheckBox(self.input_frame)
+            
             setattr(self,HideAnswer,self.input_hideanswer)
+            self.input_hideanswer.setToolTip("Only supported in the string input type for JSXGraph related opreations,\n see 'Help' for details")
             self.input_hideanswer.setObjectName(u"input_hideanswer")
             self.input_hideanswer.setText("Hide Answer")
 
 
             self.input_allowempty = QCheckBox(self.input_frame)
             setattr(self,AllowEmpty,self.input_allowempty)
+            self.input_allowempty.setToolTip("Normally a blank answer will be marked 'invalid',\n checking this allows blank answers to be validated as incorrect ")
             self.input_allowempty.setObjectName(u"input_allowempty")
             self.input_allowempty.setText("Allow Empty")
             
             self.input_simplify = QCheckBox(self.input_frame)
+            self.input_simplify.setToolTip("Allows students to use customly created functions to simplify algebraic calculations,\n this can be used in combination with syntax hint")
             setattr(self,Simplify,self.input_simplify)
             self.input_simplify.setText("Simplify")
                        
@@ -852,7 +859,7 @@ class MainWindow(QtWidgets.QMainWindow):
             exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols) 
             widgetname2 = f'{rows}_{lastrow}'              
 
-            self.input_name.setText('_' + elem[2:-2])  
+            self.input_name.setText('stu_' + elem[2:-2])  
             self.input_ans.setText(elem[2:-2])          
             self.input_size.setText("5")
 
@@ -925,7 +932,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.label_name.setObjectName(u"label_name")
         self.label_name.setText("Name")
-        self.label_name.setToolTip("The Name of the Input, can be used in the potential tree section\n Edit through the Question Text Section")
+        self.label_name.setToolTip("The variable name of student input, used in the potential tree section for 'Student Answer'\n, automatically defined")
         self.label_name.setAlignment(Qt.AlignCenter)
 
         self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_name)
@@ -943,9 +950,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.input_name)
 
         self.label_type = QLabel(self.input_frame)
+        self.label_type.setToolTip("The type of input entered by student,\nfor filling in the blank purposes use Algebraic Input,\nfor further details refer to 'Help'")
         self.label_type.setObjectName(u"label_type")
         self.label_type.setText("Type")
-
+        self.label_type.setToolTip
         self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_type)
 
         self.input_type = QComboBox(self.input_frame)
@@ -968,6 +976,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.input_type)
 
         self.label_ans = QLabel(self.input_frame)
+        self.label_ans.setToolTip("The variable name of teacher input, used in the potential tree section for 'Student Answer',\n defined through the Question Text Section")
         self.label_ans.setObjectName(u"label_ans")
         self.label_ans.setText("Answer")
         self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_ans)
@@ -979,6 +988,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.input_ans)
 
         self.label_size = QLabel(self.input_frame)
+        self.label_size.setToolTip("Width of the input box, defaulted as 5 \n but will expand automatically adjust length as student input becomes longer")
         self.label_size.setObjectName(u"label_size")
         self.label_size.setText("Box Size")
 
@@ -1315,6 +1325,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #self.inputs = inputs
 
+    def closeEvent(self, event):
+        print(title)
+        checkSaveStatus = re.findall(r'New Question', title)
+        if checkSaveStatus != []:
+            quit_msg = 'You have not selected a save location.\n Are you sure you want to exit?'
+        else:
+            self.onSave()
+            quit_msg = "Are you sure you want to exit the program?\n Your latest changes will be saved."
+        reply = QMessageBox.question(self, 'Exit Confirmation', 
+                        quit_msg, QMessageBox.Yes, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
 
         
 

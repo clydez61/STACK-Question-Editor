@@ -216,7 +216,7 @@ QPushButton:hover{
                 <string notr="true">font: 14pt &quot;MS Sans Serif&quot;;</string>
                </property>
                <property name="text">
-                <string>STACK Question Maker</string>
+                <string>STACK Question Editor</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -895,8 +895,8 @@ font: 75 14pt &quot;MS Sans Serif&quot;;</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>522</width>
-                   <height>477</height>
+                   <width>114</width>
+                   <height>164</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -1106,8 +1106,8 @@ background-color: rgb(255, 243, 205);</string>
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>522</width>
-                   <height>514</height>
+                   <width>98</width>
+                   <height>28</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_8"/>
@@ -1497,8 +1497,8 @@ background-color: rgb(51, 51, 51);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>1052</width>
-                   <height>575</height>
+                   <width>98</width>
+                   <height>28</height>
                   </rect>
                  </property>
                  <property name="sizePolicy">
@@ -1587,7 +1587,7 @@ QLabel{
      <x>0</x>
      <y>0</y>
      <width>1126</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -1626,6 +1626,9 @@ color: rgb(255, 255, 222);</string>
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionABout"/>
+    <addaction name="actionDocumantation"/>
+    <addaction name="actionFurther"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1726,6 +1729,21 @@ color: rgb(255, 255, 222);</string>
   <action name="actionTemporary_save">
    <property name="text">
     <string>Temporary save</string>
+   </property>
+  </action>
+  <action name="actionABout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionDocumantation">
+   <property name="text">
+    <string>Documentation</string>
+   </property>
+  </action>
+  <action name="actionFurther">
+   <property name="text">
+    <string>Further</string>
    </property>
   </action>
  </widget>
