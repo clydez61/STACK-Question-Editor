@@ -285,6 +285,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.nodeEditor.deserialize(data['nodeData'])
                     self.filename = fname
 
+                
+                         
                 self.setTitle()
                 self.setWindowModified(False)
 
@@ -298,8 +300,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # return
         # else:
+
         if self.filename is not None:
             self.saveToFile(data, self.filename)
+            
         else:
             self.onSaveAs()
 
@@ -1038,8 +1042,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.nodeEditor.nodeEditorModified.connect(lambda:self.setWindowModified(True))
 
+        
     def createActions(self):
-        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
+        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered= self.onFileNew)
 
     def createMenus(self):
         self.menuEdit.clear()
@@ -1326,20 +1331,30 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.inputs = inputs
 
     def closeEvent(self, event):
-        print(title)
+        quit_msg = ''
         checkSaveStatus = re.findall(r'New Question', title)
         if checkSaveStatus != []:
-            quit_msg = 'You have not selected a save location.\n Are you sure you want to exit?'
-        else:
-            self.onSave()
-            quit_msg = "Are you sure you want to exit the program?\n Your latest changes will be saved."
-        reply = QMessageBox.question(self, 'Exit Confirmation', 
-                        quit_msg, QMessageBox.Yes, QMessageBox.No)
+            quit_msg = 'You have not selected a save location.\n Are you sure you want to ignore and exit?'
+        elif self.isWindowModified() == True and checkSaveStatus == []:
+            quit_msg = "Your lastest changes have not been saved.\n Would you like to save and exit or ignore changes?"
 
-        if reply == QMessageBox.Yes:
+        if quit_msg != '':
+            reply = QMessageBox.question(self, 'Exit Confirmation', 
+                    quit_msg, QMessageBox.Save | QMessageBox.Ignore | QMessageBox.Cancel)
+        else:
+            event.accept()
+            return
+        if reply == QMessageBox.Save:
+            self.onSave()
+            event.accept()
+        elif reply == QMessageBox.Ignore:
             event.accept()
         else:
             event.ignore()
+
+       
+
+
 
         
 
