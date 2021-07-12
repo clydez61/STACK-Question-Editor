@@ -368,8 +368,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:                    
                     self.gfont_box.setCurrentText("Arial")                           
 
-<<<<<<< HEAD
-=======
     def createVariables(self):
         global qvar_content
         global stack_var
@@ -417,7 +415,6 @@ class MainWindow(QtWidgets.QMainWindow):
         
                 
 
->>>>>>> 0266cd1d24ab4b92b9e0058cae2b85ffe7d7d20f
     def resetfont(self,n):
         if n == 1:
             for textfont, cursorindex in selectedfonts.items():
