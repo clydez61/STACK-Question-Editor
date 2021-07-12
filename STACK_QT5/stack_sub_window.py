@@ -13,6 +13,7 @@ DEBUG_CONTEXT = False
 
 class StackSubWindow(NodeEditorWidget):
     nodeDataModified = pyqtSignal(dict)
+    updatePropertiesSignal = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -100,6 +101,10 @@ class StackSubWindow(NodeEditorWidget):
             else:
                 print("... drop ignored, not requested format '%s'" % LISTBOX_MIMETYPE)
                 event.ignore()
+
+    def mouseReleaseEvent(self, event):
+        self.updatePropertiesSignal.emit()
+        super().mouseReleaseEvent(event)
 
     def contextMenuEvent(self, event):
         try:
@@ -218,6 +223,27 @@ class StackSubWindow(NodeEditorWidget):
         self.scene.deserialize(data['nodeData'])
 
     def exportSerialize(self):
+        export = OrderedDict()
         nodeData = self.scene.serialize()
-        for node in nodeData:
-            print(node)
+        i = 0
+        for node in nodeData['nodes']:
+            node['name'] = i
+            i = i+1
+
+        for node in nodeData['nodes']:
+            for inputSocket in node['inputs']:
+                if inputSocket['socket_type'] is 2:
+                    nodeInputID = inputSocket['id']
+
+            for outputSocket in node['outputs']:
+                if outputSocket['socket_type'] is 1:
+                    nodeTrueOutputID = outputSocket['id']
+
+                if outputSocket['socket_type'] is 4:
+                    nodeFalseOutputID = outputSocket['id']
+
+            node['truenextmode'] = -1
+            node['falsenextmode'] = -1
+
+
+        

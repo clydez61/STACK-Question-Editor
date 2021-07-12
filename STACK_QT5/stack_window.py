@@ -275,6 +275,7 @@ class StackWindow(NodeEditorWindow):
         nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditorPropertiesBox)
         nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
         nodeeditor.nodeDataModified.connect(self.displayNodeData)
+        nodeeditor.updatePropertiesSignal.connect(self.updateEditorPropertiesBox)
         nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
 
