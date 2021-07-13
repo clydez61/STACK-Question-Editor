@@ -19,13 +19,13 @@ from stack_conf_nodes import *
 import syntax_pars
 list = []
 WINDOW_SIZE = 0
-selectedfonts = {}
+selectedfonts = {"Arial":[0,0]}
 selectedsizes = {}
 gselectedfonts = {}
 gselectedsizes = {}
 syntax_dict = {}
 float_dict = {}
-
+defaultfont = ''
 #retrieve input info
 varname_dict = {}
 vartype_dict = {}
@@ -39,10 +39,13 @@ qvar_content = ''
 reserved_content = ''
 qvar_definition = []
 qvar_declaration = []
+global fontItem
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
+
 class MainWindow(QtWidgets.QMainWindow):
     qvar_content = ''    
    
@@ -187,12 +190,14 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
         self.qtext_box.selectionChanged.connect(lambda:self.updatefont(1))
+        #self.qtext_box.cursorPositionChanged.connect(lambda:self.updatefont(1))
         self.qtext_box.textChanged.connect(lambda:self.resetfont(1))
+
         self.qtext_box.selectionChanged.connect(lambda:self.updatesize(1))
         self.qtext_box.textChanged.connect(lambda:self.resetsize(1))
         self.qtext_box.textChanged.connect(lambda:self.createVariables())
         self.qvar_box.textChanged.connect(lambda:self.reserveVariables())
-
+        
         
         self.gfeedback_box.selectionChanged.connect(lambda:self.updatefont(2))
         self.gfeedback_box.textChanged.connect(lambda:self.resetfont(2))
@@ -200,19 +205,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gfeedback_box.textChanged.connect(lambda:self.resetsize(2))
         
 
-        self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
+        self.tfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet",""])
         self.tfont_box.activated.connect(lambda:self.setFont(1))
     
-        self.gfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet"])
+        self.gfont_box.addItems(["Arial", "Times", "Courier", "Georgia", "Verdana",  "Trebuchet",""])
         self.gfont_box.activated.connect(lambda:self.setFont(2))    
 
 
-        self.tsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24"])
+        self.tsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24",''])
         self.qtext_box.setFontPointSize(float(12))
         self.tsize_box.setCurrentText('12')
         self.tsize_box.activated.connect(lambda:self.setFontSize(1))
 
-        self.gsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24"])
+        self.gsize_box.addItems(["6.75","7.5", "10", "12", "13.5", "18",  "24",''])
         self.gfeedback_box.setFontPointSize(float(12))
         self.gsize_box.setCurrentText('12')
         self.gsize_box.activated.connect(lambda:self.setFontSize(2))        
@@ -342,33 +347,55 @@ class MainWindow(QtWidgets.QMainWindow):
         return [cursor3.selectionStart(), cursor3.selectionEnd()];
         
     def setFont(self,n):
+        global font
+        global font2
         if n == 1:
+            
             font = self.tfont_box.currentText()
             self.qtext_box.blockSignals(True)
             self.qtext_box.setCurrentFont(QFont(font)) 
             self.qtext_box.blockSignals(False)
             selectedfonts[self.tfont_box.currentText()] = self.handleSelectionChanged()
+            
         if n == 2:
-            font = self.gfont_box.currentText()
+            gfont = self.gfont_box.currentText()
             self.gfeedback_box.blockSignals(True)
-            self.gfeedback_box.setCurrentFont(QFont(font)) 
+            self.gfeedback_box.setCurrentFont(QFont(gfont)) 
             self.gfeedback_box.blockSignals(False)
             gselectedfonts[self.gfont_box.currentText()] = self.handleSelectionChanged2()        
         
         #just set for the following cursor locations, set font to ""             
         
     def updatefont(self,n):
+        global defaultfont
+        
         if n == 1:
+            maxFontKey = ''
             cursor2 = self.qtext_box.textCursor() 
-            
+
+            #maxFontIndex = itemMaxValue[1][1]
             for textfont, cursorindex in selectedfonts.items():
-                if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() <= cursorindex[1]:                    
-                    self.tfont_box.setCurrentText(textfont)    
-                                
-                    break
-                else:                    
-                    self.tfont_box.setCurrentText("Arial")     
+                if cursor2.selectionStart() >= cursorindex[0] and cursor2.selectionEnd() < cursorindex[1]:  #if in range of a saved font index range                  
+                    self.tfont_box.setCurrentText(textfont)  
+                                                   
+                    break  
+                else:
+                    self.tfont_box.setCurrentText('')   
+
+
+                itemMaxValue = max(selectedfonts.items(), key=lambda x : x[1][1])
+        
+                maxFontKey = itemMaxValue[0]
+                if cursor2.selectionStart() == len(self.qtext_box.toPlainText()):
+                    
+                    self.tfont_box.setCurrentText(maxFontKey)
+                    selectedfonts[maxFontKey][1] = len(self.qtext_box.toPlainText())
+
+                
+                    #selectedfonts[self.tfont_box.currentText()] = [cursorindex[0],len(self.qtext_box.toPlainText())]
+                  
         if n == 2:
+            maxFontKey2 = ''
             cursor4 = self.gfeedback_box.textCursor() 
             
             for textfont, cursorindex in gselectedfonts.items():
@@ -377,8 +404,16 @@ class MainWindow(QtWidgets.QMainWindow):
                                 
                     break
                 else:                    
-                    self.gfont_box.setCurrentText("Arial")                           
-
+                    self.gfont_box.setCurrentText("")                           
+                itemMaxValue = max(gselectedfonts.items(), key=lambda x : x[1][1])
+        
+                maxFontKey2 = itemMaxValue[0]
+                if cursor4.selectionStart() == len(self.gfeedback_box.toPlainText()):
+                    
+                    self.gfont_box.setCurrentText(maxFontKey2)
+                    gselectedfonts[maxFontKey2][1] = len(self.gfeedback_box.toPlainText()) 
+                
+        print(selectedfonts)
     def createVariables(self):
         global qvar_content
         global stack_var
@@ -427,14 +462,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 
 
     def resetfont(self,n):
+        
+        
         if n == 1:
             for textfont, cursorindex in selectedfonts.items():
-                if len(self.qtext_box.toPlainText()) < cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
+ 
+                if len(self.qtext_box.toPlainText()) <= cursorindex[1] and len(self.qtext_box.toPlainText()) > cursorindex[0]:
                     selectedfonts[textfont] = [cursorindex[0],len(self.qtext_box.toPlainText())]
-                    
+                    pass               
                 elif len(self.qtext_box.toPlainText()) <= cursorindex[0]:
                         
                     selectedfonts[textfont] = [-1,-1]
+
         if n == 2:
             for textfont, cursorindex in gselectedfonts.items():
                 if len(self.gfeedback_box.toPlainText()) < cursorindex[1] and len(self.gfeedback_box.toPlainText()) > cursorindex[0]:
@@ -461,6 +500,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def updatesize(self,n):
         if n == 1:
+            maxSizeKey = ''
             cursor2 = self.qtext_box.textCursor()
             
             for textsize, cursorindex in selectedsizes.items():
@@ -470,8 +510,16 @@ class MainWindow(QtWidgets.QMainWindow):
                     
                     break
                 else:               
-                    self.tsize_box.setCurrentText('12')
+                    self.tsize_box.setCurrentText('')
+                itemMaxValue = max(selectedsizes.items(), key=lambda x : x[1][1])
+        
+                maxSizeKey = itemMaxValue[0]
+                if cursor2.selectionStart() == len(self.gfeedback_box.toPlainText()):
+                    
+                    self.tsize_box.setCurrentText(maxSizeKey)
+                    selectedsizes[maxSizeKey][1] = len(self.gfeedback_box.toPlainText())         
         if n == 2:
+            MaxSizeKey2 = ''
             cursor4 = self.qtext_box.textCursor()
             
             for textsize, cursorindex in gselectedsizes.items():
@@ -482,6 +530,13 @@ class MainWindow(QtWidgets.QMainWindow):
                     break
                 else:               
                     self.gsize_box.setCurrentText('12')       
+                itemMaxValue = max(gselectedsizes.items(), key=lambda x : x[1][1])
+        
+                MaxSizeKey2 = itemMaxValue[0]
+                if cursor4.selectionStart() == len(self.gfeedback_box.toPlainText()):
+                    
+                    self.gsize_box.setCurrentText(MaxSizeKey2)
+                    gselectedsizes[MaxSizeKey2][1] = len(self.gfeedback_box.toPlainText())  
 
     def resetsize(self,n):
         if n == 1:
@@ -493,6 +548,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         
                     selectedsizes[textsize] = [-1,-1]
                     #self.tfont_box.setCurrentText("Arial") 
+            
         if n == 2:
             for textsize, cursorindex in gselectedsizes.items():
                 if len(self.gfeedback_box.toPlainText()) < cursorindex[1] and len(self.gfeedback_box.toPlainText()) > cursorindex[0]:
@@ -562,10 +618,11 @@ class MainWindow(QtWidgets.QMainWindow):
             #qtext_code = mdtex2html.convert(qtext_code)
             
             stack_var = re.findall(r'\[\[[\w-]+\]\]', qtext_code)
-
+            random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)
             for variables in stack_var:
                 qtext_code = qtext_code.replace(variables,'_____')
-
+            for variables in random_var:
+                qtext_code = qtext_code.replace(variables, f'{variables[2:-2]}')
                 
   
             htmlstart= """
@@ -586,9 +643,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             qtext_code = self.gfeedback_box.toHtml()
             
-            self.gfeedback_box.setAcceptRichText(True)    
+            random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)   
             
-
+            for variables in random_var:
+                qtext_code = qtext_code.replace(variables,f'{variables[2:-2]}')
 
             htmlstart= """
              <html><head>
@@ -1353,9 +1411,9 @@ class MainWindow(QtWidgets.QMainWindow):
         quit_msg = ''
         checkSaveStatus = re.findall(r'New Question', title)
         if checkSaveStatus != []:
-            quit_msg = 'You have not selected a save location.\n Are you sure you want to ignore and exit?'
+            quit_msg = 'You have not selected a save location.\nAre you sure you want to ignore and exit?'
         elif self.isWindowModified() == True and checkSaveStatus == []:
-            quit_msg = "Your lastest changes have not been saved.\n Would you like to save and exit or ignore changes?"
+            quit_msg = "Your lastest changes have not been saved.\nWould you like to save and exit or ignore changes?"
 
         if quit_msg != '':
             reply = QMessageBox.question(self, 'Exit Confirmation', 
