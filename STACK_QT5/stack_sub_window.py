@@ -1,3 +1,4 @@
+from traceback import print_tb
 from typing import ByteString
 from collections import OrderedDict
 from PyQt5.QtGui import *
@@ -101,10 +102,6 @@ class StackSubWindow(NodeEditorWidget):
             else:
                 print("... drop ignored, not requested format '%s'" % LISTBOX_MIMETYPE)
                 event.ignore()
-
-    def mouseReleaseEvent(self, event):
-        self.updatePropertiesSignal.emit()
-        super().mouseReleaseEvent(event)
 
     def contextMenuEvent(self, event):
         try:

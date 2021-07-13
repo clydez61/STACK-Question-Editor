@@ -21,6 +21,7 @@ DEBUG = False
 class StackWindow(NodeEditorWindow):
     # For parent widget to know modifications have been made within node editor
     nodeEditorModified = pyqtSignal()
+    updateEditMenuSignal = pyqtSignal()
 
     def initUI(self):
         self.name_company = 'University of Alberta'
@@ -177,9 +178,11 @@ class StackWindow(NodeEditorWindow):
             # self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e: dumpException(e)
 
-    def mouseReleaseEvent(self, event):
-        self.updateEditorPropertiesBox()
-        super().mouseReleaseEvent(event)
+    # NOTE(Arthur): May be obsolete code?
+    # def mouseReleaseEvent(self, event):
+    #     self.updateEditorPropertiesBox()
+    #     self.updateEditMenuSignal.emit()
+    #     super().mouseReleaseEvent(event)
 
     def updateEditorPropertiesBox(self):
         currentSubWnd = self.getCurrentNodeEditorWidget()
@@ -273,6 +276,7 @@ class StackWindow(NodeEditorWindow):
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         nodeeditor.treeName = self.getNewSubWindowName()
         nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditorPropertiesBox)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenuSignal.emit)
         nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
         nodeeditor.nodeDataModified.connect(self.displayNodeData)
         nodeeditor.updatePropertiesSignal.connect(self.updateEditorPropertiesBox)

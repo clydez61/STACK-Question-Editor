@@ -147,6 +147,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.NodeEditorLayout.addWidget(self.nodeEditor)
 
         self.nodeEditor.mdiArea.subWindowActivated.connect(self.updateMenus)
+        self.nodeEditor.updateEditMenuSignal.connect(self.updateEditMenu)
         self.windowMapper = QSignalMapper(self.nodeEditor)
         self.windowMapper.mapped[QWidget].connect(self.nodeEditor.setActiveSubWindow)
 
@@ -163,6 +164,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 # Move window only when window is normal size   
                 # ###############################################
                 #if left mouse button is clicked (Only accept left mouse button clicks)
+
                 #FIXME(Arthur): hasatrr() is a hacky fix, come up with solution to prevent click-drag of left-menu toggle button.
                 if e.buttons() == Qt.LeftButton and hasattr(self, 'clickPosition'):  
                     #Move window 
@@ -1115,8 +1117,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 
                 self.gfeedback_box.setHtml(textformat)   
 
+    def exportTags(self):
+        tags = self.tag_box.toPlainText()
+        return re.findall(r".*[^\n]", tags)
+
     def open(self):
-        #NOTE(Arthur): Relic function, may be used for translating .py files to something saveable in the future
+        #NOTE(Arthur): Relic function, may be used for translating STACK .py files to .json in the future
         fname = QFileDialog.getOpenFileName(self,'Open File','STACK_QT5','(*.py)') #(*.py *.xml *.txt)
         path = fname[0]
         split_string = path.rsplit("/",1)
@@ -1154,48 +1160,61 @@ class MainWindow(QtWidgets.QMainWindow):
         if fileExport == '': return False
         
         self.exportToFile(fileExport)
-        print(json.dumps(self.nodeEditor.exportSerialize(), indent=4))
 
     def exportToFile(self, fileExport):
+        try:
+            data = OrderedDict([
+                ("questiontext", str(self.automateInputSave(self.qtext_box.toHtml()))),
+                ("questionvariables", str(self.qvar_box.toPlainText())),
+                ("generalfeedback", str(self.gfeedback_box.toHtml())),
+                ("defaultgrade", str(self.grade_box.toPlainText())),
+                ("questionnote", str(self.qnote_box.toPlainText())),
+                ("tags", self.exportTags()),
+                ("input", self.serializeInputs()),
+                ("prt", self.nodeEditor.exportSerialize()),
+            ])
+        except Exception as e: dumpException(e)
+
         with open(fileExport,'w') as file:
 
-            file.write("question = {")
+            file.write("question = ")
 
-            #writing question text
-            file.write('   "questiontext":"""\n')
-            file.write(str(self.automateInputSave(self.qtext_box.toHtml())))
-            file.write('\n""",\n')
+            file.write(json.dumps(data, indent=4))
+            # #writing question text
+            # file.write('   "questiontext":"""\n')
+            # file.write(str(self.automateInputSave(self.qtext_box.toHtml())))
+            # file.write('\n""",\n')
 
-            #writing question variables
-            file.write('   "questionvariables":"""\n')
-            file.write(str(self.qvar_box.toPlainText()))
-            file.write('\n""",\n')
+            # #writing question variables
+            # file.write('   "questionvariables":"""\n')
+            # file.write(str(self.qvar_box.toPlainText()))
+            # file.write('\n""",\n')
 
-            #writing general feedback
-            file.write('   "generalfeedback":"""\n')
-            file.write(str(self.gfeedback_box.toHtml()))
-            file.write('\n""",\n')
+            # #writing general feedback
+            # file.write('   "generalfeedback":"""\n')
+            # file.write(str(self.gfeedback_box.toHtml()))
+            # file.write('\n""",\n')
             
-            #writing default grade
-            file.write('   "defaultgrade":')
-            file.write('"' + str(self.grade_box.toPlainText()) + '",\n')
+            # #writing default grade
+            # file.write('   "defaultgrade":')
+            # file.write('"' + str(self.grade_box.toPlainText()) + '",\n')
 
-            #writing question note
-            file.write('   "questionnote":"""\n')
-            file.write(str(self.qnote_box.toPlainText()))
-            file.write('\n""",\n')
+            # #writing question note
+            # file.write('   "questionnote":"""\n')
+            # file.write(str(self.qnote_box.toPlainText()))
+            # file.write('\n""",\n')
 
-            # writing tags 
-            file.write('   "tags":{\n')
-            file.write('       "tag": [\n')                
-            file.write(str(self.tag_box.toPlainText()) + '\n')
-            file.write('       ]\n')
-            file.write('   },\n')
+            # # writing tags 
+            # file.write('   "tags":{\n')
+            # file.write('       "tag": [\n')                
+            # file.write(str(self.tag_box.toPlainText()) + '\n')
+            # file.write('       ]\n')
+            # file.write('   },\n')
 
-            #penalty
+            # #penalty
         
             
-            file.write("\n}")
+            # file.write("\n}")
 
     def restore_or_maximize_window(self):
         # Global windows state
