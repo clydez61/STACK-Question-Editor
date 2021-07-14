@@ -156,7 +156,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.updateMenus()
 
         self.checkModified()
-        self.menuEdit.aboutToShow.connect(self.updateEditMenu)
+        self.menuTreeEdit.aboutToShow.connect(self.updateEditMenu)
         def moveWindow(e):
             # Detect if the window is  normal size
             # ###############################################  
@@ -190,7 +190,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qtext_box.textChanged.connect(lambda:self.resetfont(1))
         self.qtext_box.selectionChanged.connect(lambda:self.updatesize(1))
         self.qtext_box.textChanged.connect(lambda:self.resetsize(1))
-        self.qtext_box.textChanged.connect(lambda:self.createVariables())
+        self.qtext_box.textChanged.connect(self.createVariables)
         self.qvar_box.textChanged.connect(lambda:self.reserveVariables())
 
         
@@ -284,7 +284,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 with open(fname, 'r') as file:
                     data = json.loads(file.read())
                     self.deserialize(data['nonNodeData'])
+                    currentWidget = self.stackedWidget.currentWidget()
+                    self.stackedWidget.setCurrentWidget(self.tree_page)
                     self.nodeEditor.deserialize(data['nodeData'])
+                    self.stackedWidget.setCurrentWidget(currentWidget)
                     self.filename = fname
 
                 
@@ -379,6 +382,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 else:                    
                     self.gfont_box.setCurrentText("Arial")                           
 
+    #FIXME(Arthur): createVariables will overwrite edits made to qvar, must find friendlier ways of automating the addition of variables.
     def createVariables(self):
         global qvar_content
         global stack_var
@@ -395,7 +399,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 except:
                     pass
                 stack_var[index] = stack_var[index] + '\n'
-            vardetection = ''.join(stack_var)            
+            vardetection = ''.join(stack_var)   
             self.qvar_box.setPlainText(r'/*Define Randomized/Plain Value variables*/' + '\n')
             self.qvar_box.appendPlainText(vardetection)
             for index,variables in enumerate(input_var):
@@ -409,14 +413,12 @@ class MainWindow(QtWidgets.QMainWindow):
            
             
             self.qvar_box.appendPlainText(r'/*Define Answer Variables through Algebraic expressions*/' + '\n')
-            self.qvar_box.appendPlainText(vardetection2)
-                          
+            self.qvar_box.appendPlainText(vardetection2)           
 
     def reserveVariables(self): #detects changes in qvar_edit
         global reserved_content
         global qvar_definition
         
-
         reserved_content = self.qvar_box.toPlainText()
         
         qvars = re.split('[:\n]',reserved_content)
@@ -841,8 +843,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # this function "retreieveInput" currently binded to the "Help -> Temporary save" on the menubar, feel free to remove
         # Also now you can type whatever input name you want inside [[]], changed it 
 
-        print(syntax_dict,float_dict,lowestterm_dict, hideanswer_dict ,allowempty_dict ,simplify_dict )
-        print(varname_dict,vartype_dict,varans_dict,varboxsize_dict)
+        # print(syntax_dict,float_dict,lowestterm_dict, hideanswer_dict ,allowempty_dict ,simplify_dict )
+        # print(varname_dict,vartype_dict,varans_dict,varboxsize_dict)
         
         # print('input retrieved')       
 
@@ -891,7 +893,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.html_btn.isChecked() == False:
             inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
             for input in inputAutomation:
-                newinput = r'[[input:' + input[2:] + r" [[validation:" + input[2:]
+                newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
                 current_qtext = current_qtext.replace(input,newinput)
         return current_qtext
 
@@ -1049,25 +1051,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered= self.onFileNew)
 
     def createMenus(self):
-        self.menuEdit.clear()
+        self.menuTreeEdit.clear()
 
-        self.menuEdit.addAction(self.actNew)
-        self.menuEdit.addAction(self.nodeEditor.actUndo)
-        self.menuEdit.addAction(self.nodeEditor.actRedo)
-        self.menuEdit.addSeparator()
-        self.menuEdit.addAction(self.nodeEditor.actCut)
-        self.menuEdit.addAction(self.nodeEditor.actCopy)
-        self.menuEdit.addAction(self.nodeEditor.actPaste)
-        self.menuEdit.addSeparator()
-        self.menuEdit.addAction(self.nodeEditor.actDelete)
-        self.menuEdit.addSeparator()
-        self.nodesToolbar = self.menuEdit.addAction("Nodes Toolbar")
+        self.menuTreeEdit.addAction(self.actNew)
+        self.menuTreeEdit.addAction(self.nodeEditor.actUndo)
+        self.menuTreeEdit.addAction(self.nodeEditor.actRedo)
+        self.menuTreeEdit.addSeparator()
+        self.menuTreeEdit.addAction(self.nodeEditor.actCut)
+        self.menuTreeEdit.addAction(self.nodeEditor.actCopy)
+        self.menuTreeEdit.addAction(self.nodeEditor.actPaste)
+        self.menuTreeEdit.addSeparator()
+        self.menuTreeEdit.addAction(self.nodeEditor.actDelete)
+        self.menuTreeEdit.addSeparator()
+        self.nodesToolbar = self.menuTreeEdit.addAction("Nodes Toolbar")
         self.nodesToolbar.setCheckable(True)
         self.nodesToolbar.triggered.connect(self.nodeEditor.onWindowNodesToolbar)
-        self.propertiesToolbar = self.menuEdit.addAction("Properties Toolbar")
+        self.propertiesToolbar = self.menuTreeEdit.addAction("Properties Toolbar")
         self.propertiesToolbar.setCheckable(True)
         self.propertiesToolbar.triggered.connect(self.nodeEditor.onWindowPropertiesToolbar)
-        self.menuEdit.aboutToShow.connect(self.updateEditMenu)
+        self.menuTreeEdit.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
         # May contain other menu items
@@ -1161,16 +1163,26 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.exportToFile(fileExport)
 
+    def generateSpecificFeedback(self):
+        specificfeedback = ''
+        treeNames = self.nodeEditor.getAllSubWindowNames()
+        for treeName in treeNames:
+            specificfeedback = specificfeedback + '[[feedback:' + treeName + ']]\n'
+
+        return specificfeedback
+
+
     def exportToFile(self, fileExport):
         try:
             data = OrderedDict([
                 ("questiontext", str(self.automateInputSave(self.qtext_box.toHtml()))),
                 ("questionvariables", str(self.qvar_box.toPlainText())),
                 ("generalfeedback", str(self.gfeedback_box.toHtml())),
+                ("specificfeedback", self.generateSpecificFeedback()),
                 ("defaultgrade", str(self.grade_box.toPlainText())),
                 ("questionnote", str(self.qnote_box.toPlainText())),
                 ("tags", self.exportTags()),
-                ("input", self.serializeInputs()),
+                ("input", self.exportSerializeInputs()),
                 ("prt", self.nodeEditor.exportSerialize()),
             ])
         except Exception as e: dumpException(e)
@@ -1297,23 +1309,67 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def serializeInputs(self):
         inputs = []
-        if self.retrieveInput() == False: return inputs
-        for key in varname_dict:
-            inputs.append(
-                OrderedDict([
-                    ('varName', varname_dict[key]),
-                    ('varType', vartype_dict[key]),
-                    ('varAns', varans_dict[key]),
-                    ('varBoxSize', varboxsize_dict[key]),
-                    ('syntax', syntax_dict[key]),
-                    ('float', float_dict[key]),
-                    ('lowestTerm', lowestterm_dict[key]),
-                    ('hideAnswer', hideanswer_dict[key]),
-                    ('allowEmpty', allowempty_dict[key]),
-                    ('simplify', simplify_dict[key]),
-                ])
-            )
+        try:
+            if self.retrieveInput() == False: return inputs
+            for key in varname_dict:
+                inputs.append(
+                    OrderedDict([
+                        ('name', varname_dict[key]),
+                        ('type', vartype_dict[key]),
+                        ('tans', varans_dict[key]),
+                        ('boxsize', varboxsize_dict[key]),
+                        ('syntaxhint', syntax_dict[key]),
+                        ('forbidfloat', float_dict[key]),
+                        ('requirelowestterms', lowestterm_dict[key]),
+                        ('hideAnswer', hideanswer_dict[key]),
+                        ('allowEmpty', allowempty_dict[key]),
+                        ('simplify', simplify_dict[key]),
+                    ])
+                )
+        except Exception as e: dumpException(e)
+
         return inputs
+
+    def exportSerializeInputs(self):
+        inputs = self.serializeInputs()
+        
+        exportInputs = []
+        inputType = {'Algebraic Input': 'algebraic', 'Checkbox': 'checkbox', 'Drop down List': 'dropdown', 'Equivalence reasoning': 'equiv', 'Matrix': 'matrix', 'Notes': 'notes', 'Numerical': 'numerical', 'Radio': 'radio', 'Single Character': 'singlechar', 'String': 'string', 'Text Area': 'textarea', 'True/False': 'boolean', 'Units': 'units'}
+
+        for input in inputs:
+            options = ''
+            exportInput = OrderedDict([
+                ('name', input['name']),
+                ('type', inputType[input['type']]),
+                ('tans', input['tans']),
+                ('boxsize', int(input['boxsize'])),
+                ('syntaxhint', input['syntaxhint']),
+            ])
+
+
+
+            if input['requirelowestterms'] == 'Yes':
+                exportInput['requirelowestterms'] = 1
+
+            else:
+                exportInput['requirelowestterms'] = 0
+
+            if input['hideAnswer'] == True:
+                options + 'hideanswer, '
+
+            if input['allowEmpty'] == True:
+                options + 'allowempty, '
+
+            if input['simplify'] == True:
+                options + 'simp, '
+
+            options = re.sub(r',[\s]*$','', options)
+
+            exportInput['options'] = options
+
+            exportInputs.append(exportInput)
+        
+        return exportInputs
 
     def deserializeInputs(self, data, hashmap=[]):
         symbols = {"self": self}
@@ -1328,18 +1384,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
             exec(f'self.input_btn{rows}_{lastrow}.clicked.connect(lambda: self.expand({rows},{lastrow}))',symbols)
 
-            self.input_name.setText(subData['varName'])                  
-            self.input_type.setCurrentIndex(self.input_type.findText(subData['varType']))         
-            self.input_ans.setText(subData['varAns'])
-            self.input_size.setText(subData['varBoxSize'])
+            self.input_name.setText(subData['name'])                  
+            self.input_type.setCurrentIndex(self.input_type.findText(subData['type']))         
+            self.input_ans.setText(subData['tans'])
+            self.input_size.setText(subData['boxsize'])
 
             #NOTE(Arthur): Very janky workaround to init and store the data in the 'more...' section
             exec(f'self.input_btn{rows}_{lastrow}.toggle()', symbols)
             self.expand(rows, lastrow)
 
-            self.input_syntax.setText(subData['syntax'])
-            self.input_float.setCurrentIndex(self.input_float.findText(subData['float']))
-            self.input_lowestTerms.setCurrentIndex(self.input_lowestTerms.findText(subData['lowestTerm']))
+            self.input_syntax.setText(subData['syntaxhint'])
+            self.input_float.setCurrentIndex(self.input_float.findText(subData['forbidfloat']))
+            self.input_lowestTerms.setCurrentIndex(self.input_lowestTerms.findText(subData['requirelowestterms']))
             self.input_hideanswer.setCheckState(subData['hideAnswer'])
             self.input_allowempty.setCheckState(subData['allowEmpty'])
             self.input_simplify.setCheckState(subData['simplify'])

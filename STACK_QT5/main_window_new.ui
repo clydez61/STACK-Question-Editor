@@ -1604,9 +1604,9 @@ color: rgb(255, 255, 222);</string>
     <addaction name="separator"/>
     <addaction name="actionExport"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
+   <widget class="QMenu" name="menuTreeEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>Tree Edit</string>
     </property>
     <addaction name="actionNew_Tree"/>
     <addaction name="separator"/>
@@ -1630,8 +1630,14 @@ color: rgb(255, 255, 222);</string>
     <addaction name="actionDocumantation"/>
     <addaction name="actionFurther"/>
    </widget>
+   <widget class="QMenu" name="menuGenerate">
+    <property name="title">
+     <string>Generate</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
+   <addaction name="menuTreeEdit"/>
+   <addaction name="menuGenerate"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen">

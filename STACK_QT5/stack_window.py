@@ -271,12 +271,10 @@ class StackWindow(NodeEditorWindow):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
         subwnd.setWindowIcon(self.empty_icon)
-        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
-        # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
+        nodeeditor.scene.addItemSelectedListener(self.updateEditorPropertiesBox)
+        nodeeditor.scene.addItemSelectedListener(self.updateEditMenuSignal.emit)
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         nodeeditor.treeName = self.getNewSubWindowName()
-        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditorPropertiesBox)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenuSignal.emit)
         nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
         nodeeditor.nodeDataModified.connect(self.displayNodeData)
         nodeeditor.updatePropertiesSignal.connect(self.updateEditorPropertiesBox)
@@ -343,6 +341,13 @@ class StackWindow(NodeEditorWindow):
         if window:
             self.mdiArea.setActiveSubWindow(window)
 
+    def getAllSubWindowNames(self):
+        windowName = []
+        for window in self.mdiArea.subWindowList():
+            windowName.append(window.widget().treeName)
+
+        return windowName
+
     def serialize(self):
         subWndList = []
         for window in self.mdiArea.subWindowList():
@@ -353,6 +358,7 @@ class StackWindow(NodeEditorWindow):
         for subWndData in data:
             subwindow = self.createMdiChild()
             subwindow.showMaximized()
+            self.setActiveSubWindow(subwindow)
             subwindow.widget().deserialize(subWndData)
             subwindow.widget().scene.history.clear()
             subwindow.widget().has_been_modified = False
