@@ -39,6 +39,7 @@ qvar_content = ''
 reserved_content = ''
 qvar_definition = []
 qvar_declaration = []
+variabledict = {}
 global fontItem
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -416,53 +417,64 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.gfont_box.setCurrentText(maxFontKey2)
                     gselectedfonts[maxFontKey2][1] = len(self.gfeedback_box.toPlainText()) 
                 
-        print(selectedfonts)
-    def createVariables(self):
-        # FIXME(Arthur): Will overwrite user edits in question variables, necessary to fix ASAP! 
-        pass
-        # global qvar_content
-        # global stack_var
-        # global input_var
         
-        # if self.html_btn.isChecked() == False:
-        #     qtext_code = self.qtext_box.toPlainText()
-        #     stack_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)
-        #     input_var = re.findall(r'\[\[[\w-]+\]\]', qtext_code)
-        #     for index,variables in enumerate(stack_var):
-        #         stack_var[index] = variables[2:-2] + ':' 
-        #         try:
-        #             stack_var[index] = stack_var[index] + qvar_definition[index] 
-        #         except:
-        #             pass
-        #         stack_var[index] = stack_var[index] + '\n'
-        #     vardetection = ''.join(stack_var)   
-        #     self.qvar_box.setPlainText(r'/*Define Randomized/Plain Value variables*/' + '\n')
-        #     self.qvar_box.appendPlainText(vardetection)
-        #     for index,variables in enumerate(input_var):
-        #         input_var[index] = variables[2:-2] + ':' 
-        #         try:
-        #             input_var[index] = input_var[index] + qvar_definition[index] 
-        #         except:
-        #             pass
-        #         input_var[index] = input_var[index] + '\n'    
-        #     vardetection2 = ''.join(input_var)
-           
+    def createVariables(self):
+        global qvar_content
+        global stack_var
+        global input_var
+
+        if self.html_btn.isChecked() == False:
+            qtext_code = self.qtext_box.toPlainText()
+            stack_var = re.findall(r'[\{\[][\@\[][\w-]+[\@\]][\}\]]', qtext_code)
+            for index,element in enumerate(stack_var):
+                stack_var[index] = element[2:-2]
+            variabledict = {key:'' for i, key in enumerate(stack_var)}
             
-        #     self.qvar_box.appendPlainText(r'/*Define Answer Variables through Algebraic expressions*/' + '\n')
-        #     self.qvar_box.appendPlainText(vardetection2)           
+
+            #variabledict = {i:variabledict[i] for i in qvar_definition if i in variabledict}
+            for line in self.reserveVariables():  
+                try: 
+                    variable = re.split(':',line)[0]
+                    definition = re.split(':',line)[1]
+                    if variable in variabledict:
+                        variabledict[variable] = definition
+                except:
+                    pass
+            print(variabledict)    
+            result = json.dumps(variabledict)
+            
+            # printing result as string
+
+            result = result.replace(r'"','')
+            result = result.replace('{','')
+            result = result.replace('}','')
+            result = result.replace(',','\n')
+            result = result.replace(' ','')             
+            
+            randomVarHint =   r'/*Define Randomized/Plain Value variables*/'        
+            #self.qvar_box.setPlainText(randomVarHint + '\n')
+            self.qvar_box.setPlainText(result)
+           
+            inputVarHint = r'/*Define Answer Variables through Algebraic expressions*/'
+            #self.qvar_box.appendPlainText(inputVarHint + '\n')
+            
+
+                          
 
     def reserveVariables(self): #detects changes in qvar_edit
         global reserved_content
         global qvar_definition
+        global qvars
         
         reserved_content = self.qvar_box.toPlainText()
         
-        qvars = re.split('[:\n]',reserved_content)
-
-        if qvars != []:               
-            qvar_definition = qvars[1::2]         
+        qvars = re.split('[\n]',reserved_content)
         
-                
+        if qvars != []:               
+            qvar_definition = qvars[1::2]  
+        return qvars   
+        
+     
 
     def resetfont(self,n):
         
