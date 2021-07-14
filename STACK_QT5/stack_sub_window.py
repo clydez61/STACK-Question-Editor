@@ -1,3 +1,5 @@
+import re
+from logging import exception
 from traceback import print_tb
 from typing import ByteString
 from collections import OrderedDict
@@ -224,6 +226,7 @@ class StackSubWindow(NodeEditorWidget):
         nodes = []
         nodeData = self.scene.serialize()
         treeData = self.treeSerialize()
+        treeData['name'] = re.sub(r' ', '_', treeData['name'])
 
         export.update(treeData)
 
@@ -250,6 +253,20 @@ class StackSubWindow(NodeEditorWidget):
 
         for node in nodeData['nodes']:
             nodeContent = node['content']
+            try:
+                if nodeContent['truescore'] == '': nodeContent['truescore'] = 1
+                else: nodeContent['truescore'] = float(nodeContent['truescore'])
+
+                if nodeContent['truepenalty'] == '': nodeContent['truepenalty'] = 0
+                else: nodeContent['truepenalty'] = float(nodeContent['truepenalty'])
+
+                if nodeContent['falsescore'] == '': nodeContent['falsescore'] = 0
+                else: nodeContent['falsescore'] = float(nodeContent['falsescore'])
+
+                if nodeContent['falsepenalty'] == '': nodeContent['falsepenalty'] = 0
+                else: nodeContent['falsepenalty'] = float(nodeContent['falsepenalty'])
+            except exception as e: dumpException(e)
+
             nodeContent['truenextnode'] = -1
             nodeContent['falsenextnode'] = -1
             nodeContent['name'] = nodeIDMap[node['id']]

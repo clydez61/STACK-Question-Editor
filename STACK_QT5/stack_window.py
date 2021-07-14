@@ -49,7 +49,7 @@ class StackWindow(NodeEditorWindow):
         self.setCentralWidget(self.mdiArea)
 
         self.mdiArea.subWindowActivated.connect(self.updateMenus)
-        self.mdiArea.subWindowActivated.connect(self.updateEditorPropertiesBox)
+        self.mdiArea.subWindowActivated.connect(self.updateEditorPropertiesBox) 
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
@@ -192,8 +192,10 @@ class StackWindow(NodeEditorWindow):
             self.propertiesWidget.treeDataSignal.connect(self.storeTreeData)
             self.displayTreeData()
             if currentSubWnd.hasSelectedItem():
-                self.displayNodeData(self.getNodeData())
-                self.propertiesWidget.setNodeSelectedLayout()
+                item = self.getNodeData()
+                if item is not None:
+                    self.displayNodeData(item)
+                    self.propertiesWidget.setNodeSelectedLayout()
             else:
                 self.propertiesWidget.setNoneSelectedLayout()
 
@@ -216,8 +218,14 @@ class StackWindow(NodeEditorWindow):
         self.propertiesWidget.blockSignals(False)
     
     def getNodeData(self):
-        if self.getCurrentNodeEditorWidget().hasSelectedItem():
-            return self.getCurrentNodeEditorWidget().getSelectedItems()[0].content.serialize()
+        itemSelected = self.getCurrentNodeEditorWidget().hasSelectedItem()
+        selectedItem = self.getCurrentNodeEditorWidget().getSelectedItems()
+        print(selectedItem[0].__class__)
+        print(get_class_from_opcode(OP_NODE_PRT_NODE))
+        if itemSelected:
+            if selectedItem[0].__class__ == PrtGraphicsNode:
+                return selectedItem[0].content.serialize()
+        return None
 
     def storeNodeData(self, data):
         currentSubWnd = self.getCurrentNodeEditorWidget()
@@ -271,11 +279,13 @@ class StackWindow(NodeEditorWindow):
         nodeeditor = child_widget if child_widget is not None else StackSubWindow()
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
         subwnd.setWindowIcon(self.empty_icon)
-        nodeeditor.scene.addItemSelectedListener(self.updateEditorPropertiesBox)
-        nodeeditor.scene.addItemSelectedListener(self.updateEditMenuSignal.emit)
+        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenuSignal.emit)
+        # nodeeditor.scene.addItemSelectedListener(self.updateEditMenuSignal.emit)
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         nodeeditor.treeName = self.getNewSubWindowName()
         nodeeditor.scene.history.addHistoryModifiedListener(self.nodeEditorModified.emit)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditorPropertiesBox)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenuSignal.emit)
         nodeeditor.nodeDataModified.connect(self.displayNodeData)
         nodeeditor.updatePropertiesSignal.connect(self.updateEditorPropertiesBox)
         nodeeditor.addCloseEventListener(self.onSubWndClose)
