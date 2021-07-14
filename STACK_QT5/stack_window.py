@@ -220,8 +220,6 @@ class StackWindow(NodeEditorWindow):
     def getNodeData(self):
         itemSelected = self.getCurrentNodeEditorWidget().hasSelectedItem()
         selectedItem = self.getCurrentNodeEditorWidget().getSelectedItems()
-        print(selectedItem[0].__class__)
-        print(get_class_from_opcode(OP_NODE_PRT_NODE))
         if itemSelected:
             if selectedItem[0].__class__ == PrtGraphicsNode:
                 return selectedItem[0].content.serialize()
