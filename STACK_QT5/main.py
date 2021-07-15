@@ -438,6 +438,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     definition = re.split(':',line)[1]
                     if variable in variabledict:
                         variabledict[variable] = definition
+                    else:
+                        variabledict[variable] = ''
                 except:
                     pass
             print(variabledict)    
@@ -1018,7 +1020,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_name)
 
         self.input_name = QTextEdit(self.input_frame)
-        
+        self.input_name.setReadOnly(True)
         self.input_name.setObjectName(u'input_name')
         self.input_name.setMaximumSize(QSize(16777215, 30))
 
@@ -1063,6 +1065,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.input_ans = QTextEdit(self.input_frame)
         self.input_ans.setObjectName(NewAns)
+        self.input_ans.setReadOnly(True)
         self.input_ans.setMaximumSize(QSize(16777215, 30))
         setattr(self,NewAns,self.input_ans)
         self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.input_ans)
