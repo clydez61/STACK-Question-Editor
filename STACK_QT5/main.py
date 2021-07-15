@@ -759,6 +759,7 @@ class MainWindow(QtWidgets.QMainWindow):
             setattr(self,NewFloat,self.input_float)
             self.input_float.addItem(u"Yes")
             self.input_float.addItem(u"No")
+            self.input_float.setCurrentIndex(1)
             
             exec(f'self.input_layout{str(row)}_{str(column)}.addRow(self.label_float,self.input_float)',symbols)
             
