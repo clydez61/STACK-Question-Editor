@@ -963,13 +963,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.addInput()
             #i+=1
 
-    def automateInputSave(self,current_qtext):
-        if self.html_btn.isChecked() == False:
-            inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
-            for input in inputAutomation:
-                newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
-                current_qtext = current_qtext.replace(input,newinput)
-        return current_qtext
+
 
     def addInput(self,row,column): #triggers by clicking update 
         
@@ -1251,12 +1245,44 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.grade_box.toPlainText() == '': return 1
         else: return float(self.grade_box.toPlainText())
 
+
+
+
+    def automateInputSave(self):     
+        if self.html_btn.isChecked() == False:
+            current_qtext = self.qtext_box.toHtml()
+        elif self.html_btn.isChecked() == True:
+            current_qtext = self.qtext_box.toPlainText()
+        inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
+        for input in inputAutomation:
+            newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
+            current_qtext = current_qtext.replace(input,newinput)
+        qtext_syntax = re.findall(r'\\', current_qtext) 
+        for syntaxP in qtext_syntax:
+            newsyntax = str(syntaxP) + str(syntaxP)
+            current_qtext = current_qtext.replace(syntaxP,newsyntax)
+            
+        return f'''{current_qtext}'''
+
+    def automateGFeedback(self):     
+        if self.html_btn2.isChecked() == False:
+            current_feedback = self.gfeedback_box.toHtml()
+        elif self.html_btn2.isChecked() == True:
+            current_feedback = self.gfeedback_box.toPlainText()
+
+        feedback_syntax = re.findall(r'\\', current_feedback) 
+        for syntaxP in feedback_syntax:
+            newsyntax = str(syntaxP) + str(syntaxP)
+            current_feedback = current_feedback.replace(syntaxP,newsyntax)
+            
+        return f'''{current_feedback}'''
+
     def exportToFile(self, fileExport):
         try:
             data = OrderedDict([
-                ("questiontext", str(self.automateInputSave(self.qtext_box.toHtml()))),
+                ("questiontext", self.automateInputSave()),
                 ("questionvariables", str(self.qvar_box.toPlainText())),
-                ("generalfeedback", str(self.gfeedback_box.toHtml())),
+                ("generalfeedback", self.automateGFeedback()),
                 ("specificfeedback", self.generateSpecificFeedback()),
                 ("defaultgrade", self.generateGrade()),
                 ("questionnote", str(self.qnote_box.toPlainText())),
@@ -1352,6 +1378,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEndValue(newWidth)#end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
+
+
 
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
