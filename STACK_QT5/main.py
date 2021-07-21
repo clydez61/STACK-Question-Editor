@@ -676,6 +676,15 @@ class MainWindow(QtWidgets.QMainWindow):
             
             self.gpreview_box.setHtml(displaycode2)
         
+    def onGenerateTree(self):
+        questionVariable = self.qvar_box.toPlainText()
+        if self.retrieveInput() == False: print("Inputs have not been generated yet!")
+
+        re.replace(r"""(.*(rand_with_step|rand_with_prohib|rand|rand_selection).*\n)""", questionVariable)
+
+        print(questionVariable) 
+        
+
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
         QApplication.processEvents()
@@ -1120,11 +1129,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         
     def createActions(self):
-        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered= self.onFileNew)
+        self.actNew = QAction('&New Tree', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered= self.onFileNew)
+        self.actGenerateTree = QAction('Generate Tree', self, statusTip="Generate a PRT depending on maxima variables and inputs", triggered= self.onGenerateTree)
 
     def createMenus(self):
         self.menuTreeEdit.clear()
-
         self.menuTreeEdit.addAction(self.actNew)
         self.menuTreeEdit.addAction(self.nodeEditor.actUndo)
         self.menuTreeEdit.addAction(self.nodeEditor.actRedo)
@@ -1142,6 +1151,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.propertiesToolbar.setCheckable(True)
         self.propertiesToolbar.triggered.connect(self.nodeEditor.onWindowPropertiesToolbar)
         self.menuTreeEdit.aboutToShow.connect(self.updateEditMenu)
+
+        self.menuGenerate.clear()
+        self.menuGenerate.addAction(self.actGenerateTree)
 
     def updateMenus(self):
         # May contain other menu items
