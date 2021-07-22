@@ -439,7 +439,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     if variable in variabledict:
                         variabledict[variable] = definition
                     else:
-                        variabledict[variable] = ''
+                        variabledict[variable] = definition
                 except:
                     pass
             print(variabledict)    
