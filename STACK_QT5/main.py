@@ -39,7 +39,8 @@ qvar_content = ''
 reserved_content = ''
 qvar_definition = []
 qvar_declaration = []
-variabledict = {}
+vardict = {}
+
 global fontItem
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -197,6 +198,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.qtext_box.selectionChanged.connect(lambda:self.updatesize(1))
         self.qtext_box.textChanged.connect(lambda:self.resetsize(1))
         self.qtext_box.textChanged.connect(self.createVariables)
+        
         self.qvar_box.textChanged.connect(lambda:self.reserveVariables())
         
         
@@ -288,7 +290,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.clearInputs()
                 with open(fname, 'r') as file:
                     data = json.loads(file.read())
+                    self.qtext_box.blockSignals(True)
+                    
                     self.deserialize(data['nonNodeData'])
+                    self.qtext_box.blockSignals(False)
                     #NOTE(Arthur): Hacky fix to add node data and having the properties box working, fix later.
                     currentWidget = self.stackedWidget.currentWidget()
                     self.stackedWidget.setCurrentWidget(self.tree_page)
@@ -418,7 +423,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     gselectedfonts[maxFontKey2][1] = len(self.gfeedback_box.toPlainText()) 
                 
         
-    def createVariables(self):
+    def createVariables(self): #updates everytime qtext_box changes
         global qvar_content
         global stack_var
         global input_var
@@ -428,52 +433,54 @@ class MainWindow(QtWidgets.QMainWindow):
             stack_var = re.findall(r'[\{\[][\@\[][\w-]+[\@\]][\}\]]', qtext_code)
             for index,element in enumerate(stack_var):
                 stack_var[index] = element[2:-2]
-            variabledict = {key:'' for i, key in enumerate(stack_var)}
+            vardict = {key:'' for i, key in enumerate(stack_var)}
+            
             
 
-            #variabledict = {i:variabledict[i] for i in qvar_definition if i in variabledict}
-            for line in self.reserveVariables():  
-                try: 
-                    variable = re.split(':',line)[0]
+            #vardict: automatically detected variables
+            #qvar: reserved variables, including comments
+            for line in self.reserveVariables():       
+                variable = re.split(':',line)[0]
+                try:
                     definition = re.split(':',line)[1]
-                    if variable in variabledict:
-                        variabledict[variable] = definition
-                    else:
-                        variabledict[variable] = ''
                 except:
-                    pass
-            print(variabledict)    
-            result = json.dumps(variabledict)
-            
-            # printing result as string
+                    definition = ''
+                if variable in vardict: #if variable name exists in both qvar & qtext
+                    vardict[variable] = definition
+                if definition !='': #if there is a fully defined var, or a half defined var in qvar
+                    vardict[variable] = definition
 
+            print(vardict, qvars)
+                
+            result = json.dumps(vardict)    
+             
+            # printing result as string
             result = result.replace(r'"','')
             result = result.replace('{','')
             result = result.replace('}','')
             result = result.replace(',','\n')
-            result = result.replace(' ','')             
-            
+            result = result.replace(' ','')     
+            result = result.replace(r'*/'+ ':\n',r'*/'+'\n') 
+            result = result.replace(r'*/'+ ':',r'*/')     
+                
             randomVarHint =   r'/*Define Randomized/Plain Value variables*/'        
             #self.qvar_box.setPlainText(randomVarHint + '\n')
+            
             self.qvar_box.setPlainText(result)
-           
+
             inputVarHint = r'/*Define Answer Variables through Algebraic expressions*/'
             #self.qvar_box.appendPlainText(inputVarHint + '\n')
-            
+                               
 
-                          
-
-    def reserveVariables(self): #detects changes in qvar_edit
+    def reserveVariables(self): #detects changes in qvar_edit, if changed, update
         global reserved_content
         global qvar_definition
         global qvars
         
         reserved_content = self.qvar_box.toPlainText()
-        
+        #comments = re.findall(r'/*[\w-]+*/',reserved_content)
         qvars = re.split('[\n]',reserved_content)
         
-        if qvars != []:               
-            qvar_definition = qvars[1::2]  
         return qvars   
         
      
@@ -979,13 +986,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.addInput()
             #i+=1
 
-    def automateInputSave(self,current_qtext):
-        if self.html_btn.isChecked() == False:
-            inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
-            for input in inputAutomation:
-                newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
-                current_qtext = current_qtext.replace(input,newinput)
-        return current_qtext
+
 
     def addInput(self,row,column): #triggers by clicking update 
         
@@ -1270,12 +1271,44 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.grade_box.toPlainText() == '': return 1
         else: return float(self.grade_box.toPlainText())
 
+
+
+
+    def automateInputSave(self):     
+        if self.html_btn.isChecked() == False:
+            current_qtext = self.qtext_box.toHtml()
+        elif self.html_btn.isChecked() == True:
+            current_qtext = self.qtext_box.toPlainText()
+        inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
+        for input in inputAutomation:
+            newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
+            current_qtext = current_qtext.replace(input,newinput)
+        qtext_syntax = re.findall(r'\\', current_qtext) 
+        for syntaxP in qtext_syntax:
+            newsyntax = str(syntaxP) + str(syntaxP)
+            current_qtext = current_qtext.replace(syntaxP,newsyntax)
+            
+        return f'''{current_qtext}'''
+
+    def automateGFeedback(self):     
+        if self.html_btn2.isChecked() == False:
+            current_feedback = self.gfeedback_box.toHtml()
+        elif self.html_btn2.isChecked() == True:
+            current_feedback = self.gfeedback_box.toPlainText()
+
+        feedback_syntax = re.findall(r'\\', current_feedback) 
+        for syntaxP in feedback_syntax:
+            newsyntax = str(syntaxP) + str(syntaxP)
+            current_feedback = current_feedback.replace(syntaxP,newsyntax)
+            
+        return f'''{current_feedback}'''
+
     def exportToFile(self, fileExport):
         try:
             data = OrderedDict([
-                ("questiontext", str(self.automateInputSave(self.qtext_box.toHtml()))),
+                ("questiontext", self.automateInputSave()),
                 ("questionvariables", str(self.qvar_box.toPlainText())),
-                ("generalfeedback", str(self.gfeedback_box.toHtml())),
+                ("generalfeedback", self.automateGFeedback()),
                 ("specificfeedback", self.generateSpecificFeedback()),
                 ("defaultgrade", self.generateGrade()),
                 ("questionnote", str(self.qnote_box.toPlainText())),
@@ -1371,6 +1404,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.animation.setEndValue(newWidth)#end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
         self.animation.start()
+
+
 
     def serialize(self):
         qvar = self.qvar_box.toPlainText()
