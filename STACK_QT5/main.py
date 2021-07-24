@@ -679,12 +679,19 @@ class MainWindow(QtWidgets.QMainWindow):
             self.gpreview_box.setHtml(displaycode2)
         
     def onGenerateTree(self):
-        questionVariable = self.qvar_box.toPlainText()
+        feedbackVariable = self.qvar_box.toPlainText()
         if self.retrieveInput() == False: print("Inputs have not been generated yet!")
+        inputs = self.serializeInputs()
 
-        re.replace(r"""(.*(rand_with_step|rand_with_prohib|rand|rand_selection).*\n)""", questionVariable)
+        feedbackVariable = re.sub(r"""(.*[^\w](rand_with_step|rand_with_prohib|rand|rand_selection).*\n)""", '', feedbackVariable)
+        for input in inputs:
+            #Search through questionvariable and replace non-LHS variables with input variables
+            feedbackVariable = re.sub(input['tans']+r"""(?!([A-Z]|[^A-Z])*:)""", input['name'], feedbackVariable)
+            #Search through questionvariable and replace LHS variables with variables with "prt" + input name
+            feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
 
-        print(questionVariable) 
+        print(feedbackVariable) 
+        self.nodeEditor.generateTree(inputs, feedbackVariable)
         
 
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set

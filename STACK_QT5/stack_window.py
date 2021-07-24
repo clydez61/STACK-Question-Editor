@@ -8,6 +8,7 @@ from PyQt5.sip import dump
 
 from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
+from nodeeditor.node_edge import Edge, EDGE_TYPE_BEZIER
 from stack_sub_window import StackSubWindow
 from stack_drag_listbox import QDMDragListbox
 from stack_properties_box import PropertiesBox
@@ -97,6 +98,39 @@ class StackWindow(NodeEditorWindow):
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
+
+    def generateTree(self, inputs, feedbackVariable):
+        nodeEditor = StackSubWindow()
+        subWindow = self.mdiArea.addSubWindow(nodeEditor)
+        subWindow.showMaximized()
+        self.setActiveSubWindow(subWindow)
+        nodeEditor.feedbackVar = feedbackVariable
+        nodes = []
+
+        i = 0
+        for input in inputs:
+            node = get_class_from_opcode(1)(nodeEditor.scene)
+            data = node.content.serialize()
+            data['sans'] = input['name']
+            data['tans'] = 'prt'+input['name']
+            data['answertest'] = 'NumRelative'
+            data['testoptions'] = '0.05'
+            node.setPos(i*200, 0)
+            node.content.deserialize(data)
+            node.content.nodeDataModified.connect(nodeEditor.nodeDataModified.emit)
+            
+            nodes.append(node)
+            i = i+1
+
+        i = 0
+        while i != (len(nodes)-1):
+            edge1 = Edge(subWindow.widget().scene, nodes[i].outputs[0], nodes[i+1].inputs[0], edge_type=EDGE_TYPE_BEZIER)
+            edge2 = Edge(subWindow.widget().scene, nodes[i].outputs[1], nodes[i+1].inputs[0], edge_type=EDGE_TYPE_BEZIER)
+
+            i = i+1
+
+        nodeEditor.scene.history.clear()
+        nodeEditor.has_been_modified = False
 
     def onFileNew(self):
         try:
