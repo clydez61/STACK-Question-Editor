@@ -697,7 +697,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #Search through questionvariable and replace LHS variables with variables with "prt" + input name
             feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
 
-        print(feedbackVariable) 
+        
         self.nodeEditor.generateTree(inputs, feedbackVariable)
         
 
@@ -1253,7 +1253,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print(f"path is {imp_path}, name is {imp_name}")
 
     def onExport(self):
-        fileExport, filter = QFileDialog.getSaveFileName(self,'Save File','STACK_QT5','(*.py)')
+        fileExport, filter = QFileDialog.getSaveFileName(self,'Export File','STACK_QT5','(*.py)')
         if fileExport == '': return False
         
         self.exportToFile(fileExport)
@@ -1283,10 +1283,10 @@ class MainWindow(QtWidgets.QMainWindow):
         for input in inputAutomation:
             newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
             current_qtext = current_qtext.replace(input,newinput)
-        qtext_syntax = re.findall(r'\\', current_qtext) 
-        for syntaxP in qtext_syntax:
-            newsyntax = str(syntaxP) + str(syntaxP)
-            current_qtext = current_qtext.replace(syntaxP,newsyntax)
+        # qtext_syntax = re.findall(r'\\', current_qtext) 
+        # for syntaxP in qtext_syntax:
+        #     newsyntax = str(syntaxP) + str(syntaxP)
+        #     current_qtext = current_qtext.replace(syntaxP,newsyntax)
             
         return f'''{current_qtext}'''
 
@@ -1296,7 +1296,8 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self.html_btn2.isChecked() == True:
             current_feedback = self.gfeedback_box.toPlainText()
 
-        feedback_syntax = re.findall(r'\\', current_feedback) 
+        feedback_syntax = re.findall(r'\\', current_feedback)
+        print(feedback_syntax) 
         for syntaxP in feedback_syntax:
             newsyntax = str(syntaxP) + str(syntaxP)
             current_feedback = current_feedback.replace(syntaxP,newsyntax)
