@@ -1,15 +1,39 @@
 {
     "nonNodeData": {
-        "questionVar": "a = 10 + rand(10)\nb = 5 + rand(15)\n\narea = a*b/2",
-        "questionText": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Given base {@b@} and height {@a@} of a triangle, use the formula for the area of a triangle \\(\\frac{b*h}{2} = A\\), determine the area of the triangle.</p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\\(A=\\)[[area]]</p></body></html>",
+        "questionVar": "b:2+rand(30)\nh:3+rand(10)\narea:b*h/2",
+        "questionText": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Given base {@b@} and height {@h@} of a triangle, use the formula for the area of a triangle \\(\\frac{b*h}{2} = A\\), <span style=\" font-family:'Courier';\">determine the area of the triangle</span>.</p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">First, enter in the <span style=\" font-size:18pt;\">base and the </span><span style=\" font-size:24pt;\">height</span> of the<span style=\" font-weight:600;\"> triangle</span>.</p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\\(base=\\)[[b]]</p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\\(height=\\)[[h]]</p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Then enter in the area of the triangle.</p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\\(A=\\)[[area]]</p></body></html>",
         "inputs": [
+            {
+                "name": "stu_b",
+                "type": "Algebraic Input",
+                "tans": "b",
+                "boxsize": "5",
+                "syntaxhint": "",
+                "forbidfloat": "Yes",
+                "requirelowestterms": "No",
+                "hideAnswer": false,
+                "allowEmpty": false,
+                "simplify": false
+            },
+            {
+                "name": "stu_h",
+                "type": "Algebraic Input",
+                "tans": "h",
+                "boxsize": "5",
+                "syntaxhint": "",
+                "forbidfloat": "No",
+                "requirelowestterms": "No",
+                "hideAnswer": false,
+                "allowEmpty": false,
+                "simplify": false
+            },
             {
                 "name": "stu_area",
                 "type": "Algebraic Input",
                 "tans": "area",
                 "boxsize": "5",
                 "syntaxhint": "",
-                "forbidfloat": "Yes",
+                "forbidfloat": "No",
                 "requirelowestterms": "No",
                 "hideAnswer": false,
                 "allowEmpty": false,
@@ -24,18 +48,18 @@
     "nodeData": [
         {
             "nodeData": {
-                "id": 1994868828576,
+                "id": 2391250010016,
                 "scene_width": 64000,
                 "scene_height": 64000,
                 "nodes": [
                     {
-                        "id": 1992905907216,
+                        "id": 2391250060240,
                         "title": "PRT Node",
-                        "pos_x": -280.0,
-                        "pos_y": -126.0,
+                        "pos_x": 0.0,
+                        "pos_y": 0.0,
                         "inputs": [
                             {
-                                "id": 1992905943024,
+                                "id": 2391250060288,
                                 "index": 0,
                                 "multi_edges": false,
                                 "position": 2,
@@ -44,14 +68,106 @@
                         ],
                         "outputs": [
                             {
-                                "id": 1992905943072,
+                                "id": 2391250059856,
                                 "index": 0,
                                 "multi_edges": true,
                                 "position": 5,
                                 "socket_type": 1
                             },
                             {
-                                "id": 1992905943120,
+                                "id": 2391250060384,
+                                "index": 1,
+                                "multi_edges": true,
+                                "position": 5,
+                                "socket_type": 4
+                            }
+                        ],
+                        "content": {
+                            "sans": "stu_b",
+                            "tans": "b",
+                            "answertest": "NumRelative",
+                            "testoptions": "0.05",
+                            "truescoremode": "+",
+                            "truescore": "1",
+                            "truepenalty": "0",
+                            "falsescoremode": "-",
+                            "falsescore": "0",
+                            "falsepenalty": "0",
+                            "truefeedback": "",
+                            "falsefeedback": ""
+                        },
+                        "op_code": 1
+                    },
+                    {
+                        "id": 2391250059808,
+                        "title": "PRT Node",
+                        "pos_x": 200.0,
+                        "pos_y": 0.0,
+                        "inputs": [
+                            {
+                                "id": 2391250060624,
+                                "index": 0,
+                                "multi_edges": false,
+                                "position": 2,
+                                "socket_type": 2
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "id": 2391250060672,
+                                "index": 0,
+                                "multi_edges": true,
+                                "position": 5,
+                                "socket_type": 1
+                            },
+                            {
+                                "id": 2391250060720,
+                                "index": 1,
+                                "multi_edges": true,
+                                "position": 5,
+                                "socket_type": 4
+                            }
+                        ],
+                        "content": {
+                            "sans": "stu_h",
+                            "tans": "h",
+                            "answertest": "NumRelative",
+                            "testoptions": "0.05",
+                            "truescoremode": "+",
+                            "truescore": "1",
+                            "truepenalty": "0",
+                            "falsescoremode": "-",
+                            "falsescore": "0",
+                            "falsepenalty": "0",
+                            "truefeedback": "",
+                            "falsefeedback": ""
+                        },
+                        "op_code": 1
+                    },
+                    {
+                        "id": 2391250060576,
+                        "title": "PRT Node",
+                        "pos_x": 400.0,
+                        "pos_y": 0.0,
+                        "inputs": [
+                            {
+                                "id": 2391250060960,
+                                "index": 0,
+                                "multi_edges": false,
+                                "position": 2,
+                                "socket_type": 2
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "id": 2391250061008,
+                                "index": 0,
+                                "multi_edges": true,
+                                "position": 5,
+                                "socket_type": 1
+                            },
+                            {
+                                "id": 2391250061056,
                                 "index": 1,
                                 "multi_edges": true,
                                 "position": 5,
@@ -60,27 +176,52 @@
                         ],
                         "content": {
                             "sans": "stu_area",
-                            "tans": "area",
+                            "tans": "prtstu_area",
                             "answertest": "NumRelative",
                             "testoptions": "0.05",
                             "truescoremode": "+",
                             "truescore": "1",
-                            "truepenalty": "",
+                            "truepenalty": "0",
                             "falsescoremode": "-",
                             "falsescore": "0",
-                            "falsepenalty": "",
+                            "falsepenalty": "0",
                             "truefeedback": "",
                             "falsefeedback": ""
                         },
                         "op_code": 1
                     }
                 ],
-                "edges": []
+                "edges": [
+                    {
+                        "id": 2391250059904,
+                        "edge_type": 2,
+                        "start": 2391250059856,
+                        "end": 2391250060624
+                    },
+                    {
+                        "id": 2391250060912,
+                        "edge_type": 2,
+                        "start": 2391250060384,
+                        "end": 2391250060624
+                    },
+                    {
+                        "id": 2391250061248,
+                        "edge_type": 2,
+                        "start": 2391250060672,
+                        "end": 2391250060960
+                    },
+                    {
+                        "id": 2391250061392,
+                        "edge_type": 2,
+                        "start": 2391250060720,
+                        "end": 2391250060960
+                    }
+                ]
             },
             "treeData": {
                 "name": "New Tree",
                 "value": "",
-                "feedbackvariables": ""
+                "feedbackvariables": "prtstu_area:stu_b*stu_h/2"
             }
         }
     ]

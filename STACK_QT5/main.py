@@ -1275,10 +1275,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def automateInputSave(self):     
-        if self.html_btn.isChecked() == False:
-            current_qtext = self.qtext_box.toHtml()
-        elif self.html_btn.isChecked() == True:
-            current_qtext = self.qtext_box.toPlainText()
+        current_qtext = self.qtext_box.toHtml()
+        # current_qtext = re.sub(r'\\', r'\', current_qtext)
+        # if self.html_btn.isChecked() == False:
+        #     current_qtext = self.qtext_box.toHtml()
+        # elif self.html_btn.isChecked() == True:
+        #     current_qtext = self.qtext_box.toPlainText()
         inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
         for input in inputAutomation:
             newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
@@ -1288,7 +1290,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #     newsyntax = str(syntaxP) + str(syntaxP)
         #     current_qtext = current_qtext.replace(syntaxP,newsyntax)
             
-        return f'''{current_qtext}'''
+        return current_qtext
 
     def automateGFeedback(self):     
         if self.html_btn2.isChecked() == False:
@@ -1321,44 +1323,47 @@ class MainWindow(QtWidgets.QMainWindow):
 
         with open(fileExport,'w') as file:
 
-            file.write("""options["grading"]="manual"\nquestion = """)
+            file.write("""options["grading"]="manual"\nquestion = {""")
 
-            file.write(json.dumps(data, indent=4))
-            # #writing question text
-            # file.write('   "questiontext":"""\n')
-            # file.write(str(self.automateInputSave(self.qtext_box.toHtml())))
-            # file.write('\n""",\n')
+            # file.write(json.dumps(data, indent=4))
+            #writing question text
+            file.write('   "questiontext":"""\n')
+            file.write(str(self.automateInputSave()))
+            file.write('\n""",\n')
 
-            # #writing question variables
-            # file.write('   "questionvariables":"""\n')
-            # file.write(str(self.qvar_box.toPlainText()))
-            # file.write('\n""",\n')
+            #writing question variables
+            file.write('   "questionvariables":"""\n')
+            file.write(str(self.qvar_box.toPlainText()))
+            file.write('\n""",\n')
 
-            # #writing general feedback
-            # file.write('   "generalfeedback":"""\n')
-            # file.write(str(self.gfeedback_box.toHtml()))
-            # file.write('\n""",\n')
+            #writing general feedback
+            file.write('   "generalfeedback":"""\n')
+            file.write(str(self.gfeedback_box.toHtml()))
+            file.write('\n""",\n')
             
-            # #writing default grade
-            # file.write('   "defaultgrade":')
-            # file.write('"' + str(self.grade_box.toPlainText()) + '",\n')
+            #writing default grade
+            file.write('   "defaultgrade":')
+            file.write('"' + str(self.grade_box.toPlainText()) + '",\n')
 
-            # #writing question note
-            # file.write('   "questionnote":"""\n')
-            # file.write(str(self.qnote_box.toPlainText()))
-            # file.write('\n""",\n')
+            #writing question note
+            file.write('   "questionnote":"""\n')
+            file.write(str(self.qnote_box.toPlainText()))
+            file.write('\n""",\n')
 
-            # # writing tags 
-            # file.write('   "tags":{\n')
-            # file.write('       "tag": [\n')                
-            # file.write(str(self.tag_box.toPlainText()) + '\n')
-            # file.write('       ]\n')
-            # file.write('   },\n')
+            # writing tags 
+            file.write('   "tags":{\n')
+            file.write('       "tag": [\n')                
+            file.write(str(self.exportTags()) + '\n')
+            file.write('       ]\n')
+            file.write('   },\n')
 
-            # #penalty
+            #penalty
         
-            
-            # file.write("\n}")
+            file.write('   "input":' + json.dumps(self.exportSerializeInputs(), indent=4) + ",\n")
+
+            file.write('   "prt":' + json.dumps(self.nodeEditor.exportSerialize(), indent=4))
+
+            file.write("\n}")
 
     def restore_or_maximize_window(self):
         # Global windows state

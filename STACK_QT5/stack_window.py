@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from collections import OrderedDict
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -100,8 +101,8 @@ class StackWindow(NodeEditorWindow):
         return None
 
     def generateTree(self, inputs, feedbackVariable):
-        nodeEditor = StackSubWindow()
-        subWindow = self.mdiArea.addSubWindow(nodeEditor)
+        subWindow = self.createMdiChild()
+        nodeEditor = subWindow.widget()
         subWindow.showMaximized()
         self.setActiveSubWindow(subWindow)
         nodeEditor.feedbackVar = feedbackVariable
@@ -112,7 +113,10 @@ class StackWindow(NodeEditorWindow):
             node = get_class_from_opcode(1)(nodeEditor.scene)
             data = node.content.serialize()
             data['sans'] = input['name']
-            data['tans'] = 'prt'+input['name']
+            if re.findall("prt"+input['name']+r"""(?=:)""", feedbackVariable):
+                data['tans'] = 'prt'+input['name']
+            else: 
+                data['tans'] = input['tans'] 
             data['answertest'] = 'NumRelative'
             data['testoptions'] = '0.05'
             node.setPos(i*200, 0)
