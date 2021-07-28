@@ -55,6 +55,7 @@ class StackInputContent(StackContent):
         self.layout.addWidget(QLabel("Test Options:", self))
         self.testType = QComboBox(self)
         self.testType.addItems(['', 'AlgEquiv', 'CasEqual', 'CompletedSquare', 'Diff', 'EqualComAss', 'EquivFirst', 'EquivReasoning', 'Expanded', 'FacForm', 'Int', 'GT', 'GTE', 'NumAbsolute', 'NumDecPlaces', 'NumDecPlacesWrong', 'NumRelative', 'NumSigFigs', 'RegExp', 'SameType', 'Sets', 'SigFigsStrict', 'SingleFrac', 'String', 'StirngSloppy', 'SubstEquiv', 'SysEquiv', 'UnitsAbsolute', 'UnitsRelative', 'Units', 'UnitsStrictAbsolute', 'UnitsStrictRelative', 'UnitsStrictSigFig'])
+        self.testType.setStyleSheet(u'background-color: rgb(102, 102, 102);color: rgb(255, 255, 255);')
         self.testType.currentIndexChanged.connect(self.updateDataAndPropertiesWidget)
         self.layout.addWidget(self.testType)
         self.layout.addWidget(QLabel("Test Option Parameters:", self))
