@@ -1285,7 +1285,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #     current_qtext = self.qtext_box.toPlainText()
         inputAutomation = re.findall(r'\[\[[\w-]+\]\]', current_qtext) 
         for input in inputAutomation:
-            newinput = r'[[input:stu_' + input[2:] + r" [[validation:stu_" + input[2:]
+            newinput = r'[[input:stu_' + input[2:] 
             current_qtext = current_qtext.replace(input,newinput)
         # qtext_syntax = re.findall(r'\\', current_qtext) 
         # for syntaxP in qtext_syntax:
