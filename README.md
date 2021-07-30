@@ -22,7 +22,7 @@ the user can switch pages through the left menubar. It is recommended for users 
 
 For details of each input field, simply point mouse cursor over the label for 1 second or more for a tooltip.
 
-When the look, variables, inputs, and potential response trees have been made, the output is a .py file intended to be imported into Dr. Bowman's Python to Moodle XML program to achieve a Moodle XML file capable of being imported into Moodle.
+When the look, variables, inputs, and potential response trees have been made, the output is a .py file intended to be imported into Dr. Bowman's Python to Moodle XML program (https://gitlab.com/stacktools/tools) to achieve a Moodle XML file capable of being imported into Moodle.
 
 ## Display Page
 The display page features a split view, where the left side is a rich text editor, which also support editing in html, once the button is toggled. The right side text previewer renders LaTeX and STACK specific code live. 
