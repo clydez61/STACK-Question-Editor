@@ -69,7 +69,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
-       
+        #self.setWindowIcon(QtGui.QIcon(u'STACK-Question-Editor\\STACK_QT5\\icons\\STACK_logo.png'))
         
         self.stackedWidget.setCurrentWidget(self.qedit_page)
         self.qvar_btn.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.qvar_page))  
@@ -1038,7 +1038,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.input_name = QTextEdit(self.input_frame)
         self.input_name.setReadOnly(True)
-        self.input_name.setStyleSheet("QTextEdit[readOnly=\"true\"] { background-color: gray }")
+        self.input_name.setStyleSheet(" background-color: rgb(106, 106, 106)",)
         self.input_name.setObjectName(u'input_name')
         self.input_name.setMaximumSize(QSize(16777215, 30))
 
@@ -1084,7 +1084,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_ans = QTextEdit(self.input_frame)
         self.input_ans.setObjectName(NewAns)
         self.input_ans.setReadOnly(True)
-        self.input_ans.setStyleSheet("QTextEdit[readOnly=\"true\"] { background-color: gray }")
+        self.input_ans.setStyleSheet("background-color:  rgb(106, 106, 106)")
         self.input_ans.setMaximumSize(QSize(16777215, 30))
         setattr(self,NewAns,self.input_ans)
         self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.input_ans)
