@@ -10,7 +10,7 @@ The STACK Question Editor, is a Python based Graphic User Interface that aims to
 - Provides fast response, as it works offline and does not have to deal with servers
 
 # Installation
-The STACK Question Editor installation package is available for download through the GitHub repository: (https://github.com/clydez61/STACK-Question-Editor).
+The STACK Question Editor installation package is available for download through the GitHub repository: (https://github.com/clydez61/STACK-Question-Editor). Run the program through "main.exe".
 
 
 # Usage
