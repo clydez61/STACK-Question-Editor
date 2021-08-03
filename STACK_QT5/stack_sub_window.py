@@ -37,7 +37,7 @@ class StackSubWindow(NodeEditorWidget):
 
     def initData(self):
         self._treeName = ''
-        self.PRTValue = ''
+        self.PRTValue = '1'
         self.feedbackVar = ''
 
     def getNodeClassFromData(self, data):
