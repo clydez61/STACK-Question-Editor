@@ -1,4 +1,5 @@
 import re
+import json
 from logging import exception
 from traceback import print_tb
 from typing import ByteString
@@ -222,13 +223,17 @@ class StackSubWindow(NodeEditorWidget):
         self.scene.deserialize(data['nodeData'])
 
     def exportSerialize(self):
-        export = OrderedDict()
+        # NOTE(Arthur): Commented out codes are related to the transition of manually building the dictionary.
+        #export = OrderedDict()
         nodes = []
         nodeData = self.scene.serialize()
         treeData = self.treeSerialize()
         treeData['name'] = re.sub(r' ', '_', treeData['name'])
+        export = '            "name": """' + treeData['name'] + '""",\n'
+        export = export + '            "value": """' + treeData['value'] + '""",\n'
+        export = export + '            "feedbackvariables": """' + treeData['feedbackvariables'] + '""",\n'
 
-        export.update(treeData)
+        #export.update(treeData)
 
         i = 0
         nodeIDMap = {}
@@ -280,6 +285,6 @@ class StackSubWindow(NodeEditorWidget):
 
             nodes.append(nodeContent)
 
-        export['node'] = nodes
+        export = export + '            "node": ' + json.dumps(nodes, indent=4) + '\n'
 
         return export

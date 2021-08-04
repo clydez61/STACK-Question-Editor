@@ -1363,9 +1363,10 @@ class MainWindow(QtWidgets.QMainWindow):
         
             file.write('   "input":' + json.dumps(self.exportSerializeInputs(), indent=4) + ",\n")
 
-            file.write('   "prt":' + json.dumps(self.nodeEditor.exportSerialize(), indent=4))
+            #NOTE(Arthur): nodeEditor.exportSerialize() outputs string!
+            file.write('   "prt":' + self.nodeEditor.exportSerialize())
 
-            file.write("\n}")
+            file.write("}")
 
     def restore_or_maximize_window(self):
         # Global windows state

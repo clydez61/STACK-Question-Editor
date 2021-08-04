@@ -410,7 +410,11 @@ class StackWindow(NodeEditorWindow):
             subwindow.widget().has_been_modified = False
 
     def exportSerialize(self):
-        export = []
+        # export = []
+        export = ' [\n'
         for window in self.mdiArea.subWindowList():
-            export.append(window.widget().exportSerialize())
+            # export.append(window.widget().exportSerialize())
+            export = export + '        {\n'+window.widget().exportSerialize() + '        },\n'
+        
+        export = export + '    ]\n'
         return export

@@ -220,8 +220,8 @@
             },
             "treeData": {
                 "name": "New Tree",
-                "value": "",
-                "feedbackvariables": "prtstu_area:stu_b*stu_h/2"
+                "value": "1",
+                "feedbackvariables": "prtstu_area:stu_b*stu_h/2\ntestVar:stu_b"
             }
         }
     ]
