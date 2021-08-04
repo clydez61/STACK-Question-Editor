@@ -8,7 +8,7 @@ from PyQt5.QtWebEngineWidgets import *
 import resource
 import json
 from pylatexenc.latex2text import LatexNodes2Text
-import mdtex2html
+
 from nodeeditor.utils import *
 from nodeeditor.node_editor_window import NodeEditorWindow
 from stack_window import StackWindow
@@ -67,7 +67,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSave_as.triggered.connect(lambda:self.onSaveAs())
         self.actionExport.triggered.connect(lambda:self.onExport())
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
-        
+        self.actionDocumentation.triggered.connect(lambda:self.Documentation())
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
         #self.setWindowIcon(QtGui.QIcon(u'STACK-Question-Editor\\STACK_QT5\\icons\\STACK_logo.png'))
         
@@ -266,6 +266,12 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
         self.show()
+
+
+    def Documentation(self):
+        url = QtCore.QUrl('https://drive.google.com/drive/folders/1SclvzLaFcYmy2qfSHvoe-GjAIpda1sQp?usp=sharing')
+        if not QtGui.QDesktopServices.openUrl(url):
+            QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')      
 
     def clearInputs(self):
         item = self.gridLayout_2.itemAt(0)
@@ -1408,7 +1414,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Animate the transition
         self.animation = QPropertyAnimation(self.left_side_menu, b"minimumWidth")#Animate minimumWidht
-        self.animation.setDuration(250)
+        self.animation.setDuration(200)
         self.animation.setStartValue(width)#Start value is the current menu width
         self.animation.setEndValue(newWidth)#end value is the new menu width
         self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
