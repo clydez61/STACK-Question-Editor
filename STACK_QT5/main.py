@@ -652,13 +652,13 @@ class MainWindow(QtWidgets.QMainWindow):
             for variables in stack_var:
                 qtext_code = qtext_code.replace(variables,'_____')
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables, f'{variables[2:-2]}')
+                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[2:-2]}' + r'</em>')
                 
   
             htmlstart= """
              <html><head>
-             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
-             </script></head>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+            <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head>
              <body>
              <mathjax>             
              """
@@ -676,12 +676,12 @@ class MainWindow(QtWidgets.QMainWindow):
             random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)   
             
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables,f'{variables[2:-2]}')
+                qtext_code = qtext_code.replace(variables,r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[2:-2]}' + r'</em>')
 
             htmlstart= """
              <html><head>
-             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
-             </script></head>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+            <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head>
              <body>
              <mathjax>             
              """
