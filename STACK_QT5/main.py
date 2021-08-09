@@ -1,4 +1,6 @@
 import sys, os, importlib,re
+from subprocess import run
+
 from PyQt5 import QtWidgets,QtGui,QtCore,QtWebEngineWidgets,uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -17,6 +19,7 @@ from stack_drag_listbox import *
 from stack_conf import *
 from stack_conf_nodes import *
 import syntax_pars
+
 list = []
 WINDOW_SIZE = 0
 selectedfonts = {"Arial":[0,0]}
@@ -1261,7 +1264,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print(f"path is {imp_path}, name is {imp_name}")
 
     def onExport(self):
-        fileExport, filter = QFileDialog.getSaveFileName(self,'Export File','STACK_QT5','(*.py)')
+        fileExport, filter = QFileDialog.getSaveFileName(self,'Export File','STACK_QT5','(*.xml)')
         if fileExport == '': return False
         
         self.exportToFile(fileExport)
@@ -1329,7 +1332,9 @@ class MainWindow(QtWidgets.QMainWindow):
             ])
         except Exception as e: dumpException(e)
 
-        with open(fileExport,'w') as file:
+        fileExportPy = re.sub(r".xml", ".py", fileExport)
+
+        with open(fileExportPy,'w') as file:
 
             file.write("""options["grading"]="manual"\nquestion = {""")
 
@@ -1373,6 +1378,13 @@ class MainWindow(QtWidgets.QMainWindow):
             file.write('   "prt":' + self.nodeEditor.exportSerialize())
 
             file.write("}")
+
+        outputDir = os.path.dirname(fileExport)
+
+        run("python STACK_QT5/dependencies/tools/qcreate.py -o" + outputDir + " " + fileExportPy)
+
+        if os.path.exists(fileExportPy):
+            os.remove(fileExportPy)
 
     def restore_or_maximize_window(self):
         # Global windows state

@@ -1,0 +1,3 @@
+[submodule "STACK_QT5/dependencies/tools"]
+	path = STACK_QT5/dependencies/tools
+	url = https://gitlab.com/stacktools/tools
