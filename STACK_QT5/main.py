@@ -271,6 +271,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
 
+
     def Documentation(self):
         url = QtCore.QUrl('https://drive.google.com/drive/folders/1SclvzLaFcYmy2qfSHvoe-GjAIpda1sQp?usp=sharing')
         if not QtGui.QDesktopServices.openUrl(url):
@@ -299,10 +300,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.clearInputs()
                 with open(fname, 'r') as file:
                     data = json.loads(file.read())
-                    self.qtext_box.blockSignals(True)
+                    #self.qtext_box.blockSignals(True)
                     
                     self.deserialize(data['nonNodeData'])
-                    self.qtext_box.blockSignals(False)
+                    #self.qtext_box.blockSignals(False)
                     #NOTE(Arthur): Hacky fix to add node data and having the properties box working, fix later.
                     currentWidget = self.stackedWidget.currentWidget()
                     self.stackedWidget.setCurrentWidget(self.tree_page)
@@ -655,13 +656,13 @@ class MainWindow(QtWidgets.QMainWindow):
             for variables in stack_var:
                 qtext_code = qtext_code.replace(variables,'_____')
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables, f'{variables[2:-2]}')
+                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[2:-2]}' + r'</em>')
                 
   
             htmlstart= """
              <html><head>
-             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
-             </script></head>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+            <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head>
              <body>
              <mathjax>             
              """
@@ -679,12 +680,12 @@ class MainWindow(QtWidgets.QMainWindow):
             random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)   
             
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables,f'{variables[2:-2]}')
+                qtext_code = qtext_code.replace(variables,r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[2:-2]}' + r'</em>')
 
             htmlstart= """
              <html><head>
-             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">                     
-             </script></head>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+            <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head>
              <body>
              <mathjax>             
              """
@@ -1261,7 +1262,8 @@ class MainWindow(QtWidgets.QMainWindow):
             for elements in key['tag']: 
                 result += str(elements) + "\n" 
             self.tag_box.setText(result)
-            print(f"path is {imp_path}, name is {imp_name}")
+
+            #print(f"path is {imp_path}, name is {imp_name}")
 
     def onExport(self):
         fileExport, filter = QFileDialog.getSaveFileName(self,'Export File','STACK_QT5','(*.xml)')
