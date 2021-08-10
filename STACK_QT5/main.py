@@ -1383,7 +1383,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         outputDir = os.path.dirname(fileExport)
 
-        run("python STACK_QT5/dependencies/tools/qcreate.py -o" + outputDir + " " + fileExportPy)
+        pathToQCreate = os.path.abspath(os.path.dirname(__file__) + "/dependencies/tools/qcreate.py")
+
+        run("python " + pathToQCreate + " -o" + outputDir + " " + fileExportPy)
 
         if os.path.exists(fileExportPy):
             os.remove(fileExportPy)
