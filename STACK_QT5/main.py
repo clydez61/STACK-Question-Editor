@@ -652,11 +652,11 @@ class MainWindow(QtWidgets.QMainWindow):
             #qtext_code = mdtex2html.convert(qtext_code)
             
             stack_var = re.findall(r'\[\[[\w-]+\]\]', qtext_code)
-            random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)
+            random_var = re.findall(r'\@[\w-]+\@', qtext_code)
             for variables in stack_var:
                 qtext_code = qtext_code.replace(variables,'_____')
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[2:-2]}' + r'</em>')
+                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Tahoma, sans-serif;">' + f'{variables[1:-1]}' + r'</em>')
                 
   
             htmlstart= """
@@ -677,10 +677,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             qtext_code = self.gfeedback_box.toHtml()
             
-            random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)   
+            random_var = re.findall(r'\@[\w-]+\@', qtext_code)   
             
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables,r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[2:-2]}' + r'</em>')
+                qtext_code = qtext_code.replace(variables,r'<em style="color:blue; font-family: Garamond,serif;">' + f'{variables[1:-1]}' + r'</em>')
 
             htmlstart= """
              <html><head>
