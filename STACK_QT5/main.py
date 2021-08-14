@@ -460,7 +460,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if definition !='': #if there is a fully defined var, or a half defined var in qvar
                     vardict[variable] = definition
 
-            print(vardict, qvars)
+           
                 
             result = json.dumps(vardict)    
              
@@ -652,11 +652,11 @@ class MainWindow(QtWidgets.QMainWindow):
             #qtext_code = mdtex2html.convert(qtext_code)
             
             stack_var = re.findall(r'\[\[[\w-]+\]\]', qtext_code)
-            random_var = re.findall(r'\@[\w-]+\@', qtext_code)
+            random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)
             for variables in stack_var:
                 qtext_code = qtext_code.replace(variables,'_____')
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Tahoma, sans-serif;">' + f'{variables[1:-1]}' + r'</em>')
+                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Tahoma, sans-serif;">' + f'{variables[2:-2]}' + r'</em>')
                 
   
             htmlstart= """
@@ -1298,6 +1298,9 @@ class MainWindow(QtWidgets.QMainWindow):
         for input in inputAutomation:
             newinput = r'[[input:stu_' + input[2:] 
             current_qtext = current_qtext.replace(input,newinput)
+        randomVarSyntax = re.findall(r'\{\@[\w-]+\@\}',current_qtext)
+        for vars in randomVarSyntax:
+            current_qtext = current_qtext.replace(vars,vars[1:-1])
         # qtext_syntax = re.findall(r'\\', current_qtext) 
         # for syntaxP in qtext_syntax:
         #     newsyntax = str(syntaxP) + str(syntaxP)
