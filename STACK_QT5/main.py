@@ -445,8 +445,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 stack_var[index] = element[2:-2]
             vardict = {key:'' for i, key in enumerate(stack_var)}
             
-            
-
             #vardict: automatically detected variables
             #qvar: reserved variables, including comments
             for line in self.reserveVariables():       
@@ -658,7 +656,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for variables in random_var:
                 qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Tahoma, sans-serif;">' + f'{variables[2:-2]}' + r'</em>')
                 
-  
+
             htmlstart= """
              <html><head>
             <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>

@@ -13,7 +13,7 @@ The STACK Question Editor, is a Python based Graphic User Interface that aims to
 Distributed under the MIT License. See [LICENSE](https://github.com/clydez61/STACK-Question-Editor/blob/main/LICENSE) file for more information.
 
 # Installation
-The STACK Question Editor installation package is available for download through the [GitHub repository](https://github.com/clydez61/STACK-Question-Editor). 
+The STACK Question Editor installation package is available for download through the [Releases](https://github.com/clydez61/STACK-Question-Editor/releases) section of the GitHub repository. 
 
 To contribute or modify the code, clone the repository with git in your desired directory:
 ```
