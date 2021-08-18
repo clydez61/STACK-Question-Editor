@@ -59,6 +59,8 @@ class StackNode(Node):
         super().initSettings()
         self.input_socket_position = LEFT_CENTER
         self.output_socket_position = RIGHT_CENTER
+        self.input_multi_edged = True
+        self.output_multi_edged = True
 
     def serialize(self):
         res = super().serialize()
