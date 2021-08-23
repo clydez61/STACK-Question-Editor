@@ -654,7 +654,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for variables in stack_var:
                 qtext_code = qtext_code.replace(variables,'_____')
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables, r'<em style="color:blue; font-family: Tahoma, sans-serif;">' + f'{variables[2:-2]}' + r'</em>')
+                qtext_code = qtext_code.replace(variables, r'\textcolor{blue}{' + f'{variables[2:-2]}' + r'}')
                 
 
             htmlstart= """
@@ -662,9 +662,9 @@ class MainWindow(QtWidgets.QMainWindow):
             <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
             <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head>
              <body>
-             <mathjax>             
+                         
              """
-            htmlend = '</mathjax></body></html>'  
+            htmlend = '</body></html>'  
             
             displaycode = htmlstart + qtext_code + htmlend                  
             
@@ -678,7 +678,7 @@ class MainWindow(QtWidgets.QMainWindow):
             random_var = re.findall(r'\{\@[\w-]+\@\}', qtext_code)   
             
             for variables in random_var:
-                qtext_code = qtext_code.replace(variables,r'<em style="color:blue; font-family: Tahoma, sans-serif;">' + f'{variables[2:-2]}' + r'</em>')
+                qtext_code = qtext_code.replace(variables,r'\textcolor{blue}{' + f'{variables[2:-2]}' + r'}')
 
             htmlstart= """
              <html><head>
