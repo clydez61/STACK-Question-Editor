@@ -1511,6 +1511,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 ('syntaxhint', input['syntaxhint']),
             ])
 
+            if input['forbidfloat'] == 'Yes':
+                exportInput['forbidfloat'] = 1
+
+            else:
+                exportInput['forbidfloat'] = 0
+
             if input['requirelowestterms'] == 'Yes':
                 exportInput['requirelowestterms'] = 1
 
