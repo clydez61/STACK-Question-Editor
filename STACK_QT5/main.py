@@ -1298,7 +1298,7 @@ class MainWindow(QtWidgets.QMainWindow):
             current_qtext = current_qtext.replace(input,newinput)
         randomVarSyntax = re.findall(r'\{\@[\w-]+\@\}',current_qtext)
         for vars in randomVarSyntax:
-            current_qtext = current_qtext.replace(vars,r'\(' + vars[1:-1] + r'\)')
+            current_qtext = current_qtext.replace(vars,vars[1:-1])
         # qtext_syntax = re.findall(r'\\', current_qtext) 
         # for syntaxP in qtext_syntax:
         #     newsyntax = str(syntaxP) + str(syntaxP)
