@@ -459,14 +459,16 @@ class MainWindow(QtWidgets.QMainWindow):
                     vardict[variable] = definition
 
            
-                
+            print(vardict)    
             result = json.dumps(vardict)    
              
             # printing result as string
+            result = result.replace(r'",','\n')
             result = result.replace(r'"','')
             result = result.replace('{','')
             result = result.replace('}','')
-            result = result.replace(',','\n')
+
+            
             result = result.replace(' ','')     
             result = result.replace(r'*/'+ ':\n',r'*/'+'\n') 
             result = result.replace(r'*/'+ ':',r'*/')     
@@ -704,7 +706,7 @@ class MainWindow(QtWidgets.QMainWindow):
             feedbackVariable = re.sub(input['tans']+r"""(?!([A-Z]|[^A-Z])*:)""", input['name'], feedbackVariable)
             #Search through questionvariable and replace LHS variables with variables with "prt" + input name
             feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
-
+       
         
         self.nodeEditor.generateTree(inputs, feedbackVariable)
         
