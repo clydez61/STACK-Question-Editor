@@ -704,7 +704,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for input in inputs:
             print(input)
             #Search through questionvariable and replace non-LHS variables with input variables
-            feedbackVariable = re.sub(r"""\b"""+ input['tans'] +r"""(?!([a-zA-Z0-9_]|$)*:)\b""", input['name'], feedbackVariable)
+            feedbackVariable = re.sub(r"""\b"""+ input['tans'] +r"""\b(?!([a-zA-Z0-9_]|$)*:)""", input['name'], feedbackVariable)
             #Search through questionvariable and replace LHS variables with variables with "prt" + input name
             feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
        
