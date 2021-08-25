@@ -53,7 +53,7 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 
 class MainWindow(QtWidgets.QMainWindow):
     qvar_content = ''    
-   
+    
     
     def __init__(self):
         super(MainWindow,self).__init__()
@@ -708,8 +708,9 @@ class MainWindow(QtWidgets.QMainWindow):
             #Search through questionvariable and replace LHS variables with variables with "prt" + input name
             feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
        
-        
-        self.nodeEditor.generateTree(inputs, feedbackVariable)
+        try:
+            self.nodeEditor.generateTree(inputs, feedbackVariable)
+        except Exception as e: dumpException(e)
         
 
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set

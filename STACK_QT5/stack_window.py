@@ -24,6 +24,7 @@ class StackWindow(NodeEditorWindow):
     # For parent widget to know modifications have been made within node editor
     nodeEditorModified = pyqtSignal()
     updateEditMenuSignal = pyqtSignal()
+    switchToTreeSignal = pyqtSignal()
 
     def initUI(self):
         self.name_company = 'University of Alberta'

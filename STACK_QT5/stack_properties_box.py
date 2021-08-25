@@ -31,7 +31,7 @@ class PropertiesBox(QStackedWidget):
         self.treeName = QLineEdit()
         self.treeName.textChanged.connect(self.transmitTreeData)
         noneSelectedLayout.addWidget(self.treeName)
-        noneSelectedLayout.addWidget(QLabel("Potential Repsone Tree Mark:"))
+        noneSelectedLayout.addWidget(QLabel("Potential Response Tree Mark:"))
         self.PRTValue = QLineEdit()
         self.PRTValue.textChanged.connect(self.transmitTreeData)
         noneSelectedLayout.addWidget(self.PRTValue)

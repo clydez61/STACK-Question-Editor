@@ -256,11 +256,26 @@ class StackSubWindow(NodeEditorWidget):
 
             i = i+1
 
+        sumScore = 0
+        sumPenalty = 0
+
+        for node in nodeData['nodes']:
+            nodeContent = node['content']
+            try:
+                if nodeContent['truescore'] == '': sumScore = sumScore + 1
+                else: sumScore = sumScore + float(nodeContent['truescore'])
+
+                if nodeContent['falsepenalty'] == '': sumPenalty = sumPenalty + 0
+                else: sumPenalty = sumPenalty + float(nodeContent['falsepenalty'])
+
+            except Exception as e: dumpException(e)
+
         for node in nodeData['nodes']:
             nodeContent = node['content']
             try:
                 if nodeContent['truescore'] == '': nodeContent['truescore'] = 1
-                else: nodeContent['truescore'] = float(nodeContent['truescore'])
+                elif sumScore == 0: nodeContent['truescore'] = float(nodeContent['truescore'])
+                else: nodeContent['truescore'] = float(nodeContent['truescore'])/sumScore
 
                 if nodeContent['truepenalty'] == '': nodeContent['truepenalty'] = 0
                 else: nodeContent['truepenalty'] = float(nodeContent['truepenalty'])
@@ -269,8 +284,9 @@ class StackSubWindow(NodeEditorWidget):
                 else: nodeContent['falsescore'] = float(nodeContent['falsescore'])
 
                 if nodeContent['falsepenalty'] == '': nodeContent['falsepenalty'] = 0
-                else: nodeContent['falsepenalty'] = float(nodeContent['falsepenalty'])
-            except exception as e: dumpException(e)
+                elif sumPenalty == 0: nodeContent['falsepenalty'] = float(nodeContent['falsepenalty'])
+                else: nodeContent['falsepenalty'] = float(nodeContent['falsepenalty'])/sumPenalty
+            except Exception as e: dumpException(e)
 
             nodeContent['truenextnode'] = -1
             nodeContent['falsenextnode'] = -1
