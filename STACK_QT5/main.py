@@ -700,8 +700,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         feedbackVariable = re.sub(r"""(.*[^\w](rand_with_step|rand_with_prohib|rand|rand_selection).*\n)""", '', feedbackVariable)
         for input in inputs:
+            print(input)
             #Search through questionvariable and replace non-LHS variables with input variables
-            feedbackVariable = re.sub(input['tans']+r"""(?!([A-Z]|[^A-Z])*:)""", input['name'], feedbackVariable)
+            feedbackVariable = re.sub(r"""\b"""+ input['tans'] +r"""(?!([a-zA-Z0-9_]|$)*:)\b""", input['name'], feedbackVariable)
             #Search through questionvariable and replace LHS variables with variables with "prt" + input name
             feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
 
