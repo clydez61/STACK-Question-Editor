@@ -38,8 +38,8 @@ class StackSubWindow(NodeEditorWidget):
 
     def initData(self):
         self._treeName = ''
-        self.PRTValue = '1'
-        self.feedbackVar = ''
+        self._PRTValue = '1'
+        self._feedbackVar = ''
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
@@ -209,6 +209,23 @@ class StackSubWindow(NodeEditorWidget):
         self._treeName = name
         self.setTitle()
 
+    @property
+    def PRTValue(self):
+        return self._PRTValue
+
+    @PRTValue.setter
+    def PRTValue(self, value):
+        self._PRTValue = value
+        self.updatePropertiesSignal.emit()
+
+    @property
+    def feedbackVar(self):
+        return self._feedbackVar
+        
+    @feedbackVar.setter
+    def feedbackVar(self, data):
+        self._feedbackVar = data
+        self.updatePropertiesSignal.emit()
 
     def serialize(self):
         nodeData = self.scene.serialize()

@@ -695,9 +695,11 @@ class MainWindow(QtWidgets.QMainWindow):
             
             self.gpreview_box.setHtml(displaycode2)
         
-    def onGenerateTree(self):
+    def onGenerateTreePartial(self):
         feedbackVariable = self.qvar_box.toPlainText()
-        if self.retrieveInput() == False: print("Inputs have not been generated yet!")
+        if self.retrieveInput() == False: 
+            print("Inputs have not been generated yet!")
+            return
         inputs = self.serializeInputs()
 
         feedbackVariable = re.sub(r"""(.*[^\w](rand_with_step|rand_with_prohib|rand|rand_selection).*\n)""", '', feedbackVariable)
@@ -708,10 +710,29 @@ class MainWindow(QtWidgets.QMainWindow):
             #Search through questionvariable and replace LHS variables with variables with "prt" + input name
             feedbackVariable = re.sub(input['tans']+r"""(?=:)""", 'prt'+input['name'], feedbackVariable)
        
+        currentWidget = self.stackedWidget.currentWidget()
+        self.stackedWidget.setCurrentWidget(self.tree_page)
+
         try:
             self.nodeEditor.generateTree(inputs, feedbackVariable)
         except Exception as e: dumpException(e)
         
+        self.stackedWidget.setCurrentWidget(currentWidget)
+
+    def onGenerateTree(self):
+        if self.retrieveInput() == False: 
+            print("Inputs have not been generated yet!")
+            return
+        inputs = self.serializeInputs()
+
+        currentWidget = self.stackedWidget.currentWidget()
+        self.stackedWidget.setCurrentWidget(self.tree_page)
+
+        try:
+            self.nodeEditor.generateTreeNoPartialMarks(inputs)
+        except Exception as e: dumpException(e)
+        
+        self.stackedWidget.setCurrentWidget(currentWidget)
 
     def openDialog(self): #opens the dialog with the "more" button, openDialog() proceeds before set
         
@@ -1155,7 +1176,8 @@ class MainWindow(QtWidgets.QMainWindow):
         
     def createActions(self):
         self.actNew = QAction('&New Tree', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered= self.onFileNew)
-        self.actGenerateTree = QAction('Generate Tree', self, statusTip="Generate a PRT depending on maxima variables and inputs", triggered= self.onGenerateTree)
+        self.actGenerateTree = QAction('Generate Tree (Allow partial marks for partially correct work)', self, statusTip="Generate a PRT using student inputs to allow students to recieve partial marks for partially correct work", triggered= self.onGenerateTreePartial)
+        self.actGenerateTreeNoPartial = QAction('Generate Tree (Only use original teacher answers)', self, statusTip="Generate a PRT only using teacher answers. This means no partial marks for partially correct work.", triggered= self.onGenerateTree)
 
     def createMenus(self):
         self.menuTreeEdit.clear()
@@ -1179,6 +1201,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.menuGenerate.clear()
         self.menuGenerate.addAction(self.actGenerateTree)
+        self.menuGenerate.addAction(self.actGenerateTreeNoPartial)
 
     def updateMenus(self):
         # May contain other menu items

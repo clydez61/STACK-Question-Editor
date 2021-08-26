@@ -101,7 +101,7 @@ class StackWindow(NodeEditorWindow):
             return activeSubWindow.widget()
         return None
 
-    def generateTree(self, inputs, feedbackVariable):
+    def generateTree(self, inputs, feedbackVariable = ""):
         subWindow = self.createMdiChild()
         nodeEditor = subWindow.widget()
         subWindow.showMaximized()
@@ -136,6 +136,39 @@ class StackWindow(NodeEditorWindow):
 
         nodeEditor.scene.history.clear()
         nodeEditor.has_been_modified = False
+
+    def generateTreeNoPartialMarks(self, inputs, feedbackVariable = ""):
+        subWindow = self.createMdiChild()
+        nodeEditor = subWindow.widget()
+        subWindow.showMaximized()
+        self.setActiveSubWindow(subWindow)
+        nodeEditor.feedbackVar = feedbackVariable
+        nodes = []
+
+        i = 0
+        for input in inputs:
+            node = get_class_from_opcode(1)(nodeEditor.scene)
+            data = node.content.serialize()
+            data['sans'] = input['name']
+            data['tans'] = input['tans'] 
+            data['answertest'] = 'NumRelative'
+            data['testoptions'] = '0.05'
+            node.setPos(i*200, 0)
+            node.content.deserialize(data)
+            node.content.nodeDataModified.connect(nodeEditor.nodeDataModified.emit)
+            
+            nodes.append(node)
+            i = i+1
+
+        i = 0
+        while i != (len(nodes)-1):
+            edge1 = Edge(subWindow.widget().scene, nodes[i].outputs[0], nodes[i+1].inputs[0], edge_type=EDGE_TYPE_BEZIER)
+            edge2 = Edge(subWindow.widget().scene, nodes[i].outputs[1], nodes[i+1].inputs[0], edge_type=EDGE_TYPE_BEZIER)
+
+            i = i+1
+
+        nodeEditor.scene.history.clear()
+        nodeEditor.has_been_modified = True
 
     def onFileNew(self):
         try:
@@ -217,7 +250,7 @@ class StackWindow(NodeEditorWindow):
             # self.actRedo.setEnabled(hasMdiChild and active.canRedo())
         except Exception as e: dumpException(e)
 
-    # NOTE(Arthur): May be obsolete code?
+    # NOTE(Arthur): Obsolete code, may be useful if failing to emit signals via regular methods
     # def mouseReleaseEvent(self, event):
     #     self.updateEditorPropertiesBox()
     #     self.updateEditMenuSignal.emit()
