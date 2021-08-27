@@ -71,6 +71,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExport.triggered.connect(lambda:self.onExport())
         #self.minimizeButton.clicked.connect(lambda: self.showMinimized()) 
         self.actionDocumentation.triggered.connect(lambda:self.Documentation())
+        self.actionVideos.triggered.connect(lambda:self.TutorialVids())
         #self.restoreButton.clicked.connect(lambda: self.restore_or_maximize_window())
         #self.setWindowIcon(QtGui.QIcon(u'STACK-Question-Editor\\STACK_QT5\\icons\\STACK_logo.png'))
         
@@ -273,9 +274,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def Documentation(self):
-        url = QtCore.QUrl('https://drive.google.com/drive/folders/1SclvzLaFcYmy2qfSHvoe-GjAIpda1sQp?usp=sharing')
+        url = QtCore.QUrl('https://docs.google.com/document/d/1rZ9RJFigjOELxRBzx6KPmEsl4QGB08tMCKCmzmV7G7s/edit?usp=sharing')
         if not QtGui.QDesktopServices.openUrl(url):
             QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')      
+
+    def TutorialVids(self):
+        url = QtCore.QUrl('https://drive.google.com/drive/folders/1VzFX-3eJVG8yWiVm665R5XpyyhZC-SyQ?usp=sharing')
+        if not QtGui.QDesktopServices.openUrl(url):
+            QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')    
 
     def clearInputs(self):
         item = self.gridLayout_2.itemAt(0)
@@ -459,7 +465,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     vardict[variable] = definition
 
            
-            print(vardict)    
+              
             result = json.dumps(vardict)    
              
             # printing result as string

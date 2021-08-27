@@ -1665,6 +1665,7 @@ color: rgb(255, 255, 222);</string>
     </property>
     <addaction name="actionABout"/>
     <addaction name="actionDocumentation"/>
+    <addaction name="actionVideos"/>
    </widget>
    <widget class="QMenu" name="menuGenerate">
     <property name="title">
@@ -1786,6 +1787,11 @@ color: rgb(255, 255, 222);</string>
   <action name="actionVideo">
    <property name="text">
     <string>Video Guide</string>
+   </property>
+  </action>
+  <action name="actionVideos">
+   <property name="text">
+    <string>Video Tutorials</string>
    </property>
   </action>
  </widget>
